@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RAILWORK — 3-day park camp with Ilia Baskakov</title>
+<meta name="description" content="Three days in the Klínovec park with twelve riders and one coach who takes every lap with you. 28–30 August 2026, from €100 a day." />
+<meta name="theme-color" content="#0B0B0D" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B0B0D'/><rect x='6' y='5' width='6' height='22' fill='%23E4001F'/><rect x='19' y='5' width='6' height='22' fill='%23F2F4F7'/></svg>" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="RAILWORK — 3-day park camp with Ilia Baskakov" />
+<meta property="og:description" content="Twelve riders, one park, three days. You leave with a trick you couldn't do on Friday." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=Public+Sans:wght@300..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+
+<a class="skip-link" href="#hero">Skip to content</a>
+
+<!-- Slow-drifting snow grain over the whole page. -->
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="rail" aria-label="Elevation">
+  <span class="rail__cap">ELEV</span>
+  <span class="rail__alt" data-alt-readout>1244</span>
+  <span class="rail__unit">M</span>
+
+  <div class="rail__track">
+    <div class="rail__fill" data-progress-fill></div>
+    <!-- Markers are generated from main > section[data-alt] by app.js -->
+    <div class="rail__markers" data-markers></div>
+  </div>
+
+  <span class="rail__base">BASE 900</span>
+</nav>
+
+<main class="page">
+
+  <!-- ══ HERO ══════════════════════════════════════════════════════ -->
+  <section id="hero" class="hero" data-alt="1244" data-label="SUMMIT">
+    <!-- Drop the loop in as <source src="media/hero-loop.mp4" type="video/mp4">
+         and add poster="media/hero-poster.jpg". Until then the striped
+         placeholder below shows through and the corner slate stays visible. -->
+    <div class="hero__media" aria-hidden="true">
+      <video class="hero__video" data-hero-video autoplay muted loop playsinline preload="none"></video>
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <div class="hero__slate" data-media-slate>
+      <span>[ HERO FOOTAGE ]</span>
+      <span>12S LOOP · MUTED · POSTER FRAME</span>
+    </div>
+
+    <div class="hero__body">
+      <p class="eyebrow eyebrow--signal">RAILWORK · PARK CAMP 01</p>
+
+      <h1 class="hero__title">Ilia<br />Baskakov</h1>
+
+      <p class="hero__lede">
+        Three days in the Klínovec park with twelve riders and one coach who
+        takes every lap with you. You leave with a trick you couldn't do on Friday.
+      </p>
+
+      <dl class="factbar">
+        <div class="factbar__cell">
+          <dt>DATES</dt>
+          <dd>28–30 AUG 2026</dd>
+        </div>
+        <div class="factbar__cell">
+          <dt>RESORT</dt>
+          <dd>KLÍNOVEC, CZ</dd>
+        </div>
+        <div class="factbar__cell">
+          <dt>RIDERS</dt>
+          <dd>12 MAX</dd>
+        </div>
+        <div class="factbar__cell">
+          <dt>FROM</dt>
+          <dd>€100 / DAY</dd>
+        </div>
+      </dl>
+
+      <a class="btn btn--signal hero__cta" href="#register">
+        Reserve your spot
+        <span class="btn__meta">3 LEFT</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══ COACH ═════════════════════════════════════════════════════ -->
+  <section id="coach" class="section" data-alt="1195" data-label="THE COACH">
+    <p class="eyebrow">RUN 01 · THE COACH</p>
+
+    <div class="coach">
+      <div
+        class="pile"
+        data-pile
+        role="group"
+        aria-label="Photo pile — scroll or click to flip through"
+        tabindex="0"
+      >
+        <!-- Each card takes an <img src> when the real frames land; the striped
+             fill and mono caption stand in until then. -->
+        <figure class="pile__card" data-pile-card>
+          <img alt="" data-pile-img />
+          <figcaption>[ PORTRAIT — ILIA, TOP OF THE PARK ]</figcaption>
+        </figure>
+        <figure class="pile__card" data-pile-card>
+          <img alt="" data-pile-img />
+          <figcaption>[ FRAME GRAB — BACKSIDE 180 OUT, MAIN LINE ]</figcaption>
+        </figure>
+        <figure class="pile__card" data-pile-card>
+          <img alt="" data-pile-img />
+          <figcaption>[ FRAME GRAB — RAIL SESSION, DAY 01 ]</figcaption>
+        </figure>
+        <p class="pile__counter">
+          <span data-pile-count>01 / 03</span> · SCROLL OR CLICK
+        </p>
+      </div>
+
+      <div class="coach__text">
+        <h2 class="display display--md">Three days<br />is enough</h2>
+
+        <div class="prose">
+          <p>
+            I spent years throwing myself at the same jump and landing the same
+            way. What changed it wasn't more laps. It was somebody standing at
+            the takeoff telling me exactly what my back foot was doing.
+          </p>
+          <p>
+            That's what I do here. Small group, one park, three days. We film
+            every hit, we watch it over dinner, and you go back up in the morning
+            knowing what to fix. No drills you'll never use, no lecture. Just
+            laps and honest feedback.
+          </p>
+          <p>
+            If you can ride a blue line comfortably and you've been circling the
+            same box or the same 180 for a season, this camp is for you.
+          </p>
+        </div>
+
+        <dl class="specs">
+          <div class="specs__row"><dt>TITLES</dt><dd>3× RU FREESTYLE CHAMPION</dd></div>
+          <div class="specs__row"><dt>DISCIPLINE</dt><dd>SLOPESTYLE / PARK</dd></div>
+          <div class="specs__row"><dt>HOME PARK</dt><dd>KLÍNOVEC, CZ</dd></div>
+          <div class="specs__row"><dt>GROUP SIZE</dt><dd>12 RIDERS / 1 COACH</dd></div>
+          <div class="specs__row"><dt>YEARS RIDING</dt><dd class="is-tbc">TBC</dd></div>
+          <div class="specs__row"><dt>STANCE</dt><dd class="is-tbc">TBC</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ THREE DAYS ════════════════════════════════════════════════ -->
+  <section id="week" class="section section--sunk" data-alt="1120" data-label="3 DAYS">
+    <p class="eyebrow">RUN 02 · WHAT THE THREE DAYS LOOK LIKE</p>
+    <h2 class="display display--lg">Friday to<br />Sunday</h2>
+
+    <div class="days">
+
+      <article class="day day--tilt-l">
+        <header class="day__head">
+          <span class="day__num">01</span>
+          <span class="day__date">FRI 28 AUG</span>
+        </header>
+        <h3 class="day__title">Find out where you actually are</h3>
+        <p class="day__copy">
+          Free riding for the first hour so I can watch you. Then we pick one
+          thing each — usually it's your setup, not your trick.
+        </p>
+        <ol class="sched">
+          <li><time>08:30</time><span>MEET AT THE LOWER LIFT</span></li>
+          <li><time>09:00</time><span>FREE LAPS, FILMED</span></li>
+          <li><time>13:00</time><span>BOX + FLAT BAR SESSION</span></li>
+          <li><time>17:30</time><span>VIDEO REVIEW, ONE FIX EACH</span></li>
+        </ol>
+      </article>
+
+      <article class="day day--tilt-r">
+        <header class="day__head">
+          <span class="day__num">02</span>
+          <span class="day__date">SAT 29 AUG</span>
+        </header>
+        <h3 class="day__title">Rotation and commitment</h3>
+        <p class="day__copy">
+          The longest day. Airbag in the morning while you're fresh, real jumps
+          in the afternoon once the shape is there.
+        </p>
+        <ol class="sched">
+          <li><time>08:30</time><span>WARM-UP LAPS</span></li>
+          <li><time>09:30</time><span>AIRBAG — SPIN WORK</span></li>
+          <li><time>13:30</time><span>MEDIUM KICKER, SAME TRICK</span></li>
+          <li><time>18:00</time><span>REVIEW + DINNER, GROUP OF 12</span></li>
+        </ol>
+      </article>
+
+      <article class="day day--tilt-l">
+        <header class="day__head">
+          <span class="day__num">03</span>
+          <span class="day__date">SUN 30 AUG</span>
+        </header>
+        <h3 class="day__title">Put it on film</h3>
+        <p class="day__copy">
+          One line, start to finish, clean. You go home with the clip and a short
+          written plan for the rest of the season.
+        </p>
+        <ol class="sched">
+          <li><time>08:30</time><span>EARLY PARK, QUIET LAPS</span></li>
+          <li><time>10:00</time><span>FILM YOUR LINE</span></li>
+          <li><time>14:00</time><span>LAST FREE SESSION</span></li>
+          <li><time>16:00</time><span>CLIPS SENT, SEASON PLAN</span></li>
+        </ol>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══ REVIEWS ═══════════════════════════════════════════════════ -->
+  <section id="reviews" class="section section--clip" data-alt="1040" data-label="RIDERS">
+    <div class="contour" aria-hidden="true"></div>
+
+    <p class="eyebrow">RUN 03 · RIDERS WHO CAME LAST TIME</p>
+
+    <blockquote class="pullquote">“He fixed my back foot in an hour.”</blockquote>
+
+    <div class="reviews">
+      <figure class="review">
+        <p>
+          I'd been stuck on frontside boardslides for two winters. He watched two
+          laps, moved my lead hand, and it was done. Rest of the camp was actual
+          progression.
+        </p>
+        <figcaption>MARTA K.<br />INTERMEDIATE · PARK CAMP JAN 2026</figcaption>
+      </figure>
+      <figure class="review">
+        <p>
+          The video review is the whole thing. You think you know what you look
+          like in the air. You don't. Watching it with someone who can name the
+          mistake is worth the money on its own.
+        </p>
+        <figcaption>JAKUB D.<br />ADVANCED · PARK CAMP JAN 2026</figcaption>
+      </figure>
+      <figure class="review">
+        <p>
+          Came alone, which I was nervous about. Twelve people, one park, you're
+          riding with all of them by lunch. Left with a 360 and four people I
+          still ride with.
+        </p>
+        <figcaption>LENKA S.<br />INTERMEDIATE · PARK CAMP MAR 2026</figcaption>
+      </figure>
+    </div>
+
+    <p class="note">[ PLACEHOLDER QUOTES — REPLACE WITH REAL RIDER FEEDBACK ]</p>
+  </section>
+
+  <!-- ══ PRICING ═══════════════════════════════════════════════════ -->
+  <section id="pricing" class="section section--sunk" data-alt="980" data-label="PRICE">
+    <p class="eyebrow">RUN 04 · PRICE</p>
+    <h2 class="display display--lg">Pick your run</h2>
+    <p class="section__lede">
+      Coaching only. Lift pass, lodging, travel and rental are yours to arrange —
+      I'd rather charge less and tell you honestly what's missing.
+    </p>
+
+    <div class="tiers">
+
+      <article class="tier tier--blue tier--tilt-l">
+        <header class="tier__head">
+          <span class="pip pip--blue" aria-hidden="true"></span>
+          <span class="tier__name">BLUE RUN</span>
+        </header>
+        <p class="tier__price"><span class="tier__amount">€100</span><span class="tier__unit">1 DAY</span></p>
+        <ul class="tier__list">
+          <li class="yes">One full coached day, 09:00–16:00</li>
+          <li class="yes">Filmed laps and evening review</li>
+          <li class="yes">Group of 12 max</li>
+          <li class="no">Lift pass, gear, lodging, travel</li>
+        </ul>
+        <a class="btn btn--ghost tier__cta" href="#register" data-tier="Blue — 1 day, €100">Reserve your spot</a>
+      </article>
+
+      <article class="tier tier--red tier--tilt-r">
+        <header class="tier__head">
+          <span class="tier__group">
+            <span class="pip pip--red" aria-hidden="true"></span>
+            <span class="tier__name">RED RUN</span>
+          </span>
+          <span class="tier__flag">MOST TAKEN</span>
+        </header>
+        <p class="tier__price"><span class="tier__amount">€200</span><span class="tier__unit">2 DAYS</span></p>
+        <ul class="tier__list">
+          <li class="yes">Two coached days, your pick of dates</li>
+          <li class="yes">Airbag session included</li>
+          <li class="yes">Two video reviews, one fix per day</li>
+          <li class="no">Lift pass, gear, lodging, travel</li>
+        </ul>
+        <a class="btn btn--signal tier__cta" href="#register" data-tier="Red — 2 days, €200">Reserve your spot</a>
+      </article>
+
+      <article class="tier tier--black tier--tilt-l">
+        <header class="tier__head">
+          <span class="pip pip--black" aria-hidden="true"></span>
+          <span class="tier__name">BLACK RUN</span>
+        </header>
+        <p class="tier__price"><span class="tier__amount">€250</span><span class="tier__unit">ALL 3 DAYS</span></p>
+        <ul class="tier__list">
+          <li class="yes">All three days, Friday to Sunday</li>
+          <li class="yes">Edited clip of your best line</li>
+          <li class="yes">Written season plan after the camp</li>
+          <li class="no">Lift pass, gear, lodging, travel</li>
+        </ul>
+        <a class="btn btn--ghost tier__cta" href="#register" data-tier="Black — 3 days, €250">Reserve your spot</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ══ REGISTER ══════════════════════════════════════════════════ -->
+  <section id="register" class="register" data-alt="920" data-label="REGISTER">
+    <div class="ridgeline" aria-hidden="true"></div>
+
+    <div class="register__grid">
+      <div class="register__pitch">
+        <p class="eyebrow eyebrow--onred">BASE · 920 M · REGISTER</p>
+        <h2 class="display display--xl register__title">Take the<br />spot</h2>
+        <p class="register__lede">
+          Twelve places, three left. No payment now — I'll email you within a day
+          to confirm dates and send bank details.
+        </p>
+      </div>
+
+      <!-- No endpoint is wired yet. Set data-endpoint to a form handler URL and
+           app.js will POST the entries as JSON; without it the form validates,
+           logs the payload, and shows the confirmation panel. -->
+      <form class="signup" data-signup novalidate>
+        <label class="field">
+          <span class="field__label">NAME</span>
+          <input type="text" name="name" required autocomplete="name" />
+          <span class="field__error" data-error hidden></span>
+        </label>
+
+        <label class="field">
+          <span class="field__label">EMAIL</span>
+          <input type="email" name="email" required autocomplete="email" />
+          <span class="field__error" data-error hidden></span>
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span class="field__label">LEVEL</span>
+            <select name="level">
+              <option>Intermediate</option>
+              <option>Advanced</option>
+              <option>Not sure yet</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">RUN</span>
+            <select name="tier" data-tier-select>
+              <option>Blue — 1 day, €100</option>
+              <option>Red — 2 days, €200</option>
+              <option>Black — 3 days, €250</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="btn btn--signal signup__submit" type="submit">Reserve your spot</button>
+
+        <p class="signup__fineprint">NO PAYMENT TODAY · REPLY WITHIN 24 H · CANCEL FREE UNTIL 14 AUG</p>
+      </form>
+
+      <div class="confirm" data-confirm role="status" hidden>
+        <p class="eyebrow">CONFIRMATION</p>
+        <h3 class="display display--sm confirm__title">Spot reserved</h3>
+        <p class="confirm__copy">
+          Check your inbox — confirmation and bank details within 24 hours.
+          Bring the board you actually ride.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FAQ ═══════════════════════════════════════════════════════ -->
+  <section id="faq" class="section" data-alt="900" data-label="FAQ">
+    <p class="eyebrow">QUESTIONS</p>
+
+    <div class="faq">
+      <details class="faq__item">
+        <summary>What level do I need to be?</summary>
+        <p>
+          You should be able to ride any blue line in control and have hit a
+          small box or side hit before. Beyond that, come as you are — I split
+          the group by what people are working on, not by label.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Can I rent gear there?</summary>
+        <p>
+          Yes, there's a rental at the base, and I can reserve a park-friendly
+          board if you tell me your size when you register. Bring your own if you
+          have one — three days on a board you know is worth more.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>I'm coming on my own. Is that fine?</summary>
+        <p>
+          Most people do. Twelve riders, one park, shared dinners — you won't be
+          riding alone by the first afternoon. I can also put you in touch with
+          others looking to share a room.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>What if the conditions are bad?</summary>
+        <p>
+          If the park can't run, we move the day or refund it in full — no
+          argument. Rain and flat light we ride through; that's normal here and
+          it's still useful.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Refunds and cancellation?</summary>
+        <p>
+          Free cancellation up to two weeks before. After that I'll refund
+          whatever I can fill from the waiting list. Injury with a doctor's note,
+          full refund at any point.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Why only twelve riders?</summary>
+        <p>
+          Because I film everyone and review the footage with everyone. Past
+          twelve, that stops being possible and it turns into a lesson.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Is food included?</summary>
+        <p>
+          No. We eat together in the evening and split the bill — usually 15–20 €
+          a head. Lunch is on the hill, whenever the session breaks.
+        </p>
+      </details>
+      <details class="faq__item">
+        <summary>Can a non-riding partner come along?</summary>
+        <p>
+          Sure. They're welcome at the evening review and dinner, and Klínovec
+          has plenty to do off the hill. Just tell me so I book the right table.
+        </p>
+      </details>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__id">
+      <span class="footer__name">RAILWORK PARK CAMP</span>
+      <span>KLÍNOVEC, CZECHIA · 28–30 AUG 2026</span>
+      <span><a href="mailto:ride@railwork.camp">RIDE@RAILWORK.CAMP</a></span>
+    </div>
+    <nav class="footer__links" aria-label="Elsewhere">
+      <!-- TODO: swap in the real profile URLs. -->
+      <a href="#">INSTAGRAM</a>
+      <a href="#">YOUTUBE</a>
+      <a href="#top">TOP ↑</a>
+    </nav>
+  </footer>
+
+</main>
+
+<script src="app.js" defer></script>
+</body>
+</html>
