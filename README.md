@@ -1,7 +1,8 @@
-# RAILWORK — park camp landing page
+# BASCAMP — freestyle camp landing page
 
-Static landing page for a three-day snowboard park camp at Klínovec (28–30 Aug 2026).
-Implemented from the `Railwork Camp.dc.html` Claude Design file.
+Static landing page for a three-day snowboard freestyle camp at Klínovec (28–30 Aug 2026)
+with Ilia Baskakov. Implemented from the `Railwork Camp.dc.html` Claude Design file, then
+reworked against the coach's feedback (new schedule, 5–6 rider groups, real specs).
 
 No build step, no dependencies. Open `index.html`, or serve the folder:
 
@@ -51,8 +52,14 @@ These are stand-ins from the design and need real content before launch:
 - **Photo pile frames** — three `<img data-pile-img>` slots with no `src`. Set `src`
   and `alt` on each; the mono caption drops out once an image is present.
 - **Rider quotes** — marked in the page with `[ PLACEHOLDER QUOTES — … ]`.
-- **Coach specs** — `YEARS RIDING` and `STANCE` are `TBC`.
-- **Social links** — Instagram and YouTube in the footer point at `#`.
+- **Contact email** — `ride@bascamp.camp` is a stand-in; swap it in the footer and in the
+  signup failure message in `app.js` once the real address exists.
+- **Camp name** — the page now reads BASCAMP (RAILWORK was dropped: no rails involved).
+  If the name changes again it appears in `index.html` (title, OG tags, footer),
+  `app.js` (log prefixes, failure message) and here.
+
+Instagram and YouTube in the footer point at the real profiles
+(`@baskakov74` on both).
 
 ## Notes
 
