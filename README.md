@@ -54,12 +54,11 @@ These are stand-ins from the design and need real content before launch:
 - **Rider quotes** — marked in the page with `[ PLACEHOLDER QUOTES — … ]`.
 - **Contact email** — `ride@bascamp.camp` is a stand-in; swap it in the footer and in the
   signup failure message in `app.js` once the real address exists.
-- **Camp name** — the page now reads BASCAMP (RAILWORK was dropped: no rails involved).
-  If the name changes again it appears in `index.html` (title, OG tags, footer),
-  `app.js` (log prefixes, failure message) and here.
 
-Instagram and YouTube in the footer point at the real profiles
-(`@baskakov74` on both).
+The camp name is settled: **BASCAMP** (RAILWORK was dropped — no rails involved). It
+appears in `index.html` (title, OG tags, footer) and `app.js` (log prefixes, failure
+message). Instagram and YouTube in the footer point at the real profiles (`@baskakov74`
+on both).
 
 ## Notes
 
