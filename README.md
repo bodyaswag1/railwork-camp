@@ -17,6 +17,7 @@ python -m http.server 8000 --directory railwork-camp
 | `index.html` | All markup — hero, coach, three days, reviews, pricing, register, FAQ |
 | `styles.css` | Design tokens + every component style; tokens map 1:1 onto a shadcn/Tailwind theme |
 | `app.js` | Elevation rail, photo pile, pricing→form handoff, signup form |
+| `media/` | Coach photos, `coach-01…06`, in the order the pile shows them |
 
 ## Behaviour
 
@@ -25,8 +26,11 @@ adding a section with `data-alt` and `data-label` is enough to put it on the rai
 readout interpolates 1244 m → 900 m across scroll progress; below 760 px the rail is too
 thin for names, so markers show altitudes instead.
 
-**Photo pile** (coach section) — click, scroll, or arrow/enter keys to flip through three
-frames. Scrolling advances the pile without hijacking page scroll.
+**Photo pile** (coach section) — click, scroll, or arrow/enter keys to flip through the
+six frames in `media/`, opening on the portrait. Scrolling advances the pile without
+hijacking page scroll. Card count is read from the DOM, so adding or removing a
+`.pile__card` is enough — only the front three are ever visible, and anything deeper
+sits hidden behind them.
 
 **Pricing → form** — each tier's "Reserve your spot" preselects that tier in the signup
 `RUN` dropdown.
@@ -49,8 +53,6 @@ These are stand-ins from the design and need real content before launch:
 
 - **Hero footage** — `<video data-hero-video>` has no `<source>`. Add one plus a
   `poster`, and the `[ HERO FOOTAGE ]` slate hides itself automatically.
-- **Photo pile frames** — three `<img data-pile-img>` slots with no `src`. Set `src`
-  and `alt` on each; the mono caption drops out once an image is present.
 - **Rider quotes** — marked in the page with `[ PLACEHOLDER QUOTES — … ]`.
 - **Contact email** — `ride@bascamp.camp` is a stand-in; swap it in the footer and in the
   signup failure message in `app.js` once the real address exists.

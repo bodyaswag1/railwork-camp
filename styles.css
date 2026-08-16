@@ -670,23 +670,37 @@ button:focus-visible {
   text-transform: uppercase;
 }
 
+/* Over a photo the caption needs its own ground to stay readable. */
 .pile__card.has-image figcaption {
-  display: none;
+  z-index: 1;
+  color: var(--snowfield);
 }
 
+.pile__card.has-image::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  background: linear-gradient(180deg, transparent, rgba(11, 11, 13, 0.88));
+  pointer-events: none;
+}
+
+/* Only the front three are ever visible. Anything deeper sits at the same
+   transform as position 2, fully covered, so the pile takes any number of
+   cards without sprawling. */
 .pile__card[data-pos="0"] {
   transform: translate(0, 0) rotate(-1deg) scale(1);
-  z-index: 3;
+  z-index: 4;
 }
 
 .pile__card[data-pos="1"] {
   transform: translate(16px, 14px) rotate(2.4deg) scale(0.965);
-  z-index: 2;
+  z-index: 3;
 }
 
 .pile__card[data-pos="2"] {
   transform: translate(30px, 27px) rotate(-3.2deg) scale(0.93);
-  z-index: 1;
+  z-index: 2;
 }
 
 .pile__counter {

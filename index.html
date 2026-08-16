@@ -106,22 +106,64 @@
         aria-label="Photo pile — scroll or click to flip through"
         tabindex="0"
       >
-        <!-- Each card takes an <img src> when the real frames land; the striped
-             fill and mono caption stand in until then. -->
+        <!-- Portrait leads so the pile opens on his face, then the tricks.
+             Only the front card is visible on load, so the rest lazy-load. -->
         <figure class="pile__card" data-pile-card>
-          <img alt="" data-pile-img />
-          <figcaption>[ PORTRAIT — ILIA, TOP OF THE PARK ]</figcaption>
+          <img
+            src="media/coach-01-portrait.jpg"
+            alt="Ilia Baskakov in a red competition bib numbered 27, goggles up, throwing a peace sign at the bottom of the course."
+            data-pile-img
+            fetchpriority="high"
+          />
+          <figcaption>ILIA — COMP DAY, BIB 27</figcaption>
         </figure>
         <figure class="pile__card" data-pile-card>
-          <img alt="" data-pile-img />
-          <figcaption>[ FRAME GRAB — BACKSIDE 180 OUT, MAIN LINE ]</figcaption>
+          <img
+            src="media/coach-02-method-hip.jpg"
+            alt="Grabbed method in a yellow jacket, high above a park hip, snow-covered peaks behind."
+            data-pile-img
+            loading="lazy"
+          />
+          <figcaption>METHOD OVER THE HIP</figcaption>
         </figure>
         <figure class="pile__card" data-pile-card>
-          <img alt="" data-pile-img />
-          <figcaption>[ FRAME GRAB — RAIL SESSION, DAY 01 ]</figcaption>
+          <img
+            src="media/coach-03-handplant.jpg"
+            alt="Fisheye shot of a handplant on a blue barrel, board pointed at the sky, riders watching from the slope below."
+            data-pile-img
+            loading="lazy"
+          />
+          <figcaption>HANDPLANT ON THE BARREL</figcaption>
+        </figure>
+        <figure class="pile__card" data-pile-card>
+          <img
+            src="media/coach-04-backflip.jpg"
+            alt="Inverted grab against a deep blue sky, well above the jump, chairlift running up the glacier behind."
+            data-pile-img
+            loading="lazy"
+          />
+          <figcaption>INVERTED, GLACIER PARK</figcaption>
+        </figure>
+        <figure class="pile__card" data-pile-card>
+          <img
+            src="media/coach-05-city-jump.jpg"
+            alt="Tucked grab in a red suit over a big city-park kicker, tower blocks fading into falling snow."
+            data-pile-img
+            loading="lazy"
+          />
+          <figcaption>CITY PARK, FLAT LIGHT</figcaption>
+        </figure>
+        <figure class="pile__card" data-pile-card>
+          <img
+            src="media/coach-06-rail.jpg"
+            alt="Board vertical on a rainbow rail, upper body low over the tube, rock face behind."
+            data-pile-img
+            loading="lazy"
+          />
+          <figcaption>RAINBOW RAIL</figcaption>
         </figure>
         <p class="pile__counter">
-          <span data-pile-count>01 / 03</span> · SCROLL OR CLICK
+          <span data-pile-count>01 / 06</span> · SCROLL OR CLICK
         </p>
       </div>
 
