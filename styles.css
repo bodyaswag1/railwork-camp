@@ -125,24 +125,42 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* Full-bleed bar rather than a floating chip: when this is revealed it
+   reads as a deliberate banner instead of landing halfway across the hero
+   headline. translateY(-100%) against top:0 clears the viewport exactly,
+   whatever the bar's height ends up being. */
 .skip-link {
   position: fixed;
-  top: 8px;
-  left: 8px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  transform: translateY(-200%);
+  transform: translateY(-100%);
   background: var(--signal);
   color: var(--snowfield);
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.12em;
-  padding: 10px 16px;
+  text-align: center;
+  padding: 12px 16px;
   transition: transform var(--dur-fast) var(--ease-carve);
 }
 
 .skip-link:focus-visible {
   transform: none;
   color: var(--snowfield);
+  /* The global ring is signal red, invisible on a signal-red bar. */
+  outline: 2px solid var(--snowfield);
+  outline-offset: -6px;
+}
+
+/* Touch devices reach the sections through the elevation rail, and a
+   stray tap should never park this over the hero. Keyboard and screen
+   reader users on pointer devices keep it. */
+@media (hover: none) and (pointer: coarse) {
+  .skip-link {
+    display: none;
+  }
 }
 
 /* ── Keyframes ──────────────────────────────────────────────────── */
