@@ -16,7 +16,7 @@ python -m http.server 8000 --directory railwork-camp
 | --- | --- |
 | `index.html` | All markup — hero, coach, three days, reviews, pricing, register, FAQ |
 | `styles.css` | Design tokens + every component style; tokens map 1:1 onto a shadcn/Tailwind theme |
-| `app.js` | Elevation rail, photo pile, pricing→form handoff, signup form |
+| `app.js` | Elevation rail, photo pile, scroll reveal, signup form |
 | `media/` | Coach photos, `coach-01…06`, in the order the pile shows them |
 
 ## Behaviour
@@ -37,8 +37,10 @@ itself rather than the stylesheet carrying it, so the module stays visible when 
 script does not run; it also bails out entirely under `prefers-reduced-motion: reduce`
 or without `IntersectionObserver`, instead of leaving anything stuck at `opacity: 0`.
 
-**Pricing → form** — each tier's "Reserve your spot" preselects that tier in the signup
-`RUN` dropdown.
+**"Reserve your spot"** — the hero CTA and all three tier CTAs open
+`https://t.me/baskakov74` in a new tab. Reservations are handled in Telegram DM, so
+these are plain outbound links with no JS behind them. Change the URL in `index.html`
+in four places if the handle ever moves.
 
 **Signup form** — validates name and email inline, then shows the confirmation panel.
 Nothing is sent anywhere yet. To wire it up, put a handler URL on the form:

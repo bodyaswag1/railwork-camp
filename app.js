@@ -220,22 +220,6 @@
     }
   }
 
-  /* ── Pricing → form handoff ───────────────────────────────────── */
-
-  function initTierHandoff() {
-    var select = document.querySelector("[data-tier-select]");
-    if (!select) return;
-
-    document.querySelectorAll("[data-tier]").forEach(function (link) {
-      link.addEventListener("click", function () {
-        var wanted = link.dataset.tier;
-        Array.prototype.forEach.call(select.options, function (option) {
-          if (option.text === wanted) select.value = option.value || option.text;
-        });
-      });
-    });
-  }
-
   /* ── Signup form ──────────────────────────────────────────────── */
 
   function initSignup() {
@@ -352,7 +336,6 @@
     initPile();
     initReveal();
     initHeroSlate();
-    initTierHandoff();
     initSignup();
   }
 
