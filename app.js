@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   RAILWORK — page behaviour
+   BASCAMP — page behaviour
    Four independent pieces: the elevation rail, the photo pile, the
    pricing → form handoff, and the signup form itself. Each one guards
    its own DOM so a missing section never breaks the others.
@@ -285,16 +285,16 @@
           submit.textContent = "Reserve your spot";
         }
         // eslint-disable-next-line no-console
-        console.error("[railwork] signup failed", err);
+        console.error("[bascamp] signup failed", err);
         window.alert(
-          "That didn't go through. Email ride@railwork.camp and I'll book you in by hand."
+          "That didn't go through. Email ride@bascamp.camp and I'll book you in by hand."
         );
       }
 
       if (!endpoint) {
         // No handler wired yet — behave exactly as the design does.
         // eslint-disable-next-line no-console
-        console.info("[railwork] no data-endpoint set; signup not sent:", payload);
+        console.info("[bascamp] no data-endpoint set; signup not sent:", payload);
         done();
         return;
       }

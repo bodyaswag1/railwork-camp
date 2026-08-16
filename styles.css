@@ -536,6 +536,17 @@ button:focus-visible {
   animation: fadeUp 0.7s 0.2s var(--ease-edge) both;
 }
 
+/* Coach credit under the headline — reads as a byline, not a title. */
+.hero__name {
+  margin-top: clamp(12px, 1.4vw, 18px);
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.1vw, 13px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  animation: fadeUp 0.8s 0.75s var(--ease-edge) both;
+}
+
 .hero__lede {
   max-width: 46ch;
   margin-top: clamp(16px, 2vw, 26px);
@@ -805,9 +816,11 @@ button:focus-visible {
   border-bottom: 0;
 }
 
+/* Wide enough for a full range (14:30–17:00) so the labels stay aligned. */
 .sched time {
   color: var(--signal);
-  min-width: 52px;
+  min-width: 76px;
+  white-space: nowrap;
 }
 
 .sched span {
