@@ -630,7 +630,22 @@ button:focus-visible {
   aspect-ratio: 4 / 5;
   margin: 0 34px 34px 0;
   cursor: pointer;
-  touch-action: pan-y;
+  transition:
+    opacity 700ms var(--ease-edge),
+    transform 900ms var(--ease-edge);
+}
+
+/* Slides in as a single block the first time it scrolls into view. Both
+   classes come from app.js — see initReveal for why the resting state
+   lives there and not here. */
+.pile.is-armed {
+  opacity: 0;
+  transform: translate3d(-56px, 20px, 0);
+}
+
+.pile.is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 .pile__card {

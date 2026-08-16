@@ -126,7 +126,6 @@
 
     var n = cards.length;
     var top = 0;
-    var wheelLock = 0;
 
     // A card with a real frame drops its stand-in caption.
     cards.forEach(function (card) {
@@ -154,20 +153,6 @@
       step(1);
     });
 
-    // Deliberately not preventDefault: the page keeps scrolling past the
-    // pile, the frames just advance on the way through.
-    pile.addEventListener(
-      "wheel",
-      function (e) {
-        if (Math.abs(e.deltaY) < 8) return;
-        var now = Date.now();
-        if (now - wheelLock < 420) return;
-        wheelLock = now;
-        step(e.deltaY > 0 ? 1 : -1);
-      },
-      { passive: true }
-    );
-
     pile.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -179,6 +164,47 @@
     });
 
     render();
+  }
+
+  /* ── Scroll reveal ────────────────────────────────────────────── */
+
+  function initReveal() {
+    var targets = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+    if (!targets.length) return;
+
+    var still =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Nothing to animate with, so leave everything in its final state
+    // rather than hiding it behind a transition that will never run.
+    if (still || !("IntersectionObserver" in window)) return;
+
+    // The hidden state is applied here rather than in the stylesheet, so a
+    // module stays visible if this script never loads.
+    targets.forEach(function (el) {
+      el.classList.add("is-armed");
+    });
+
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-revealed");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    // Two frames so the armed state paints before anything is observed —
+    // otherwise a module already in view snaps in instead of sliding.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        targets.forEach(function (el) {
+          io.observe(el);
+        });
+      });
+    });
   }
 
   /* ── Hero footage slate ───────────────────────────────────────── */
@@ -324,6 +350,7 @@
   function boot() {
     initRail();
     initPile();
+    initReveal();
     initHeroSlate();
     initTierHandoff();
     initSignup();

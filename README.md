@@ -26,11 +26,16 @@ adding a section with `data-alt` and `data-label` is enough to put it on the rai
 readout interpolates 1244 m → 900 m across scroll progress; below 760 px the rail is too
 thin for names, so markers show altitudes instead.
 
-**Photo pile** (coach section) — click, scroll, or arrow/enter keys to flip through the
-six frames in `media/`, opening on the portrait. Scrolling advances the pile without
-hijacking page scroll. Card count is read from the DOM, so adding or removing a
-`.pile__card` is enough — only the front three are ever visible, and anything deeper
-sits hidden behind them.
+**Photo pile** (coach section) — click or use the arrow/enter keys to flip through the
+six frames in `media/`, opening on the portrait. Card count is read from the DOM, so
+adding or removing a `.pile__card` is enough — only the front three are ever visible,
+and anything deeper sits hidden behind them.
+
+**Scroll reveal** — anything marked `data-reveal` slides in the first time it enters the
+viewport (currently just the photo pile). `initReveal` adds the hidden `is-armed` state
+itself rather than the stylesheet carrying it, so the module stays visible when the
+script does not run; it also bails out entirely under `prefers-reduced-motion: reduce`
+or without `IntersectionObserver`, instead of leaving anything stuck at `opacity: 0`.
 
 **Pricing → form** — each tier's "Reserve your spot" preselects that tier in the signup
 `RUN` dropdown.
