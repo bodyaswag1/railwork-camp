@@ -3,569 +3,601 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BASCAMP — 3-day freestyle camp with Ilia Baskakov</title>
-<meta name="description" content="Three days on the airbag with five or six riders and one coach who is on every session with you. Klínovec, 28–30 August 2026, from €100 a day." />
-<meta name="theme-color" content="#0B0B0D" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B0B0D'/><rect x='6' y='5' width='6' height='22' fill='%23E4001F'/><rect x='19' y='5' width='6' height='22' fill='%23F2F4F7'/></svg>" />
+<title>Tier S Specialists — IT consulting &amp; technical recruitment</title>
+<meta name="description" content="We staff engineering teams with people who clear a real technical bar, and send our own consultants when the work has to happen now. Retained search, contract, and project delivery." />
+<meta name="theme-color" content="#0E1116" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230E1116'/><text x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='700' text-anchor='middle' fill='%23D9A425'>S</text></svg>" />
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content="BASCAMP — 3-day freestyle camp with Ilia Baskakov" />
-<meta property="og:description" content="Five or six riders, three days, one coach. You leave with a trick you couldn't do on Friday." />
+<meta property="og:title" content="Tier S Specialists — IT consulting &amp; technical recruitment" />
+<meta property="og:description" content="S-tier or we don't send them. Technical search, contract staffing, and consulting delivery." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=Public+Sans:wght@300..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body id="top">
 
 <a class="skip-link" href="#hero">Skip to content</a>
 
-<!-- Slow-drifting snow grain over the whole page. -->
-<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span class="progress__fill" data-progress></span></div>
 
-<nav class="rail" aria-label="Elevation">
-  <span class="rail__cap">ELEV</span>
-  <span class="rail__alt" data-alt-readout>1244</span>
-  <span class="rail__unit">M</span>
+<header class="topbar" data-topbar>
+  <a class="brand" href="#top" aria-label="Tier S Specialists — home">
+    <span class="brand__mark" aria-hidden="true">S</span>
+    <span class="brand__text">
+      <strong>TIER S</strong>
+      <em>SPECIALISTS</em>
+    </span>
+  </a>
 
-  <div class="rail__track">
-    <div class="rail__fill" data-progress-fill></div>
-    <!-- Markers are generated from main > section[data-alt] by app.js -->
-    <div class="rail__markers" data-markers></div>
-  </div>
+  <nav class="topnav" aria-label="Sections">
+    <ul>
+      <li><a href="#practices">Practices</a></li>
+      <li><a href="#grading">Grading</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#roles">Roles</a></li>
+      <li><a href="#engagements">Engagements</a></li>
+    </ul>
+  </nav>
 
-  <span class="rail__base">BASE 900</span>
+  <a class="btn btn--primary btn--sm topbar__cta" href="#contact">Start a brief</a>
+
+  <button class="burger" type="button" data-burger aria-expanded="false" aria-controls="mobile-nav">
+    <span class="burger__box" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="sr-only">Menu</span>
+  </button>
+</header>
+
+<nav class="drawer" id="mobile-nav" data-drawer hidden aria-label="Sections">
+  <ul>
+    <li><a href="#practices">Practices</a></li>
+    <li><a href="#grading">Grading</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#roles">Roles</a></li>
+    <li><a href="#engagements">Engagements</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a class="drawer__cta" href="#contact">Start a brief</a></li>
+  </ul>
 </nav>
 
 <main class="page">
 
   <!-- ══ HERO ══════════════════════════════════════════════════════ -->
-  <section id="hero" class="hero" data-alt="1244" data-label="SUMMIT">
-    <!-- Drop the loop in as <source src="media/hero-loop.mp4" type="video/mp4">
-         and add poster="media/hero-poster.jpg". Until then the striped
-         placeholder below shows through and the corner slate stays visible. -->
-    <div class="hero__media" aria-hidden="true">
-      <video class="hero__video" data-hero-video autoplay muted loop playsinline preload="none"></video>
-    </div>
-    <div class="hero__scrim" aria-hidden="true"></div>
-
-    <div class="hero__slate" data-media-slate>
-      <span>[ HERO FOOTAGE ]</span>
-      <span>12S LOOP · MUTED · POSTER FRAME</span>
-    </div>
+  <section id="hero" class="hero" data-label="Hero">
+    <div class="hero__grid" aria-hidden="true"></div>
 
     <div class="hero__body">
-      <p class="eyebrow eyebrow--signal">DRY SLOPE · FREESTYLE CAMP 01</p>
+      <p class="eyebrow">IT CONSULTING · TECHNICAL RECRUITMENT</p>
 
-      <h1 class="hero__title">Progress<br />starts here</h1>
-
-      <!-- The coach's name sits under the headline, not above it. -->
-      <p class="hero__name">WITH ILIA BASKAKOV</p>
+      <h1 class="hero__title">
+        S-tier, or we<br />
+        don&rsquo;t send them.
+      </h1>
 
       <p class="hero__lede">
-        Three days on the airbag with five or six riders and one coach who is on
-        every session with you. You leave with a trick you couldn't do on Friday.
+        Tier S Specialists does two things. We staff engineering teams with
+        people who have cleared a technical bar set by engineers, and we send
+        our own consultants when the work has to happen now.
       </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#contact">Start a brief</a>
+        <a class="btn btn--ghost" href="#grading">See how we grade &rarr;</a>
+      </div>
 
       <dl class="factbar">
         <div class="factbar__cell">
-          <dt>DATES</dt>
-          <dd>28–30 AUG 2026</dd>
+          <dt>Model</dt>
+          <dd>Retained &middot; contract &middot; project</dd>
         </div>
         <div class="factbar__cell">
-          <dt>RESORT</dt>
-          <dd>KLÍNOVEC, CZ</dd>
+          <dt>Coverage</dt>
+          <dd>EU &middot; UK &middot; remote</dd>
         </div>
         <div class="factbar__cell">
-          <dt>RIDERS</dt>
-          <dd>5–6 PER GROUP</dd>
+          <dt>Shortlist</dt>
+          <dd>3 names, not 30 CVs</dd>
         </div>
         <div class="factbar__cell">
-          <dt>FROM</dt>
-          <dd>€100 / DAY</dd>
+          <dt>Reply</dt>
+          <dd>1 business day</dd>
         </div>
       </dl>
-
-      <!-- Reservations run through Telegram DM, not the page. -->
-      <a
-        class="btn btn--signal hero__cta"
-        href="https://t.me/baskakov74"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Reserve your spot
-        <span class="btn__meta">3 LEFT</span>
-      </a>
     </div>
   </section>
 
-  <!-- ══ COACH ═════════════════════════════════════════════════════ -->
-  <section id="coach" class="section" data-alt="1195" data-label="THE COACH">
-    <p class="eyebrow">RUN 01 · THE COACH</p>
+  <!-- ══ PRACTICES ═════════════════════════════════════════════════ -->
+  <section id="practices" class="section" data-label="Practices">
+    <div class="section__head">
+      <p class="eyebrow">02 — PRACTICES</p>
+      <h2 class="section__title">Two halves of the same problem</h2>
+      <p class="section__lede">
+        Most companies come to us with a delivery gap and discover it is a
+        hiring gap, or the other way round. We are set up to answer either
+        without handing you to a second vendor.
+      </p>
+    </div>
 
-    <div class="coach">
-      <div
-        class="pile"
-        data-pile
-        data-reveal
-        role="group"
-        aria-label="Photo pile — click or use the arrow keys to flip through"
-        tabindex="0"
-      >
-        <!-- Portrait leads so the pile opens on his face, then the tricks.
-             Only the front card is visible on load, so the rest lazy-load. -->
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-01-portrait.jpg"
-            alt="Ilia Baskakov in a red competition bib numbered 27, goggles up, throwing a peace sign at the bottom of the course."
-            data-pile-img
-            fetchpriority="high"
-          />
-          <figcaption>ILIA — COMP DAY, BIB 27</figcaption>
-        </figure>
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-02-method-hip.jpg"
-            alt="Grabbed method in a yellow jacket, high above a park hip, snow-covered peaks behind."
-            data-pile-img
-            loading="lazy"
-          />
-          <figcaption>METHOD OVER THE HIP</figcaption>
-        </figure>
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-03-handplant.jpg"
-            alt="Fisheye shot of a handplant on a blue barrel, board pointed at the sky, riders watching from the slope below."
-            data-pile-img
-            loading="lazy"
-          />
-          <figcaption>HANDPLANT ON THE BARREL</figcaption>
-        </figure>
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-04-backflip.jpg"
-            alt="Inverted grab against a deep blue sky, well above the jump, chairlift running up the glacier behind."
-            data-pile-img
-            loading="lazy"
-          />
-          <figcaption>INVERTED, GLACIER PARK</figcaption>
-        </figure>
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-05-city-jump.jpg"
-            alt="Tucked grab in a red suit over a big city-park kicker, tower blocks fading into falling snow."
-            data-pile-img
-            loading="lazy"
-          />
-          <figcaption>CITY PARK, FLAT LIGHT</figcaption>
-        </figure>
-        <figure class="pile__card" data-pile-card>
-          <img
-            src="media/coach-06-rail.jpg"
-            alt="Board vertical on a rainbow rail, upper body low over the tube, rock face behind."
-            data-pile-img
-            loading="lazy"
-          />
-          <figcaption>RAINBOW RAIL</figcaption>
-        </figure>
-        <p class="pile__counter">
-          <span data-pile-count>01 / 06</span> · CLICK OR ARROWS
+    <div class="practices">
+      <article class="practice" data-reveal>
+        <p class="practice__tag">PRACTICE A</p>
+        <h3 class="practice__title">Consulting</h3>
+        <p class="practice__lede">
+          You have the roadmap and not the hands. We bring a small senior team,
+          ship the thing, and leave your engineers able to maintain it.
         </p>
+        <ul class="ticklist">
+          <li>Platform &amp; cloud architecture — AWS, GCP, Azure</li>
+          <li>Data engineering, warehousing, analytics enablement</li>
+          <li>DevOps, SRE, CI/CD and release engineering</li>
+          <li>Application delivery — backend, frontend, mobile</li>
+          <li>Security reviews and compliance readiness</li>
+          <li>Legacy migration and rescue of stalled projects</li>
+        </ul>
+        <a class="link-arrow" href="#engagements">Engagement models &rarr;</a>
+      </article>
+
+      <article class="practice" data-reveal>
+        <p class="practice__tag">PRACTICE B</p>
+        <h3 class="practice__title">Talent</h3>
+        <p class="practice__lede">
+          You need the person, not the agency spam. Every name on your
+          shortlist has been through a technical screen run by someone who
+          could do the job themselves.
+        </p>
+        <ul class="ticklist">
+          <li>Retained permanent search — engineering and leadership</li>
+          <li>Contract and interim placement</li>
+          <li>Embedded recruiter / RPO for scaling teams</li>
+          <li>Technical screening as a service on your own pipeline</li>
+          <li>Salary benchmarking and offer strategy</li>
+          <li>Employer branding and careers-page rewrites</li>
+        </ul>
+        <a class="link-arrow" href="#grading">The grading rubric &rarr;</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ GRADING ═══════════════════════════════════════════════════ -->
+  <section id="grading" class="section section--dark" data-label="Grading">
+    <div class="section__head">
+      <p class="eyebrow eyebrow--gold">03 — GRADING</p>
+      <h2 class="section__title">The tier list is the product</h2>
+      <p class="section__lede">
+        Every candidate we touch gets a grade, and the grade is written down
+        before anyone talks price. You only ever see S and A. The name of the
+        company comes from the top of this list.
+      </p>
+    </div>
+
+    <div class="ladder">
+      <div class="ladder__tabs" role="tablist" aria-label="Candidate grades" data-tablist>
+        <button class="tier tier--s" role="tab" id="tab-s" aria-controls="panel-s" aria-selected="true" tabindex="0" data-tier="s">
+          <span class="tier__grade">S</span>
+          <span class="tier__name">Ships without supervision</span>
+          <span class="tier__meta">Forwarded</span>
+        </button>
+        <button class="tier tier--a" role="tab" id="tab-a" aria-controls="panel-a" aria-selected="false" tabindex="-1" data-tier="a">
+          <span class="tier__grade">A</span>
+          <span class="tier__name">Strong hire inside a team</span>
+          <span class="tier__meta">Forwarded</span>
+        </button>
+        <button class="tier tier--b" role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false" tabindex="-1" data-tier="b">
+          <span class="tier__grade">B</span>
+          <span class="tier__name">Right seat, wrong level</span>
+          <span class="tier__meta">Held</span>
+        </button>
+        <button class="tier tier--c" role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false" tabindex="-1" data-tier="c">
+          <span class="tier__grade">C</span>
+          <span class="tier__name">Not what the brief asked for</span>
+          <span class="tier__meta">Never sent</span>
+        </button>
       </div>
 
-      <div class="coach__text">
-        <h2 class="display display--md">Three days<br />is enough</h2>
-
-        <div class="prose">
-          <p>
-            I've walked this road plenty of times myself — rebuilt my technique,
-            scrapped it, started again from nothing. What I learned is that you
-            don't get far on your own. You always need a coach, an outside eye
-            on what you're actually doing. That's exactly why I'm here.
+      <div class="ladder__panels">
+        <div class="panel" role="tabpanel" id="panel-s" aria-labelledby="tab-s" tabindex="0">
+          <h3 class="panel__title">S — ships without supervision</h3>
+          <p class="panel__lede">
+            Has already solved your class of problem in production, at your
+            scale or above, and can explain the decisions they would make
+            differently now.
           </p>
-          <p>
-            Twenty years of riding and every stage of it behind me, my job as a
-            coach comes down to two things: get you to the trick you're after
-            faster, and keep the injuries and the bad habits out of your
-            technique on the way.
-          </p>
-          <p>
-            So: small group, three days, sessions split by level. We film
-            everything, we go through it in the evening, and you go back up the
-            next morning knowing what to fix. No drills you'll never use, no
-            lecture. Just airtime and honest feedback.
-          </p>
-          <p>
-            The camp is for beginners and progressing riders who want to push
-            their freestyle. One requirement — you're confident on a snowboard.
-          </p>
+          <ul class="ticklist ticklist--tight">
+            <li>Defends an architecture choice under pressure without getting defensive</li>
+            <li>Two references from engineers who worked beside them, not managers who liked them</li>
+            <li>Explains their work in language a non-engineer can follow</li>
+            <li>Owns a failure in the interview without being asked twice</li>
+          </ul>
+          <p class="panel__foot">Typically 3 of these on a shortlist. If we cannot find three, we tell you that instead of padding.</p>
         </div>
 
-        <dl class="specs">
-          <div class="specs__row"><dt>TITLES</dt><dd>3× RU FREESTYLE CHAMPION</dd></div>
-          <div class="specs__row"><dt>DISCIPLINE</dt><dd>FREESTYLE / SLOPESTYLE / PARK</dd></div>
-          <div class="specs__row"><dt>HOME PARK</dt><dd>NORDKETTE, INNSBRUCK</dd></div>
-          <div class="specs__row"><dt>GROUP SIZE</dt><dd>5–6 RIDERS / 1 COACH</dd></div>
-          <div class="specs__row"><dt>YEARS RIDING</dt><dd>20 YEARS</dd></div>
-          <div class="specs__row"><dt>STANCE</dt><dd>REGULAR</dd></div>
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══ THREE DAYS ════════════════════════════════════════════════ -->
-  <section id="week" class="section section--sunk" data-alt="1120" data-label="3 DAYS">
-    <p class="eyebrow">RUN 02 · WHAT THE THREE DAYS LOOK LIKE</p>
-    <h2 class="display display--lg">Friday to<br />Sunday</h2>
-
-    <p class="section__lede">
-      Two long days and a short one. Every session runs on the airbag and is
-      split by level — small bag while the shape is coming, medium once it's
-      there. Warm-up before, stretching after, video review in the evening.
-    </p>
-
-    <div class="days">
-
-      <article class="day day--tilt-l">
-        <header class="day__head">
-          <span class="day__num">01</span>
-          <span class="day__date">FRI 28 AUG</span>
-        </header>
-        <h3 class="day__title">Find out where you actually are</h3>
-        <p class="day__copy">
-          The first session is me watching you ride. Then we each pick one thing
-          to work on — usually it's your setup, not your trick.
-        </p>
-        <ol class="sched">
-          <li><time>09:00</time><span>WARM-UP</span></li>
-          <li><time>11:00–14:00</time><span>SESSION 01 · SMALL BAG</span></li>
-          <li><time>14:00–14:30</time><span>BREAK</span></li>
-          <li><time>14:30–17:00</time><span>SESSION 02 · S/M BAG</span></li>
-          <li><time>19:00</time><span>STRETCHING</span></li>
-          <li><time>20:00</time><span>VIDEO REVIEW + FIXES</span></li>
-        </ol>
-      </article>
-
-      <article class="day day--tilt-r">
-        <header class="day__head">
-          <span class="day__num">02</span>
-          <span class="day__date">SAT 29 AUG</span>
-        </header>
-        <h3 class="day__title">Rotation and commitment</h3>
-        <p class="day__copy">
-          Same rhythm, more airtime. Small bag while you're building the shape,
-          medium in the afternoon once the take-off is repeatable.
-        </p>
-        <ol class="sched">
-          <li><time>09:00</time><span>WARM-UP</span></li>
-          <li><time>11:00–14:00</time><span>SESSION 01 · SPIN WORK</span></li>
-          <li><time>14:00–14:30</time><span>BREAK</span></li>
-          <li><time>14:30–17:00</time><span>SESSION 02 · S/M BAG</span></li>
-          <li><time>19:00</time><span>STRETCHING</span></li>
-          <li><time>20:00</time><span>VIDEO REVIEW + FIXES</span></li>
-        </ol>
-      </article>
-
-      <article class="day day--tilt-l">
-        <header class="day__head">
-          <span class="day__num">03</span>
-          <span class="day__date">SUN 30 AUG</span>
-        </header>
-        <h3 class="day__title">Put it on film</h3>
-        <p class="day__copy">
-          Proper tricks, start to finish, clean. You go home with the clip and a
-          short written plan for your next few sessions.
-        </p>
-        <ol class="sched">
-          <li><time>08:00</time><span>WARM-UP</span></li>
-          <li><time>09:00–12:00</time><span>SESSION · S/M BAG</span></li>
-          <li><time>12:00</time><span>STRETCHING</span></li>
-          <li><time>12:30</time><span>CLIPS SENT, YOUR PLAN</span></li>
-        </ol>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ══ REVIEWS ═══════════════════════════════════════════════════ -->
-  <section id="reviews" class="section section--clip" data-alt="1040" data-label="RIDERS">
-    <div class="contour" aria-hidden="true"></div>
-
-    <p class="eyebrow">RUN 03 · RIDERS WHO CAME LAST TIME</p>
-
-    <blockquote class="pullquote">“He fixed my back foot in an hour.”</blockquote>
-
-    <div class="reviews">
-      <figure class="review">
-        <p>
-          I'd been stuck on frontside boardslides for two winters. He watched two
-          laps, moved my lead hand, and it was done. Rest of the camp was actual
-          progression.
-        </p>
-        <figcaption>MARTA K.<br />INTERMEDIATE · PARK CAMP JAN 2026</figcaption>
-      </figure>
-      <figure class="review">
-        <p>
-          The video review is the whole thing. You think you know what you look
-          like in the air. You don't. Watching it with someone who can name the
-          mistake is worth the money on its own.
-        </p>
-        <figcaption>JAKUB D.<br />ADVANCED · PARK CAMP JAN 2026</figcaption>
-      </figure>
-      <figure class="review">
-        <p>
-          Came alone, which I was nervous about. Six people, one airbag, you're
-          riding with all of them by lunch. Left with a 360 and four people I
-          still ride with.
-        </p>
-        <figcaption>LENKA S.<br />INTERMEDIATE · PARK CAMP MAR 2026</figcaption>
-      </figure>
-    </div>
-
-    <p class="note">[ PLACEHOLDER QUOTES — REPLACE WITH REAL RIDER FEEDBACK ]</p>
-  </section>
-
-  <!-- ══ PRICING ═══════════════════════════════════════════════════ -->
-  <section id="pricing" class="section section--sunk" data-alt="980" data-label="PRICE">
-    <p class="eyebrow">RUN 04 · PRICE</p>
-    <h2 class="display display--lg">Pick your run</h2>
-    <p class="section__lede">
-      Coaching only. Lift pass, lodging, travel and rental are yours to arrange —
-      I'd rather charge less and tell you honestly what's missing.
-    </p>
-
-    <div class="tiers">
-
-      <article class="tier tier--blue tier--tilt-l">
-        <header class="tier__head">
-          <span class="pip pip--blue" aria-hidden="true"></span>
-          <span class="tier__name">BLUE RUN</span>
-        </header>
-        <p class="tier__price"><span class="tier__amount">€100</span><span class="tier__unit">1 DAY</span></p>
-        <ul class="tier__list">
-          <li class="yes">One full coached day, 09:00 to 20:00</li>
-          <li class="yes">Two airbag sessions, filmed</li>
-          <li class="yes">Group of 5–6, split by level</li>
-          <li class="no">Lift pass, gear, lodging, travel</li>
-        </ul>
-        <a class="btn btn--ghost tier__cta" href="https://t.me/baskakov74" target="_blank" rel="noopener noreferrer">Reserve your spot</a>
-      </article>
-
-      <article class="tier tier--red tier--tilt-r">
-        <header class="tier__head">
-          <span class="tier__group">
-            <span class="pip pip--red" aria-hidden="true"></span>
-            <span class="tier__name">RED RUN</span>
-          </span>
-          <span class="tier__flag">MOST TAKEN</span>
-        </header>
-        <p class="tier__price"><span class="tier__amount">€200</span><span class="tier__unit">2 DAYS</span></p>
-        <ul class="tier__list">
-          <li class="yes">Two coached days, your pick of dates</li>
-          <li class="yes">Four sessions, small and medium bag</li>
-          <li class="yes">Two video reviews, one fix per day</li>
-          <li class="no">Lift pass, gear, lodging, travel</li>
-        </ul>
-        <a class="btn btn--signal tier__cta" href="https://t.me/baskakov74" target="_blank" rel="noopener noreferrer">Reserve your spot</a>
-      </article>
-
-      <article class="tier tier--black tier--tilt-l">
-        <header class="tier__head">
-          <span class="pip pip--black" aria-hidden="true"></span>
-          <span class="tier__name">BLACK RUN</span>
-        </header>
-        <p class="tier__price"><span class="tier__amount">€250</span><span class="tier__unit">ALL 3 DAYS</span></p>
-        <ul class="tier__list">
-          <li class="yes">All three days, Friday to Sunday</li>
-          <li class="yes">Edited clip of your best tricks</li>
-          <li class="yes">Written plan for your next sessions</li>
-          <li class="no">Lift pass, gear, lodging, travel</li>
-        </ul>
-        <a class="btn btn--ghost tier__cta" href="https://t.me/baskakov74" target="_blank" rel="noopener noreferrer">Reserve your spot</a>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ══ REGISTER ══════════════════════════════════════════════════ -->
-  <section id="register" class="register" data-alt="920" data-label="REGISTER">
-    <div class="ridgeline" aria-hidden="true"></div>
-
-    <div class="register__grid">
-      <div class="register__pitch">
-        <p class="eyebrow eyebrow--onred">BASE · 920 M · REGISTER</p>
-        <h2 class="display display--xl register__title">Take the<br />spot</h2>
-        <p class="register__lede">
-          Six places, three left. No payment now — I'll email you within a day to
-          confirm dates and send bank details.
-        </p>
-      </div>
-
-      <!-- No endpoint is wired yet. Set data-endpoint to a form handler URL and
-           app.js will POST the entries as JSON; without it the form validates,
-           logs the payload, and shows the confirmation panel. -->
-      <form class="signup" data-signup novalidate>
-        <label class="field">
-          <span class="field__label">NAME</span>
-          <input type="text" name="name" required autocomplete="name" />
-          <span class="field__error" data-error hidden></span>
-        </label>
-
-        <label class="field">
-          <span class="field__label">EMAIL</span>
-          <input type="email" name="email" required autocomplete="email" />
-          <span class="field__error" data-error hidden></span>
-        </label>
-
-        <div class="field-row">
-          <label class="field">
-            <span class="field__label">LEVEL</span>
-            <select name="level">
-              <option>Beginner in the park</option>
-              <option>Intermediate</option>
-              <option>Advanced</option>
-              <option>Not sure yet</option>
-            </select>
-          </label>
-          <label class="field">
-            <span class="field__label">RUN</span>
-            <select name="tier">
-              <option>Blue — 1 day, €100</option>
-              <option>Red — 2 days, €200</option>
-              <option>Black — 3 days, €250</option>
-            </select>
-          </label>
+        <div class="panel" role="tabpanel" id="panel-a" aria-labelledby="tab-a" tabindex="0" hidden>
+          <h3 class="panel__title">A — strong hire inside a team</h3>
+          <p class="panel__lede">
+            Everything an S does, with one dependency: a tech lead, a review
+            culture, or a domain they have not seen before. Most great hires
+            live here.
+          </p>
+          <ul class="ticklist ticklist--tight">
+            <li>Clears the technical screen without hints</li>
+            <li>Growth curve is visible across their last two roles</li>
+            <li>Needs an existing team to plug into rather than a green field</li>
+            <li>Forwarded with a written note on what support they will need</li>
+          </ul>
+          <p class="panel__foot">We say out loud which of your seats an A fits and which they do not.</p>
         </div>
 
-        <button class="btn btn--signal signup__submit" type="submit">Reserve your spot</button>
+        <div class="panel" role="tabpanel" id="panel-b" aria-labelledby="tab-b" tabindex="0" hidden>
+          <h3 class="panel__title">B — right seat, wrong level</h3>
+          <p class="panel__lede">
+            Good engineers who do not match this brief. Usually a seniority
+            mismatch, sometimes a stack we cannot verify yet.
+          </p>
+          <ul class="ticklist ticklist--tight">
+            <li>Held in our own pipeline with their grade and the reason attached</li>
+            <li>Re-graded when they ship something that changes the answer</li>
+            <li>Offered to you only if you open a role they actually fit</li>
+            <li>Never re-sent under a different job title hoping you forgot</li>
+          </ul>
+          <p class="panel__foot">A B today is often an A in eighteen months. We keep the note either way.</p>
+        </div>
 
-        <p class="signup__fineprint">NO PAYMENT TODAY · REPLY WITHIN 24 H · CANCEL FREE UNTIL 14 AUG</p>
+        <div class="panel" role="tabpanel" id="panel-c" aria-labelledby="tab-c" tabindex="0" hidden>
+          <h3 class="panel__title">C — not what the brief asked for</h3>
+          <p class="panel__lede">
+            The CV never reaches you. This is the whole point of paying an
+            agency, and it is the part most agencies skip.
+          </p>
+          <ul class="ticklist ticklist--tight">
+            <li>Could not produce work matching what the CV claims</li>
+            <li>Screen answers did not survive one follow-up question</li>
+            <li>Applying to everything, targeting nothing</li>
+            <li>Rejected with a reason, in writing, to the candidate</li>
+          </ul>
+          <p class="panel__foot">We do not forward C-grade candidates to fill a quota, and we do not bill for volume.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PROCESS ═══════════════════════════════════════════════════ -->
+  <section id="process" class="section" data-label="Process">
+    <div class="section__head">
+      <p class="eyebrow">04 — PROCESS</p>
+      <h2 class="section__title">From brief to signed, in the open</h2>
+      <p class="section__lede">
+        The same four steps whether you are hiring a staff engineer or handing
+        us a delivery. You see the pipeline the whole way through.
+      </p>
+    </div>
+
+    <ol class="steps">
+      <li class="step" data-reveal>
+        <p class="step__no">01</p>
+        <h3 class="step__title">Scope call</h3>
+        <p class="step__when">Day 0 &middot; 45 minutes</p>
+        <p class="step__body">
+          What the seat actually does, who it reports to, what the money is,
+          and what would make you say no. For consulting, the same call
+          establishes the deliverable and the constraint that matters most.
+        </p>
+      </li>
+      <li class="step" data-reveal>
+        <p class="step__no">02</p>
+        <h3 class="step__title">Search &amp; screen</h3>
+        <p class="step__when">Day 1&ndash;7</p>
+        <p class="step__body">
+          Sourcing, then a technical screen run by an engineer against the
+          rubric agreed on the scope call. Every candidate gets a grade and a
+          written reason, including the ones you never see.
+        </p>
+      </li>
+      <li class="step" data-reveal>
+        <p class="step__no">03</p>
+        <h3 class="step__title">Shortlist</h3>
+        <p class="step__when">Day 7&ndash;12</p>
+        <p class="step__body">
+          Three names, each with the screen notes, the grade, the salary
+          expectation, and the risk we think you are taking. You interview,
+          we schedule, nobody chases anybody.
+        </p>
+      </li>
+      <li class="step" data-reveal>
+        <p class="step__no">04</p>
+        <h3 class="step__title">Offer &amp; landing</h3>
+        <p class="step__when">Day 12 onward</p>
+        <p class="step__body">
+          Offer strategy, counter-offer handling, and a check-in at week one
+          and month three. Placements carry a replacement guarantee &mdash;
+          the term is in the agreement, not on a website.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ══ ROLES ═════════════════════════════════════════════════════ -->
+  <section id="roles" class="section section--tint" data-label="Roles">
+    <div class="section__head">
+      <p class="eyebrow">05 — COVERAGE</p>
+      <h2 class="section__title">Seats we can grade</h2>
+      <p class="section__lede">
+        If a role is not on this list we will say so rather than take the brief
+        and learn on your time.
+      </p>
+    </div>
+
+    <div class="filters" data-filters role="group" aria-label="Filter roles by discipline">
+      <button class="chipbtn is-active" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="chipbtn" type="button" data-filter="engineering" aria-pressed="false">Engineering</button>
+      <button class="chipbtn" type="button" data-filter="infra" aria-pressed="false">Infrastructure</button>
+      <button class="chipbtn" type="button" data-filter="data" aria-pressed="false">Data &amp; AI</button>
+      <button class="chipbtn" type="button" data-filter="security" aria-pressed="false">Security</button>
+      <button class="chipbtn" type="button" data-filter="product" aria-pressed="false">Product &amp; leadership</button>
+    </div>
+
+    <ul class="chips" data-chips>
+      <li class="chip" data-cat="engineering">Backend engineer — Go, Java, .NET, Python</li>
+      <li class="chip" data-cat="engineering">Frontend engineer — TypeScript, React, Vue</li>
+      <li class="chip" data-cat="engineering">Full-stack engineer</li>
+      <li class="chip" data-cat="engineering">Mobile engineer — iOS, Android, React Native</li>
+      <li class="chip" data-cat="engineering">QA automation engineer</li>
+      <li class="chip" data-cat="engineering">Staff / principal engineer</li>
+      <li class="chip" data-cat="infra">DevOps engineer</li>
+      <li class="chip" data-cat="infra">Site reliability engineer</li>
+      <li class="chip" data-cat="infra">Cloud architect — AWS, GCP, Azure</li>
+      <li class="chip" data-cat="infra">Platform engineer — Kubernetes, Terraform</li>
+      <li class="chip" data-cat="infra">Database administrator</li>
+      <li class="chip" data-cat="data">Data engineer — Spark, dbt, Airflow</li>
+      <li class="chip" data-cat="data">Analytics engineer</li>
+      <li class="chip" data-cat="data">Machine learning engineer</li>
+      <li class="chip" data-cat="data">MLOps engineer</li>
+      <li class="chip" data-cat="data">Data scientist</li>
+      <li class="chip" data-cat="security">Security engineer</li>
+      <li class="chip" data-cat="security">Application security specialist</li>
+      <li class="chip" data-cat="security">GRC and compliance lead</li>
+      <li class="chip" data-cat="security">Penetration tester</li>
+      <li class="chip" data-cat="product">Engineering manager</li>
+      <li class="chip" data-cat="product">Head of engineering / CTO</li>
+      <li class="chip" data-cat="product">Technical product manager</li>
+      <li class="chip" data-cat="product">Delivery lead / Scrum master</li>
+      <li class="chip" data-cat="product">Business analyst</li>
+    </ul>
+
+    <p class="chips__empty" data-chips-empty hidden>Nothing in that discipline yet — tell us what you need and we will say whether we can grade it.</p>
+  </section>
+
+  <!-- ══ ENGAGEMENTS ═══════════════════════════════════════════════ -->
+  <section id="engagements" class="section" data-label="Engagements">
+    <div class="section__head">
+      <p class="eyebrow">06 — ENGAGEMENTS</p>
+      <h2 class="section__title">Three ways to work with us</h2>
+      <p class="section__lede">
+        Rates depend on the seniority and the market, so the numbers below are
+        ranges we quote against, not a price list. The exact figure goes in the
+        agreement before any work starts.
+      </p>
+    </div>
+
+    <div class="cards">
+      <article class="card" data-reveal>
+        <h3 class="card__title">Retained search</h3>
+        <p class="card__price"><span data-placeholder-figure>15&ndash;22%</span> <small>of first-year salary</small></p>
+        <p class="card__lede">For seats where a bad hire costs you a quarter. Split across kick-off, shortlist, and start date.</p>
+        <ul class="ticklist ticklist--tight">
+          <li>Exclusive for the search window</li>
+          <li>Written grade and screen notes per candidate</li>
+          <li>Replacement guarantee on the placement</li>
+          <li>Weekly pipeline report, no chasing</li>
+        </ul>
+        <a class="btn btn--ghost btn--block" href="#contact">Brief a search</a>
+      </article>
+
+      <article class="card card--feature" data-reveal>
+        <p class="card__flag">MOST COMMON</p>
+        <h3 class="card__title">Contract &amp; staff augmentation</h3>
+        <p class="card__price"><span data-placeholder-figure>day rate</span> <small>per specialist</small></p>
+        <p class="card__lede">Our people or vetted contractors inside your team, under your process, for a fixed window.</p>
+        <ul class="ticklist ticklist--tight">
+          <li>Start in days, not notice periods</li>
+          <li>Monthly rolling, two weeks&rsquo; notice either side</li>
+          <li>Swap-out if the fit is wrong in the first two weeks</li>
+          <li>Compliance and contracting handled by us</li>
+        </ul>
+        <a class="btn btn--primary btn--block" href="#contact">Request people</a>
+      </article>
+
+      <article class="card" data-reveal>
+        <h3 class="card__title">Project delivery</h3>
+        <p class="card__price"><span data-placeholder-figure>fixed scope</span> <small>quoted per phase</small></p>
+        <p class="card__lede">A defined outcome — a migration, a platform, an audit — delivered by a team we assemble and manage.</p>
+        <ul class="ticklist ticklist--tight">
+          <li>Discovery phase priced separately and small</li>
+          <li>Named tech lead accountable for the outcome</li>
+          <li>Your repo, your cloud, your IP from commit one</li>
+          <li>Handover docs and a working runbook at the end</li>
+        </ul>
+        <a class="btn btn--ghost btn--block" href="#contact">Scope a project</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ PROOF ═════════════════════════════════════════════════════ -->
+  <section id="proof" class="section section--tint" data-label="Proof">
+    <div class="section__head">
+      <p class="eyebrow">07 — PROOF</p>
+      <h2 class="section__title">What clients say</h2>
+      <p class="section__lede placeholder-note">
+        [ PLACEHOLDER QUOTES — replace with real, attributed testimonials
+        before launch. Do not publish these as if they were client feedback. ]
+      </p>
+    </div>
+
+    <div class="quotes">
+      <figure class="quote" data-reveal>
+        <blockquote>Three names, and we hired the first one. The screen notes were more useful than our own interview loop.</blockquote>
+        <figcaption><span>Placeholder name</span><span>Placeholder title, company</span></figcaption>
+      </figure>
+      <figure class="quote" data-reveal>
+        <blockquote>They told us the brief was wrong before they took our money. That is the whole reason we came back.</blockquote>
+        <figcaption><span>Placeholder name</span><span>Placeholder title, company</span></figcaption>
+      </figure>
+      <figure class="quote" data-reveal>
+        <blockquote>Two contractors, in the codebase inside a week, still there a year later on our own payroll.</blockquote>
+        <figcaption><span>Placeholder name</span><span>Placeholder title, company</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ══ CONTACT ═══════════════════════════════════════════════════ -->
+  <section id="contact" class="section section--dark" data-label="Contact">
+    <div class="contact">
+      <div class="contact__intro">
+        <p class="eyebrow eyebrow--gold">08 — START</p>
+        <h2 class="section__title">Tell us what you need</h2>
+        <p class="section__lede">
+          One form, two directions. Hiring briefs get a reply within one
+          business day. Candidates get a reply either way, including a no.
+        </p>
+        <ul class="contact__facts">
+          <li><span>Email</span><a href="mailto:hello@tiersspecialists.com">hello@tiersspecialists.com</a></li>
+          <li><span>Hours</span>Mon&ndash;Fri, 09:00&ndash;18:00 CET</li>
+          <li><span>NDA</span>Signed before any brief that needs one</li>
+        </ul>
+      </div>
+
+      <form class="brief" data-brief novalidate>
+        <div class="toggle" role="radiogroup" aria-label="What brings you here">
+          <button class="toggle__opt is-active" type="button" role="radio" aria-checked="true" data-intent="hiring">I&rsquo;m hiring</button>
+          <button class="toggle__opt" type="button" role="radio" aria-checked="false" data-intent="looking">I&rsquo;m looking</button>
+        </div>
+        <input type="hidden" name="intent" value="hiring" data-intent-field />
+
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required />
+          <p class="field__error" data-error-for="name" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required />
+          <p class="field__error" data-error-for="email" hidden></p>
+        </div>
+
+        <div class="field" data-only="hiring">
+          <label for="f-company">Company</label>
+          <input id="f-company" name="company" type="text" autocomplete="organization" />
+        </div>
+
+        <div class="field" data-only="hiring">
+          <label for="f-role">Role you are filling</label>
+          <input id="f-role" name="role" type="text" placeholder="e.g. Senior platform engineer, 2 seats" />
+        </div>
+
+        <div class="field" data-only="looking">
+          <label for="f-current">Current role</label>
+          <input id="f-current" name="current_role" type="text" placeholder="e.g. Backend engineer, 6 years" />
+        </div>
+
+        <div class="field" data-only="looking">
+          <label for="f-stack">Main stack</label>
+          <input id="f-stack" name="stack" type="text" placeholder="e.g. Go, Postgres, Kubernetes" />
+        </div>
+
+        <div class="field field--wide">
+          <label for="f-message">What should we know?</label>
+          <textarea id="f-message" name="message" rows="4" placeholder="Timeline, budget or salary range, anything that would make this a no."></textarea>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit" data-submit>Send the brief</button>
+        <p class="brief__small">No newsletter, no CV database resale. We reply to you and that is it.</p>
+
+        <div class="brief__done" data-done hidden>
+          <p class="brief__doneTitle">Got it.</p>
+          <p>We have your brief and will come back within one business day. If it is urgent, mail <a href="mailto:hello@tiersspecialists.com">hello@tiersspecialists.com</a> directly.</p>
+        </div>
       </form>
-
-      <div class="confirm" data-confirm role="status" hidden>
-        <p class="eyebrow">CONFIRMATION</p>
-        <h3 class="display display--sm confirm__title">Spot reserved</h3>
-        <p class="confirm__copy">
-          Check your inbox — confirmation and bank details within 24 hours.
-          Bring the board you actually ride.
-        </p>
-      </div>
     </div>
   </section>
 
   <!-- ══ FAQ ═══════════════════════════════════════════════════════ -->
-  <section id="faq" class="section" data-alt="900" data-label="FAQ">
-    <p class="eyebrow">QUESTIONS</p>
+  <section id="faq" class="section" data-label="FAQ">
+    <div class="section__head">
+      <p class="eyebrow">09 — FAQ</p>
+      <h2 class="section__title">The questions we get asked first</h2>
+    </div>
 
     <div class="faq">
-      <details class="faq__item">
-        <summary>What level do I need to be?</summary>
-        <p>
-          The camp works for beginners in the park and for riders already
-          progressing. There is one real requirement: you're confident on a
-          snowboard and in control on a blue line. Everything past that we build
-          from where you actually are — sessions are split by level, so nobody
-          is queuing behind riders twice their speed.
-        </p>
+      <details class="qa">
+        <summary>What happens if the hire does not work out?</summary>
+        <p>Permanent placements carry a replacement guarantee: if the person leaves or is let go inside the guarantee window, we run the search again at no additional fee. The window and the conditions are written into the agreement before you pay anything.</p>
       </details>
-      <details class="faq__item">
-        <summary>Do I need to land tricks already?</summary>
-        <p>
-          No. Plenty of people arrive having never left the ground. That's what
-          the small airbag is for — you can commit to a rotation without paying
-          for it on landing, and we move you up to the medium bag only when the
-          take-off is repeatable.
-        </p>
+      <details class="qa">
+        <summary>Do you send CVs we have already seen?</summary>
+        <p>No. Before the search starts we take your list of candidates already in your pipeline and exclude them. If we surface someone you have seen before, we tell you where they came from rather than claiming the introduction.</p>
       </details>
-      <details class="faq__item">
-        <summary>What does a day look like?</summary>
-        <p>
-          Warm-up at 09:00, a three-hour session on the small bag from 11:00, a
-          break, then a second session on small and medium from 14:30 to 17:00.
-          Stretching at 19:00 and video review at 20:00. Sunday is a short day:
-          warm-up at 08:00 and one session from 09:00 to 12:00.
-        </p>
+      <details class="qa">
+        <summary>Who runs the technical screen?</summary>
+        <p>An engineer who has worked in that discipline, against a rubric we agree with you on the scope call. Recruiters run the process; they do not decide whether someone can do the job.</p>
       </details>
-      <details class="faq__item">
-        <summary>Can I rent gear there?</summary>
-        <p>
-          Yes, there's a rental at the base, and I can reserve a park-friendly
-          board if you tell me your size when you register. Bring your own if you
-          have one — three days on a board you know is worth more.
-        </p>
+      <details class="qa">
+        <summary>Can you work with our internal recruiters instead of replacing them?</summary>
+        <p>Yes, and it is often the cheaper answer. We can run screening as a service on your own pipeline, or embed a recruiter with your team for a fixed period, without touching your ATS ownership.</p>
       </details>
-      <details class="faq__item">
-        <summary>I'm coming on my own. Is that fine?</summary>
-        <p>
-          Most people do. Five or six riders in a group and three days together —
-          you won't be riding alone by the first afternoon. I can also put you in
-          touch with others looking to share a room.
-        </p>
+      <details class="qa">
+        <summary>Are your consultants employees or contractors?</summary>
+        <p>Both, depending on the market and the engagement. Either way the contracting, compliance, and invoicing sit with us — you get one agreement and one invoice.</p>
       </details>
-      <details class="faq__item">
-        <summary>What if the conditions are bad?</summary>
-        <p>
-          If the airbag can't run, we move the day or refund it in full — no
-          argument. Rain and flat light we ride through; that's normal here and
-          it's still useful.
-        </p>
-      </details>
-      <details class="faq__item">
-        <summary>Refunds and cancellation?</summary>
-        <p>
-          Free cancellation up to two weeks before. After that I'll refund
-          whatever I can fill from the waiting list. Injury with a doctor's note,
-          full refund at any point.
-        </p>
-      </details>
-      <details class="faq__item">
-        <summary>Why only five or six riders?</summary>
-        <p>
-          Because I film everyone, watch every attempt, and go through the
-          footage with each of you in the evening. Past six that stops being
-          possible and it turns into a lesson with an audience.
-        </p>
-      </details>
-      <details class="faq__item">
-        <summary>Is food included?</summary>
-        <p>
-          No. Lunch is in the break, and most evenings we eat together after the
-          review and split the bill — usually 15–20 € a head.
-        </p>
-      </details>
-      <details class="faq__item">
-        <summary>What do I leave with?</summary>
-        <p>
-          Your filmed tricks from the last day, and a short written plan for your
-          next few training sessions — what to work on, in what order, and what
-          to stop doing.
-        </p>
-      </details>
-      <details class="faq__item">
-        <summary>Can a non-riding partner come along?</summary>
-        <p>
-          Sure. They're welcome at the evening review and dinner, and Klínovec
-          has plenty to do off the hill. Just tell me so I book the right table.
-        </p>
+      <details class="qa">
+        <summary>What do you do with candidate data?</summary>
+        <p>We hold it to run the search you briefed and to grade candidates in our own pipeline, we do not sell it, and candidates can ask us to delete it at any time. The full statement lives in the privacy policy.</p>
       </details>
     </div>
   </section>
 
-  <footer class="footer">
-    <div class="footer__id">
-      <span class="footer__name">BASCAMP · FREESTYLE CAMP</span>
-      <span>KLÍNOVEC, CZECHIA · 28–30 AUG 2026</span>
-      <span><a href="mailto:ride@bascamp.camp">RIDE@BASCAMP.CAMP</a></span>
-    </div>
-    <nav class="footer__links" aria-label="Elsewhere">
-      <a href="https://www.instagram.com/baskakov74" target="_blank" rel="noopener">INSTAGRAM</a>
-      <a href="https://youtube.com/@baskakov74" target="_blank" rel="noopener">YOUTUBE</a>
-      <a href="#top">TOP ↑</a>
-    </nav>
-  </footer>
-
 </main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <a class="brand brand--footer" href="#top">
+      <span class="brand__mark" aria-hidden="true">S</span>
+      <span class="brand__text"><strong>TIER S</strong><em>SPECIALISTS</em></span>
+    </a>
+    <p class="footer__line">IT consulting and technical recruitment.</p>
+  </div>
+
+  <div class="footer__cols">
+    <div>
+      <h4>Practices</h4>
+      <ul>
+        <li><a href="#practices">Consulting</a></li>
+        <li><a href="#practices">Talent</a></li>
+        <li><a href="#engagements">Engagements</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#grading">Grading</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@tiersspecialists.com">hello@tiersspecialists.com</a></li>
+        <li><a href="#contact">Start a brief</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footer__legal">
+    &copy; <span data-year>2026</span> Tier S Specialists. Company details, registration number, and privacy policy to be added before launch.
+  </p>
+</footer>
 
 <script src="app.js" defer></script>
 </body>
