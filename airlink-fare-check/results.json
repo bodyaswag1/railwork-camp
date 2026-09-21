@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T13:01:42+00:00",
+  "generated_at": "2026-09-21T13:11:47+00:00",
   "passengers": {
     "adults": 1,
     "children": 0,
@@ -18,7 +18,7 @@
     "base": "EUR",
     "provider": "frankfurter.dev",
     "rates_as_of": "2026-09-18",
-    "fetched_at": "2026-09-21T12:50:18+00:00",
+    "fetched_at": "2026-09-21T13:02:28+00:00",
     "rates": {
       "AUD": 1.6095,
       "BRL": 5.8857,
@@ -167,7 +167,7 @@
             }
           ],
           "cabin_bag_included": true,
-          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_allowance": "1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
           "cabin_bag_fee": null,
           "checked_bags_included": 1,
           "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
@@ -180,7 +180,7 @@
           "notes": [
             "Optional Kiwi.com Guarantee +684 CZK (Kiwi's own disruption cover, not an airline fare rule)."
           ],
-          "captured_at": "2026-09-21T12:50:27+00:00",
+          "captured_at": "2026-09-21T13:02:37+00:00",
           "raw": {
             "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsInByaWNlIjoiNTM4OCJ9",
             "shareId": "eyJyIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsImkiOlsiMDdjNzAyOTY1MTU0MDAwMDI1NGFjYTFlXzAiXSwidGhjIjowLCJ0YXQiOjAsInZpIjowLCJ0IjoiT1cifQ==",
@@ -270,7 +270,7 @@
             }
           ],
           "cabin_bag_included": true,
-          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_allowance": "1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
           "cabin_bag_fee": null,
           "checked_bags_included": 1,
           "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
@@ -283,7 +283,7 @@
           "notes": [
             "Optional Kiwi.com Guarantee +28 EUR (Kiwi's own disruption cover, not an airline fare rule)."
           ],
-          "captured_at": "2026-09-21T12:50:35+00:00",
+          "captured_at": "2026-09-21T13:02:45+00:00",
           "raw": {
             "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsInByaWNlIjoiMjIxIn0=",
             "shareId": "eyJyIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsImkiOlsiMDdjNzAyOTY1MTU0MDAwMDI1NGFjYTFlXzAiXSwidGhjIjowLCJ0YXQiOjAsInZpIjowLCJ0IjoiT1cifQ==",
@@ -352,7 +352,7 @@
       "point_of_sale": "google.com (CZK)",
       "target_id": "leg1_cpt_wvb",
       "status": "error",
-      "detail": "result cards never rendered; Chromium blocked 20 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "detail": "result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
       "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDJqBRIDQ1BUcgUSA1dWQkIBAUgBmAEC&curr=CZK&hl=en&gl=us&tfu=EgQIABABIgA",
       "offers": []
     },
@@ -361,7 +361,7 @@
       "point_of_sale": "google.com (EUR)",
       "target_id": "leg1_cpt_wvb",
       "status": "error",
-      "detail": "result cards never rendered; Chromium blocked 16 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "detail": "result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
       "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDJqBRIDQ1BUcgUSA1dWQkIBAUgBmAEC&curr=EUR&hl=en&gl=us&tfu=EgQIABABIgA",
       "offers": []
     },
@@ -444,7 +444,7 @@
             }
           ],
           "cabin_bag_included": true,
-          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_allowance": "1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
           "cabin_bag_fee": null,
           "checked_bags_included": 1,
           "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
@@ -457,7 +457,7 @@
           "notes": [
             "Optional Kiwi.com Guarantee +1045 CZK (Kiwi's own disruption cover, not an airline fare rule)."
           ],
-          "captured_at": "2026-09-21T12:54:45+00:00",
+          "captured_at": "2026-09-21T13:06:55+00:00",
           "raw": {
             "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwicHJpY2UiOiI4NTcxIn0=",
             "shareId": "eyJyIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwiaSI6WyIwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMHwwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMSJdLCJ0aGMiOjAsInRhdCI6MCwidmkiOjAsInQiOiJPVyJ9",
@@ -556,7 +556,7 @@
             }
           ],
           "cabin_bag_included": true,
-          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_allowance": "1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
           "cabin_bag_fee": null,
           "checked_bags_included": 1,
           "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
@@ -569,7 +569,7 @@
           "notes": [
             "Optional Kiwi.com Guarantee +43 EUR (Kiwi's own disruption cover, not an airline fare rule)."
           ],
-          "captured_at": "2026-09-21T12:54:53+00:00",
+          "captured_at": "2026-09-21T13:07:03+00:00",
           "raw": {
             "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwicHJpY2UiOiIzNTEifQ==",
             "shareId": "eyJyIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwiaSI6WyIwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMHwwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMSJdLCJ0aGMiOjAsInRhdCI6MCwidmkiOjAsInQiOiJPVyJ9",
@@ -719,8 +719,8 @@
       "source": "google_flights",
       "point_of_sale": "google.com (CZK)",
       "target_id": "alt_wdh_vfa_direct",
-      "status": "error",
-      "detail": "result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "status": "blocked",
+      "detail": "blocked: reCAPTCHA challenge at https://www.google.com/sorry/index",
       "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=CZK&hl=en&gl=us&tfu=EgQIABABIgA",
       "offers": []
     },
@@ -728,8 +728,8 @@
       "source": "google_flights",
       "point_of_sale": "google.com (EUR)",
       "target_id": "alt_wdh_vfa_direct",
-      "status": "error",
-      "detail": "result cards never rendered; Chromium blocked 13 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "status": "blocked",
+      "detail": "blocked: reCAPTCHA challenge at https://www.google.com/sorry/index",
       "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=EUR&hl=en&gl=us&tfu=EgQIABABIgA",
       "offers": []
     },

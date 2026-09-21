@@ -1,12 +1,12 @@
 # Airlink fare check
 
-Generated 2026-09-21T13:01:42+00:00 · 1 adult · economy · cabin bag only, no checked baggage
+Generated 2026-09-21T13:11:47+00:00 · 1 adult · economy · cabin bag only, no checked baggage
 
 No purchase was made and no personal or payment details were entered; every source was read at its results page and no further.
 
 ## Exchange rate used
 
-Live ECB reference rates via **frankfurter.dev**, rates as of **2026-09-18**, fetched 2026-09-21T12:50:18+00:00.
+Live ECB reference rates via **frankfurter.dev**, rates as of **2026-09-18**, fetched 2026-09-21T13:02:28+00:00.
 
 | Pair | Rate |
 |---|---|
@@ -89,7 +89,7 @@ _Taken from Airlink's published baggage policy. It could not be re-read directly
 
 - Flights matched: `4Z341`
 - Price: 5,388 CZK = 5,388 CZK interbank, 5,388 CZK on the card
-- Cabin bag: 1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
+- Cabin bag: 1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
 - Checked bags included: 1
 - Single ticket / one PNR: yes (pnrCount=1)
 - Change rules: Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.
@@ -102,7 +102,7 @@ _Taken from Airlink's published baggage policy. It could not be re-read directly
 
 - Flights matched: `4Z341`
 - Price: 221 EUR = 5,379 CZK interbank, 5,460 CZK on the card
-- Cabin bag: 1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
+- Cabin bag: 1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
 - Checked bags included: 1
 - Single ticket / one PNR: yes (pnrCount=1)
 - Change rules: Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.
@@ -115,7 +115,7 @@ _Taken from Airlink's published baggage policy. It could not be re-read directly
 
 - Flights matched: `4Z129+4Z494`
 - Price: 8,571 CZK = 8,571 CZK interbank, 8,571 CZK on the card
-- Cabin bag: 1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
+- Cabin bag: 1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
 - Checked bags included: 1
 - Single ticket / one PNR: yes (pnrCount=1)
 - Change rules: Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.
@@ -128,7 +128,7 @@ _Taken from Airlink's published baggage policy. It could not be re-read directly
 
 - Flights matched: `4Z129+4Z494`
 - Price: 351 EUR = 8,543 CZK interbank, 8,671 CZK on the card
-- Cabin bag: 1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
+- Cabin bag: 1 piece, max 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)
 - Checked bags included: 1
 - Single ticket / one PNR: yes (pnrCount=1)
 - Change rules: Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.
@@ -148,8 +148,8 @@ Every source attempted, including the ones that refused. Sites that showed a cap
 | amadeus | amadeus (CZK) | alt_wdh_vfa_direct | **skipped** | no key set - export AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET (free at developers.amadeus.com) to enable this source |
 | kiwi | kiwi.com (CZK) | leg1_cpt_wvb | **ok** | 1 matching offer(s) of 10 returned |
 | kiwi | kiwi.com (EUR) | leg1_cpt_wvb | **ok** | 1 matching offer(s) of 10 returned |
-| google_flights | google.com (CZK) | leg1_cpt_wvb | **error** | result cards never rendered; Chromium blocked 20 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
-| google_flights | google.com (EUR) | leg1_cpt_wvb | **error** | result cards never rendered; Chromium blocked 16 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
+| google_flights | google.com (CZK) | leg1_cpt_wvb | **error** | result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
+| google_flights | google.com (EUR) | leg1_cpt_wvb | **error** | result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
 | skyscanner | skyscanner.net (CZK) | leg1_cpt_wvb | **blocked** | blocked: Skyscanner bot check at https://www.skyscanner.cz/sttc/px/captcha-v2/index.html. Skyscanner's bot check fired; not bypassed by design. No free API exists as a fallback. |
 | airlink | en-za | leg1_cpt_wvb | **blocked** | blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-za. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by |
 | airlink | en-na | leg1_cpt_wvb | **blocked** | blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-na. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by |
@@ -166,8 +166,8 @@ Every source attempted, including the ones that refused. Sites that showed a cap
 | airlink | en-us | leg2_wdh_vfa | **blocked** | blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-us. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by |
 | kiwi | kiwi.com (CZK) | alt_wdh_vfa_direct | **no_match** | Kiwi returned no itineraries for this date |
 | kiwi | kiwi.com (EUR) | alt_wdh_vfa_direct | **no_match** | Kiwi returned no itineraries for this date |
-| google_flights | google.com (CZK) | alt_wdh_vfa_direct | **error** | result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
-| google_flights | google.com (EUR) | alt_wdh_vfa_direct | **error** | result cards never rendered; Chromium blocked 13 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start |
+| google_flights | google.com (CZK) | alt_wdh_vfa_direct | **blocked** | blocked: reCAPTCHA challenge at https://www.google.com/sorry/index |
+| google_flights | google.com (EUR) | alt_wdh_vfa_direct | **blocked** | blocked: reCAPTCHA challenge at https://www.google.com/sorry/index |
 | skyscanner | skyscanner.net (CZK) | alt_wdh_vfa_direct | **blocked** | blocked: Skyscanner bot check at https://www.skyscanner.cz/sttc/px/captcha-v2/index.html. Skyscanner's bot check fired; not bypassed by design. No free API exists as a fallback. |
 | airlink | en-za | alt_wdh_vfa_direct | **blocked** | blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-za. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by |
 | airlink | en-na | alt_wdh_vfa_direct | **blocked** | blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-na. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by |
