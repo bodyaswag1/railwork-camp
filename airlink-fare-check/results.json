@@ -1,0 +1,782 @@
+{
+  "generated_at": "2026-09-21T13:01:42+00:00",
+  "passengers": {
+    "adults": 1,
+    "children": 0,
+    "infants": 0
+  },
+  "cabin_class": "economy",
+  "checked_bags_wanted": 0,
+  "cabin_bags_wanted": 1,
+  "report_currency": "CZK",
+  "fx_margin_assumed": 0.015,
+  "fx_margin_range": [
+    0.01,
+    0.02
+  ],
+  "fx": {
+    "base": "EUR",
+    "provider": "frankfurter.dev",
+    "rates_as_of": "2026-09-18",
+    "fetched_at": "2026-09-21T12:50:18+00:00",
+    "rates": {
+      "AUD": 1.6095,
+      "BRL": 5.8857,
+      "CAD": 1.6056,
+      "CHF": 0.9462,
+      "CNY": 7.6755,
+      "CZK": 24.339,
+      "DKK": 7.4754,
+      "GBP": 0.8588,
+      "HKD": 8.9903,
+      "HUF": 364.28,
+      "IDR": 20424.81,
+      "ILS": 3.4812,
+      "INR": 109.8755,
+      "ISK": 139.4,
+      "JPY": 180.94,
+      "KRW": 1590.76,
+      "MXN": 19.6855,
+      "MYR": 4.6763,
+      "NOK": 10.8095,
+      "NZD": 2.0068,
+      "PHP": 71.972,
+      "PLN": 4.3635,
+      "RON": 5.2647,
+      "SEK": 11.2915,
+      "SGD": 1.4651,
+      "THB": 38.225,
+      "TRY": 55.9077,
+      "USD": 1.146,
+      "ZAR": 18.6482
+    }
+  },
+  "targets": [
+    {
+      "id": "leg1_cpt_wvb",
+      "label": "Leg 1 - 4Z341 CPT->WVB",
+      "date": "2027-01-02",
+      "origin": "CPT",
+      "destination": "WVB",
+      "segments": [
+        {
+          "carrier": "4Z",
+          "number": "341",
+          "from": "CPT",
+          "to": "WVB"
+        }
+      ],
+      "dep": "11:10",
+      "arr": "13:25",
+      "single_ticket_required": false,
+      "kiwi_from": "cape-town-south-africa",
+      "kiwi_to": "walvis-bay-namibia"
+    },
+    {
+      "id": "leg2_wdh_vfa",
+      "label": "Leg 2 - 4Z129 + 4Z494 WDH->JNB->VFA",
+      "date": "2027-01-06",
+      "origin": "WDH",
+      "destination": "VFA",
+      "segments": [
+        {
+          "carrier": "4Z",
+          "number": "129",
+          "from": "WDH",
+          "to": "JNB"
+        },
+        {
+          "carrier": "4Z",
+          "number": "494",
+          "from": "JNB",
+          "to": "VFA"
+        }
+      ],
+      "dep": "07:10",
+      "arr": "13:20",
+      "single_ticket_required": true,
+      "kiwi_from": "windhoek-namibia",
+      "kiwi_to": "victoria-falls-zimbabwe"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "alt_wdh_vfa_direct",
+      "label": "ALTERNATIVE (needs tour operator approval) - direct WDH->VFA",
+      "date": "2027-01-06",
+      "origin": "WDH",
+      "destination": "VFA",
+      "segments": [],
+      "nonstop_only": true,
+      "single_ticket_required": false,
+      "kiwi_from": "windhoek-namibia",
+      "kiwi_to": "victoria-falls-zimbabwe"
+    }
+  ],
+  "results": [
+    {
+      "source": "amadeus",
+      "point_of_sale": "amadeus (CZK)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "skipped",
+      "detail": "no key set - export AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET (free at developers.amadeus.com) to enable this source",
+      "url": "https://test.api.amadeus.com/v2/shopping/flight-offers",
+      "offers": []
+    },
+    {
+      "source": "amadeus",
+      "point_of_sale": "amadeus (CZK)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "skipped",
+      "detail": "no key set - export AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET (free at developers.amadeus.com) to enable this source",
+      "url": "https://test.api.amadeus.com/v2/shopping/flight-offers",
+      "offers": []
+    },
+    {
+      "source": "amadeus",
+      "point_of_sale": "amadeus (CZK)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "skipped",
+      "detail": "no key set - export AMADEUS_CLIENT_ID and AMADEUS_CLIENT_SECRET (free at developers.amadeus.com) to enable this source",
+      "url": "https://test.api.amadeus.com/v2/shopping/flight-offers",
+      "offers": []
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (CZK)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "ok",
+      "detail": "1 matching offer(s) of 10 returned",
+      "url": "https://www.kiwi.com/en/search/results/cape-town-south-africa/walvis-bay-namibia/2027-01-02/no-return?sortBy=price&currency=czk&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+      "offers": [
+        {
+          "source": "kiwi",
+          "point_of_sale": "kiwi.com (CZK)",
+          "target_id": "leg1_cpt_wvb",
+          "fare_tier": "Kiwi.com / KIWI-BASIC",
+          "price": 5388.0,
+          "currency": "CZK",
+          "segments": [
+            {
+              "carrier": "4Z",
+              "number": "341",
+              "origin": "CPT",
+              "destination": "WVB",
+              "dep_local": "2027-01-02T11:10:00",
+              "arr_local": "2027-01-02T13:25:00"
+            }
+          ],
+          "cabin_bag_included": true,
+          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_fee": null,
+          "checked_bags_included": 1,
+          "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "refund_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "single_ticket": true,
+          "pnr_count": 1,
+          "self_transfer": false,
+          "booking_url": "https://www.kiwi.com/en/search/results/cape-town-south-africa/walvis-bay-namibia/2027-01-02/no-return?sortBy=price&currency=czk&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+          "seats_left": 2,
+          "notes": [
+            "Optional Kiwi.com Guarantee +684 CZK (Kiwi's own disruption cover, not an airline fare rule)."
+          ],
+          "captured_at": "2026-09-21T12:50:27+00:00",
+          "raw": {
+            "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsInByaWNlIjoiNTM4OCJ9",
+            "shareId": "eyJyIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsImkiOlsiMDdjNzAyOTY1MTU0MDAwMDI1NGFjYTFlXzAiXSwidGhjIjowLCJ0YXQiOjAsInZpIjowLCJ0IjoiT1cifQ==",
+            "priceEur": "221.151399",
+            "bagsInfo": {
+              "includedCheckedBags": 1,
+              "includedHandBags": 1,
+              "hasNoBaggageSupported": false,
+              "hasNoCheckedBaggage": false,
+              "checkedBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 20
+                      }
+                    }
+                  ]
+                }
+              ],
+              "handBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 8
+                      }
+                    }
+                  ]
+                }
+              ],
+              "includedPersonalItem": 0,
+              "personalItemTiers": []
+            },
+            "travelHack": {
+              "isTrueHiddenCity": false,
+              "isVirtualInterlining": false,
+              "isThrowawayTicket": false
+            },
+            "pnrCount": 1,
+            "provider": {
+              "name": "Kiwi.com",
+              "code": "KIWI-BASIC",
+              "hasHighProbabilityOfPriceChange": false,
+              "contentProvider": {
+                "code": "KIWI-BASIC"
+              },
+              "id": "ItineraryProvider:KIWI-BASIC"
+            }
+          },
+          "flight_numbers": [
+            "4Z341"
+          ],
+          "effective_price": 5388.0
+        }
+      ]
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (EUR)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "ok",
+      "detail": "1 matching offer(s) of 10 returned",
+      "url": "https://www.kiwi.com/en/search/results/cape-town-south-africa/walvis-bay-namibia/2027-01-02/no-return?sortBy=price&currency=eur&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+      "offers": [
+        {
+          "source": "kiwi",
+          "point_of_sale": "kiwi.com (EUR)",
+          "target_id": "leg1_cpt_wvb",
+          "fare_tier": "Kiwi.com / KIWI-BASIC",
+          "price": 221.0,
+          "currency": "EUR",
+          "segments": [
+            {
+              "carrier": "4Z",
+              "number": "341",
+              "origin": "CPT",
+              "destination": "WVB",
+              "dep_local": "2027-01-02T11:10:00",
+              "arr_local": "2027-01-02T13:25:00"
+            }
+          ],
+          "cabin_bag_included": true,
+          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_fee": null,
+          "checked_bags_included": 1,
+          "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "refund_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "single_ticket": true,
+          "pnr_count": 1,
+          "self_transfer": false,
+          "booking_url": "https://www.kiwi.com/en/search/results/cape-town-south-africa/walvis-bay-namibia/2027-01-02/no-return?sortBy=price&currency=eur&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+          "seats_left": 2,
+          "notes": [
+            "Optional Kiwi.com Guarantee +28 EUR (Kiwi's own disruption cover, not an airline fare rule)."
+          ],
+          "captured_at": "2026-09-21T12:50:35+00:00",
+          "raw": {
+            "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsInByaWNlIjoiMjIxIn0=",
+            "shareId": "eyJyIjoiNFo6MzQxOkNQVDoxNzk4ODgxMDAwOldWQjoxNzk4ODg5MTAwOmVjb25vbXk6RmFsc2U6Ojo0WiIsImkiOlsiMDdjNzAyOTY1MTU0MDAwMDI1NGFjYTFlXzAiXSwidGhjIjowLCJ0YXQiOjAsInZpIjowLCJ0IjoiT1cifQ==",
+            "priceEur": "221",
+            "bagsInfo": {
+              "includedCheckedBags": 1,
+              "includedHandBags": 1,
+              "hasNoBaggageSupported": false,
+              "hasNoCheckedBaggage": false,
+              "checkedBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 20
+                      }
+                    }
+                  ]
+                }
+              ],
+              "handBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 8
+                      }
+                    }
+                  ]
+                }
+              ],
+              "includedPersonalItem": 0,
+              "personalItemTiers": []
+            },
+            "travelHack": {
+              "isTrueHiddenCity": false,
+              "isVirtualInterlining": false,
+              "isThrowawayTicket": false
+            },
+            "pnrCount": 1,
+            "provider": {
+              "name": "Kiwi.com",
+              "code": "KIWI-BASIC",
+              "hasHighProbabilityOfPriceChange": false,
+              "contentProvider": {
+                "code": "KIWI-BASIC"
+              },
+              "id": "ItineraryProvider:KIWI-BASIC"
+            }
+          },
+          "flight_numbers": [
+            "4Z341"
+          ],
+          "effective_price": 221.0
+        }
+      ]
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (CZK)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "error",
+      "detail": "result cards never rendered; Chromium blocked 20 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDJqBRIDQ1BUcgUSA1dWQkIBAUgBmAEC&curr=CZK&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (EUR)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "error",
+      "detail": "result cards never rendered; Chromium blocked 16 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDJqBRIDQ1BUcgUSA1dWQkIBAUgBmAEC&curr=EUR&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "skyscanner",
+      "point_of_sale": "skyscanner.net (CZK)",
+      "target_id": "leg1_cpt_wvb",
+      "status": "blocked",
+      "detail": "blocked: Skyscanner bot check at https://www.skyscanner.cz/sttc/px/captcha-v2/index.html. Skyscanner's bot check fired; not bypassed by design. No free API exists as a fallback.",
+      "url": "https://www.skyscanner.net/transport/flights/cpt/wvb/270102/?adultsv2=1&cabinclass=economy&currency=CZK&market=cz&locale=en-GB&ref=home&rtn=0",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-za",
+      "target_id": "leg1_cpt_wvb",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-za. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-za/book/select-flight?tripType=oneway&origin=CPT&destination=WVB&departureDate=2027-01-02&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-na",
+      "target_id": "leg1_cpt_wvb",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-na. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-na/book/select-flight?tripType=oneway&origin=CPT&destination=WVB&departureDate=2027-01-02&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-gb",
+      "target_id": "leg1_cpt_wvb",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-gb. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-gb/book/select-flight?tripType=oneway&origin=CPT&destination=WVB&departureDate=2027-01-02&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-us",
+      "target_id": "leg1_cpt_wvb",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-us. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-us/book/select-flight?tripType=oneway&origin=CPT&destination=WVB&departureDate=2027-01-02&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (CZK)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "ok",
+      "detail": "1 matching offer(s) of 10 returned",
+      "url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=czk&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+      "offers": [
+        {
+          "source": "kiwi",
+          "point_of_sale": "kiwi.com (CZK)",
+          "target_id": "leg2_wdh_vfa",
+          "fare_tier": "Kiwi.com / KIWI-BASIC",
+          "price": 8571.0,
+          "currency": "CZK",
+          "segments": [
+            {
+              "carrier": "4Z",
+              "number": "129",
+              "origin": "WDH",
+              "destination": "JNB",
+              "dep_local": "2027-01-06T07:10:00",
+              "arr_local": "2027-01-06T09:00:00"
+            },
+            {
+              "carrier": "4Z",
+              "number": "494",
+              "origin": "JNB",
+              "destination": "VFA",
+              "dep_local": "2027-01-06T11:35:00",
+              "arr_local": "2027-01-06T13:20:00"
+            }
+          ],
+          "cabin_bag_included": true,
+          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_fee": null,
+          "checked_bags_included": 1,
+          "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "refund_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "single_ticket": true,
+          "pnr_count": 1,
+          "self_transfer": false,
+          "booking_url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=czk&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+          "seats_left": 4,
+          "notes": [
+            "Optional Kiwi.com Guarantee +1045 CZK (Kiwi's own disruption cover, not an airline fare rule)."
+          ],
+          "captured_at": "2026-09-21T12:54:45+00:00",
+          "raw": {
+            "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwicHJpY2UiOiI4NTcxIn0=",
+            "shareId": "eyJyIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwiaSI6WyIwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMHwwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMSJdLCJ0aGMiOjAsInRhdCI6MCwidmkiOjAsInQiOiJPVyJ9",
+            "priceEur": "351.798189",
+            "bagsInfo": {
+              "includedCheckedBags": 1,
+              "includedHandBags": 1,
+              "hasNoBaggageSupported": false,
+              "hasNoCheckedBaggage": false,
+              "checkedBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 20
+                      }
+                    }
+                  ]
+                }
+              ],
+              "handBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 8
+                      }
+                    }
+                  ]
+                }
+              ],
+              "includedPersonalItem": 0,
+              "personalItemTiers": []
+            },
+            "travelHack": {
+              "isTrueHiddenCity": false,
+              "isVirtualInterlining": false,
+              "isThrowawayTicket": false
+            },
+            "pnrCount": 1,
+            "provider": {
+              "name": "Kiwi.com",
+              "code": "KIWI-BASIC",
+              "hasHighProbabilityOfPriceChange": false,
+              "contentProvider": {
+                "code": "KIWI-BASIC"
+              },
+              "id": "ItineraryProvider:KIWI-BASIC"
+            }
+          },
+          "flight_numbers": [
+            "4Z129",
+            "4Z494"
+          ],
+          "effective_price": 8571.0
+        }
+      ]
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (EUR)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "ok",
+      "detail": "1 matching offer(s) of 10 returned",
+      "url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=eur&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+      "offers": [
+        {
+          "source": "kiwi",
+          "point_of_sale": "kiwi.com (EUR)",
+          "target_id": "leg2_wdh_vfa",
+          "fare_tier": "Kiwi.com / KIWI-BASIC",
+          "price": 351.0,
+          "currency": "EUR",
+          "segments": [
+            {
+              "carrier": "4Z",
+              "number": "129",
+              "origin": "WDH",
+              "destination": "JNB",
+              "dep_local": "2027-01-06T07:10:00",
+              "arr_local": "2027-01-06T09:00:00"
+            },
+            {
+              "carrier": "4Z",
+              "number": "494",
+              "origin": "JNB",
+              "destination": "VFA",
+              "dep_local": "2027-01-06T11:35:00",
+              "arr_local": "2027-01-06T13:20:00"
+            }
+          ],
+          "cabin_bag_included": true,
+          "cabin_bag_allowance": "1 x 1 x 8 kg, 56 x 36 x 23 (H x W x L) cm (Airlink published allowance)",
+          "cabin_bag_fee": null,
+          "checked_bags_included": 1,
+          "change_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "refund_rules": "Per-family change and cancellation rules live at flyairlink.com/en/za/fares/domestic_sunbird, which is behind the same bot wall and could not be read on this run. What is confirmed from the Reservations Policy: cheaper economy families are the restricted ones, and a no-show forfeits the fare. Treat change/refund as UNCONFIRMED and check at the airline's payment page, where the fare rules are shown before you pay.",
+          "single_ticket": true,
+          "pnr_count": 1,
+          "self_transfer": false,
+          "booking_url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=eur&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0",
+          "seats_left": 4,
+          "notes": [
+            "Optional Kiwi.com Guarantee +43 EUR (Kiwi's own disruption cover, not an airline fare rule)."
+          ],
+          "captured_at": "2026-09-21T12:54:53+00:00",
+          "raw": {
+            "id": "ItineraryOneWay:eyJwcm92aWRlcnMiOiJLSVdJLUJBU0lDOktJV0kiLCJyb3V0ZV9kYXRhIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwicHJpY2UiOiIzNTEifQ==",
+            "shareId": "eyJyIjoiNFo6MTI5OldESDoxNzk5MjEyMjAwOkpOQjoxNzk5MjE4ODAwOmVjb25vbXk6RmFsc2U6Ojo0Wnw0Wjo0OTQ6Sk5COjE3OTkyMjgxMDA6VkZBOjE3OTkyMzQ0MDA6ZWNvbm9teTpGYWxzZTo6OjRaIiwiaSI6WyIwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMHwwYmRiMTZjOTUxNTgwMDAwN2NmZTYyZTNfMSJdLCJ0aGMiOjAsInRhdCI6MCwidmkiOjAsInQiOiJPVyJ9",
+            "priceEur": "351",
+            "bagsInfo": {
+              "includedCheckedBags": 1,
+              "includedHandBags": 1,
+              "hasNoBaggageSupported": false,
+              "hasNoCheckedBaggage": false,
+              "checkedBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 20
+                      }
+                    }
+                  ]
+                }
+              ],
+              "handBagTiers": [
+                {
+                  "tierPrice": {
+                    "amount": "0"
+                  },
+                  "bags": [
+                    {
+                      "weight": {
+                        "value": 8
+                      }
+                    }
+                  ]
+                }
+              ],
+              "includedPersonalItem": 0,
+              "personalItemTiers": []
+            },
+            "travelHack": {
+              "isTrueHiddenCity": false,
+              "isVirtualInterlining": false,
+              "isThrowawayTicket": false
+            },
+            "pnrCount": 1,
+            "provider": {
+              "name": "Kiwi.com",
+              "code": "KIWI-BASIC",
+              "hasHighProbabilityOfPriceChange": false,
+              "contentProvider": {
+                "code": "KIWI-BASIC"
+              },
+              "id": "ItineraryProvider:KIWI-BASIC"
+            }
+          },
+          "flight_numbers": [
+            "4Z129",
+            "4Z494"
+          ],
+          "effective_price": 351.0
+        }
+      ]
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (CZK)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: reCAPTCHA challenge at https://www.google.com/sorry/index",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=CZK&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (EUR)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "error",
+      "detail": "result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=EUR&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "skyscanner",
+      "point_of_sale": "skyscanner.net (CZK)",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: Skyscanner bot check at https://www.skyscanner.cz/sttc/px/captcha-v2/index.html. Skyscanner's bot check fired; not bypassed by design. No free API exists as a fallback.",
+      "url": "https://www.skyscanner.net/transport/flights/wdh/vfa/270106/?adultsv2=1&cabinclass=economy&currency=CZK&market=cz&locale=en-GB&ref=home&rtn=0",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-za",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-za. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-za/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-na",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-na. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-na/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-gb",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-gb. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-gb/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-us",
+      "target_id": "leg2_wdh_vfa",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-us. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-us/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (CZK)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "no_match",
+      "detail": "Kiwi returned no itineraries for this date",
+      "url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=czk&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0&stopNumber=0",
+      "offers": []
+    },
+    {
+      "source": "kiwi",
+      "point_of_sale": "kiwi.com (EUR)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "no_match",
+      "detail": "Kiwi returned no itineraries for this date",
+      "url": "https://www.kiwi.com/en/search/results/windhoek-namibia/victoria-falls-zimbabwe/2027-01-06/no-return?sortBy=price&currency=eur&adults=1&cabinClass=ECONOMY&cabinBaggage=1&checkedBaggage=0&stopNumber=0",
+      "offers": []
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (CZK)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "error",
+      "detail": "result cards never rendered; Chromium blocked 18 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=CZK&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "google_flights",
+      "point_of_sale": "google.com (EUR)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "error",
+      "detail": "result cards never rendered; Chromium blocked 13 of Google's own script bundles (ERR_BLOCKED_BY_ORB) - the JS app could not start",
+      "url": "https://www.google.com/travel/flights?tfs=GhoSCjIwMjctMDEtMDZqBRIDV0RIcgUSA1ZGQUIBAUgBmAEC&curr=EUR&hl=en&gl=us&tfu=EgQIABABIgA",
+      "offers": []
+    },
+    {
+      "source": "skyscanner",
+      "point_of_sale": "skyscanner.net (CZK)",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "blocked",
+      "detail": "blocked: Skyscanner bot check at https://www.skyscanner.cz/sttc/px/captcha-v2/index.html. Skyscanner's bot check fired; not bypassed by design. No free API exists as a fallback.",
+      "url": "https://www.skyscanner.net/transport/flights/wdh/vfa/270106/?adultsv2=1&cabinclass=economy&currency=CZK&market=cz&locale=en-GB&ref=home&rtn=0",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-za",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-za. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-za/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-na",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-na. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-na/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-gb",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-gb. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-gb/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    },
+    {
+      "source": "airlink",
+      "point_of_sale": "en-us",
+      "target_id": "alt_wdh_vfa_direct",
+      "status": "blocked",
+      "detail": "blocked: Imperva/Incapsula interstitial at https://www.flyairlink.com/en-us. Airlink fronts its site with Imperva and serves a captcha to automated browsers; not bypassed by design. Re-run from a normal home connection, or price this leg by hand.",
+      "url": "https://www.flyairlink.com/en-us/book/select-flight?tripType=oneway&origin=WDH&destination=VFA&departureDate=2027-01-06&adults=1&cabinClass=economy",
+      "offers": []
+    }
+  ]
+}
