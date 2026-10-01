@@ -845,7 +845,6 @@ button:focus-visible {
 }
 
 .sched {
-  margin-top: auto;
   border-top: 1px solid var(--border);
 }
 
@@ -1051,6 +1050,7 @@ button:focus-visible {
   font-size: 11px;
   letter-spacing: 0.12em;
   color: var(--muted-foreground);
+  white-space: nowrap;
 }
 
 .tier__list {
@@ -1255,6 +1255,27 @@ button:focus-visible {
 }
 
 /* ── FAQ ────────────────────────────────────────────────────────── */
+
+/* On wide screens the label takes a left column so the list doesn't
+   leave the right half of the page empty. */
+@media (min-width: 1000px) {
+  #faq {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(0, 900px);
+    column-gap: clamp(28px, 4vw, 64px);
+    align-items: start;
+  }
+
+  #faq .eyebrow {
+    position: sticky;
+    top: 32px;
+    padding-top: 22px;
+  }
+
+  #faq .faq {
+    margin-top: 0;
+  }
+}
 
 .faq {
   max-width: 900px;
