@@ -162,7 +162,7 @@ export class PaperEngine {
    * Render the left-over crease layer (flat sheet, grey values) and return it as an image URL,
    * so the DOM overlay after landing is exactly what the last canvas frame showed.
    */
-  async bakeResidual(mode: 1 | 2): Promise<string> {
+  async bakeResidual(mode: 1 | 2): Promise<HTMLCanvasElement> {
     const u = this.material.uniforms;
     const W = Math.round(this.W), H = Math.round(this.H);
     const rt = new THREE.WebGLRenderTarget(W, H, { depthBuffer: true });
@@ -186,8 +186,8 @@ export class PaperEngine {
     const img = ctx.createImageData(W, H);
     for (let y = 0; y < H; y++) img.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4);
     ctx.putImageData(img, 0, 0);
-    const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/png'));
-    return blob ? URL.createObjectURL(blob) : c.toDataURL('image/png');
+    // handed over as the canvas itself: it goes straight into the page as the crease overlay
+    return c;
   }
 
   clear() { this.renderer.setRenderTarget(null); this.renderer.clear(); }

@@ -12,8 +12,8 @@
 // on the CPU and handed to the vertex shader as uniforms; `deform()` mirrors the shader so the CPU
 // can measure centroid and size.
 import { config } from './config';
-import { rng } from '../paper';
-import { clamp01, phase, smooth } from './timing';
+import { rng } from '../paper-gen';
+import { clamp01, phase, smooth } from './curves';
 
 export const MAX_FOLDS = 26;
 export const MAX_LINES = 28;
@@ -216,7 +216,8 @@ export function frameAt(set: FoldSet, p: number): Frame {
   const flat = p <= 0 || p >= 1;
   if (flat) { for (let i = 0; i < angles.length; i++) angles[i] = 0; crease = 0; comp = 0; }
   const shade = clamp01(Math.max(crease, ...angles.map((a, i) => Math.abs(a / set.folds[i].theta))) * 1.6);
-  const m = flat ? { center: [0, 0, 0] as [number, number, number], radius: 1e9 } : measure(set, { angles, crease }, false, true);
+  // per film frame on the main thread: without the crease relief (it barely moves the centre) it's ~26× cheaper
+  const m = flat ? { center: [0, 0, 0] as [number, number, number], radius: 1e9 } : measure(set, { angles, crease: 0 }, false, true);
   // the ball loosens along the GIF's size curve (crumple: the same curve, the other way);
   // it lets go of the paper once the folded sheet itself is about as small as the ball
   const rFlat = Math.sqrt(set.W * set.H / Math.PI);
@@ -286,7 +287,9 @@ export function deform(set: FoldSet, f: { angles: number[]; crease: number }, x:
 
 /** centroid and radius of the folded sheet (before ball compression) */
 export function measure(set: FoldSet, f: { angles: number[]; crease: number }, full: boolean, withRadius = full) {
-  const nx = full ? 40 : 22, ny = Math.max(8, Math.round(nx * set.H / set.W));
+  // the same number of samples in portrait and landscape (~1000 for the one-off measure, ~300 per frame)
+  const n = full ? 1000 : 300;
+  const nx = Math.max(8, Math.round(Math.sqrt(n * set.W / set.H))), ny = Math.max(8, Math.round(n / nx));
   let cx = 0, cy = 0, cz = 0, N = 0;
   for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
     const p = deform(set, f, ((i + 0.5) / nx - 0.5) * set.W, ((j + 0.5) / ny - 0.5) * set.H);

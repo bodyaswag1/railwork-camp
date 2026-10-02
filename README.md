@@ -71,14 +71,34 @@ then the next page opens out of the same ball (`src/scripts/crumple/`).
 - **timing.ts:** one GSAP timeline, p 0 → 1, ball at 0.5 with a rounded turn (no hold). Drawn at `FILM_FPS`
   with 1–2 held frames away from the ball; stop-motion jitter, gate weave and flicker fade to zero at both
   ends.
-- **snapshots.ts:** page textures. The outgoing page is captured as it is on screen; the incoming one in its
-  pre-landing state (marks hidden, boards waiting to drop). Cached per page, refreshed after changes, pre-warmed
-  on idle. Never taken during a move: a gesture waits for them instead.
+- **snapshots.ts:** page textures, copied from the DOM with modern-screenshot. Copying is the most expensive
+  thing the site does, so each page is copied just twice in its life: its pre-landing look (marks hidden,
+  boards waiting to drop, what an arriving page shows) and its landed look (what a leaving page shows). A page
+  that scrolls inside is copied as its background plus its whole content column, so any scroll position is
+  composed in a few milliseconds. The wear layers and left-over creases are drawn on with the CSS blend modes.
+  One capture context is reused (fonts and photos are fetched and encoded once, in modern-screenshot's worker),
+  only the CSS properties the pages use are copied (`style-props.ts`), and a copy yields to the browser every
+  8 ms. Copies run in the background only while the reader is quiet and the page on screen has finished
+  animating in. A touch, scroll or key press pauses a background copy, and it carries on from where it was
+  once the reader has been still for 0.4 s. A page turn stops it, unless it's a copy that turn needs: then it
+  carries on as the turn's own. A copy of a page that changed meanwhile (a board spun, the lightbox opened) is
+  thrown away and redone. A copy that makes no progress for 9 s is given up and the capture context rebuilt,
+  so a stalled download can't block page turns. Never taken during a move. On a turn, the leaving page's
+  entrance animations jump to their end so the screen matches its landed copy. `<video>` clips aren't
+  copied (the paper shows the tile under them).
+- Fold sets are generated in a worker (`folds.worker.ts`), one turn ahead.
 - After landing, the creases the page just opened from stay on it (a baked overlay, multiply 10% on paper,
   screen 4% on the dark pages). The cover gets a set on first load too.
-- **Fallbacks:** `prefers-reduced-motion` gives a 200 ms crossfade with static marks; no WebGL or a failed
-  snapshot gives the CSS version (scale + rotate + feTurbulence/feDisplacementMap + a crumpled texture), also
-  over the black stage.
+- **Loading:** the engine's file (Three.js and all, ~150 KB gzipped) is prefetched right after the page loads
+  (download only; the build writes its hashed name into a `<meta name="crumple-chunk">`, see
+  `astro.config.mjs`). The engine itself (WebGL, shader compile, first copies) starts 2.5 s after load, or at
+  the first touch, scroll, wheel or key. A swipe made while it starts waits for it (up to 3 s, then that one
+  turn is a crossfade): on a device with WebGL the page turn is always the paper crumple. Once it's running,
+  the wear textures are decoded and drawn once at idle, so the GPU's first-use shader compiles don't land in
+  the first turn, and the first turn's folds are generated in the worker while its pages are copied.
+- **Fallbacks:** `prefers-reduced-motion` gives a 200 ms crossfade with static marks; a device without WebGL
+  gets the CSS version (scale + rotate + feTurbulence/feDisplacementMap + a crumpled texture), also over the
+  black stage. If a WebGL turn fails, that one turn is a quiet crossfade.
 
 ### Tuning
 
@@ -108,21 +128,33 @@ Run against `npm run preview` (or set `BASE_URL`):
 | `npm run check:contrast` | Red text only on light paper, pink text only on dark, WCAG AA for every visible text element. |
 | `npm run compare` | Our unfold vs the reference GIF at the same relative times, side by side, with size and solidity → `design/compare.png`, `design/compare.json`. Needs the GIF frames in `design/ref/crumple-frames/` (from the handoff package; not in the repo). |
 | `npm run perf [-- url w h cpuThrottle mobile]` | Frame times during real page turns, e.g. `npm run perf -- http://localhost:4322 390 844 4 mobile`. |
+| `node scripts/mobile-journey.mjs [url] [cpu] [label] [reader\|skim]` | A phone reader (390×844 @3x, real touch input, CPU slowed): reads, scrolls, swipes. Per turn: which effect ran, `latency` (from the swipe counting as a turn to the paper moving), frame times in the move and while landing; jank while scrolling; what blocked the main thread; and a timeline of every page copy (`snap:start/done/gave-way/failed`, with the reason). |
+| `node scripts/style-props.mjs [url]` | Regenerates `src/scripts/crumple/style-props.ts`, the CSS properties page copies compare. **Re-run after changing page CSS.** |
+| `node scripts/snapprof.mjs [url]` | Times and profiles single page copies. |
 | `npm run handoff` | Canvas vs live DOM at p = 0 and p = 1. |
 | `npm run lighthouse` | Mobile Lighthouse for `/` and `/camp`. |
 | `npm run og` | Re-renders `public/og.jpg` from the cover. |
 
 Latest results (local preview, Windows, AMD integrated GPU):
 
-- **Lighthouse (mobile):** `/` Performance 93, Accessibility 100, Best Practices 100, SEO 100. `/camp`:
-  98, 100, 100, 100.
-- **Move frame rate:** 60 fps at 1440×900, and 60 fps at 390×844 with the CPU throttled 4×.
-- **Hand-offs:** mean difference 0.5–1.2/255; what remains is sub-pixel anti-aliasing on rotated text.
+- **Lighthouse (mobile):** `/` Performance 93–94 (TBT 90 ms), Accessibility 100, Best Practices 100, SEO 100.
+  `/camp`: 98, 100, 100, 100.
+- **Move frame rate:** 57–60 fps at 1440×900; at 390×844 @3x with the CPU slowed 2× or 4×, median and p95
+  frame 16.7 ms in every move.
+- **Phone reader (390×844 @3x), wait from the swipe to the paper moving:** reading each page, CPU 2×: under
+  0.05 s for every turn; CPU 4×: ~0.5–0.6 s for the first two turns after load, then under 0.05 s. Swiping on
+  as soon as each page lands (no quiet moment to copy ahead): CPU 2× ~0.5–0.7 s for the first three turns,
+  CPU 4× ~1–1.3 s, then instant (every page has been copied by then). Scrolling inside pages has no dropped
+  frames.
+- **Hand-offs:** mean difference 0.5–1.2/255 (stats page at p = 0: 2.2/255, the 3D board cards rasterise
+  slightly differently from the flat copy); what remains is sub-pixel anti-aliasing.
 - **Size curve vs GIF** (relative to the flat sheet): ours 0.19 / 0.32 / 0.40 / 0.44 / 0.55 / 1, GIF
   0.26 / 0.37 / 0.45 / 0.52 / 0.68 / 1. Our ball is sized to the spec's ¼–⅓ of the short side.
 
-Known trade-off: snapshots cost about 250 ms on desktop (more on slow phones), so a turn made right after
-landing can wait briefly before it starts.
+Known trade-off: a page copy costs ~60–200 ms on desktop and ~0.3–0.7 s on a CPU slowed 4×, mostly in small
+slices, but the final rasterisation of each copy is one task (~0.1–0.3 s at 4×) that can't be split. That's
+why copies wait for quiet moments and never run while the page on screen animates in: a turn made before a
+page could be copied in the background waits for its copies instead.
 
 ## Not shipped / TODO
 

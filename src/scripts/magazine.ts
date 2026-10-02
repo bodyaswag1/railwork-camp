@@ -3,7 +3,7 @@
 // The page change itself is delegated to a Transition (WebGL crumple, CSS fallback or reduced-motion fade).
 import { pages, ui } from '../content/site';
 import { agePaper } from './paper';
-import { drawMarks, hideMarks, showMarks } from './marks';
+import { drawMarks, hideMarks, showMarks, finishMarks } from './marks';
 import { initBoards } from './boards';
 import { initGallery } from './gallery';
 import { fadeTransition, cssTransition, type Transition, type Hooks } from './transitions';
@@ -23,7 +23,8 @@ if (reduced) root.classList.add('marks-static');
 
 // Hand-jitter for the marker layer. The design file uses feTurbulence; recomputing turbulence every frame of
 // a draw-on is costly, so the same smooth noise is rendered once into a tile and fed through feImage/feTile.
-// Each page carries its own copy of the filter so a snapshot of the page renders it too.
+// Each page carries its own copy of the filter so a snapshot of the page renders it too — inside the scroll
+// column on pages that scroll, since that column is copied on its own.
 const jitterTile = (() => {
   const N = 64, cell = 16, g = N / cell; // ~ baseFrequency .035 → features every ~28 units
   const grid = (seed: number) => { let x = seed; return Array.from({ length: (g + 1) ** 2 }, () => { x = (x * 16807) % 2147483647; return x / 2147483647; }); };
@@ -46,7 +47,7 @@ const jitFilter = (id: string) => `<filter id="${id}" x="-10%" y="-10%" width="1
 root.querySelector('#jit')?.replaceWith(document.createRange().createContextualFragment(`<svg xmlns="http://www.w3.org/2000/svg">${jitFilter('jit')}</svg>`).querySelector('filter')!);
 secs.forEach((s) => {
   const id = `jit-${s.id}`;
-  s.insertAdjacentHTML('afterbegin', `<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0"><defs>${jitFilter(id)}</defs></svg>`);
+  (s.querySelector('[data-scroll]') ?? s).insertAdjacentHTML('afterbegin', `<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0"><defs>${jitFilter(id)}</defs></svg>`);
   s.querySelectorAll<SVGElement>('svg.mk:not(.mk-nf), svg.marks, svg[style*="#jit"]').forEach((el) => { el.style.filter = `url(#${id})`; });
 });
 
@@ -59,20 +60,48 @@ let busy = false;
 let lockUntil = 0;
 let acc = 0, lastWheel = 0, edgeAt = 0;
 let ty: number | null = null, tUp = false, tDown = false, swiped = false;
-let edgeUp: number | null = null, edgeDown: number | null = null;
 let lightboxOpen = false;
+let lastInput = 0;
+const settled = new Set<number>(); // pages whose entrance animations have finished
+const marked = new Set<number>(); // pages whose marks have finished drawing on
 
 export const state = {
   get cur() { return cur; },
   get busy() { return busy; },
   secs, reduced, debug, paperReady,
-  /** called whenever a page's live look changes (marks drawn, board spun, scrolled) */
+  /** ms since the reader last touched, scrolled, clicked or pressed a key */
+  quietFor: () => performance.now() - lastInput,
+  /** the page's entrance animations are done (its DOM shows the landed look) */
+  isSettled: (i: number) => settled.has(i),
+  /** the page's busy entrance animations are over: marks drawn, boards landed and not spinning (slow intro flips may still run) */
+  isCalm: (i: number) => marked.has(i) && (i !== 1 || boards.landed()),
+  /** which landed look a page has right now ('' = the default one) */
+  variant: (i: number) => (i === 1 ? boards.variant() : ''),
+  /** jump a page's entrance animations to their end, so its DOM shows the landed look */
+  finishLanding: (i: number) => {
+    finishMarks(secs[i]);
+    // a page left before it ever drew its marks (a swipe before the fonts arrived) still shows them now
+    if (!marked.has(i)) showMarks(secs[i]);
+    if (i === 1) { boards.finish(); if (!boards.introRan()) boards.landedPose(); }
+    marked.add(i); settled.add(i);
+  },
+  /** put an off-screen page into a look for a copy; returns how to undo it */
+  setLook: (i: number, look: 'pre' | 'landed'): (() => void) | void => {
+    if (look === 'pre') return;
+    showMarks(secs[i]);
+    if (i === 1) boards.landedPose();
+    return () => prepare(i);
+  },
+  /** called when a page's look changes after landing (marks done, a board spun) */
   onDirty: (_i: number) => {},
   /** called after each landing */
   onLanded: (_i: number) => {},
 };
 
-const boards = initBoards(secs[1], () => cur === 1 && !busy, reduced, () => state.onDirty(1));
+const boards = initBoards(secs[1], () => cur === 1 && !busy, reduced,
+  () => { settled.add(1); state.onDirty(1); },
+  // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
+  () => { settled.delete(1); lastInput = performance.now(); });
 const gallery = initGallery(secs[2], (open) => { lightboxOpen = open; });
 
 let transition: Transition = reduced ? fadeTransition : cssTransition;
@@ -112,10 +141,13 @@ const setCounter = (i: number) => {
   });
 };
 
+let landedOnce = false;
 function land(i: number, focus = true) {
+  landedOnce = true;
   const s = secs[i];
+  settled.delete(i); marked.delete(i);
   const tl = drawMarks(s, reduced);
-  tl.eventCallback('onComplete', () => state.onDirty(i));
+  tl.eventCallback('onComplete', () => { marked.add(i); if (i !== 1) settled.add(i); state.onDirty(i); });
   if (i === 1) boards.land();
   gallery.setActive(i === 2);
   if (focus) s.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
@@ -123,13 +155,21 @@ function land(i: number, focus = true) {
 }
 
 // ---------------------------------------------------------------- go
-export async function go(n: number, push = true) {
-  if (busy || n < 0 || n >= total || n === cur) return;
+// A menu link, Home/End or back/forward pressed during a turn is kept and followed once it lands
+// (swipes and wheel aren't: a gesture during a turn must not turn a second page).
+let queued: [number, boolean] | null = null;
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+export async function go(n: number, push = true, explicit = false) {
+  if (busy) { if (explicit) queued = [n, push]; return; }
+  if (n < 0 || n >= total || n === cur) return;
   busy = true;
+  landedOnce = true;
   performance.mark('turn:start');
   const from = cur, dir: 1 | -1 = n > from ? 1 : -1;
   gallery.setActive(false);
   prepare(n);
+  // the arriving page renders underneath from now on, so it's ready to take over the moment the paper lands
+  secs[n].classList.add('is-next');
   const hooks: Hooks = {
     showIn: () => setActive(n),
     hideOut: () => secs[from].classList.remove('is-active'),
@@ -137,14 +177,21 @@ export async function go(n: number, push = true) {
   };
   try {
     if (document.hidden) throw new Error('hidden');
-    // a gesture never waits: until the WebGL version is installed (it loads on the first interaction),
-    // the CSS paper version runs straight away
-    await transition.run(from, n, dir, hooks);
+    // the paper crumple may still be loading (first gesture right after load): wait for it, it's the turn —
+    // but not forever (a stalled download): then this one turn is a quiet fade
+    let t = transition;
+    if (crumpleLoading) {
+      const ready = await Promise.race([crumpleLoading.then(() => true), sleep(3000).then(() => false)]);
+      t = ready ? transition : fadeTransition;
+    }
+    await t.run(from, n, dir, hooks);
   } catch (err) {
     if (debug) console.warn('[transition] fell back', err);
-    try { await cssTransition.run(from, n, dir, hooks); } catch { /* last resort below */ }
+    // without WebGL the CSS paper version is the page turn; if the WebGL turn itself fails, a quiet fade
+    try { await (transition === cssTransition ? cssTransition : fadeTransition).run(from, n, dir, hooks); } catch { /* last resort below */ }
   }
   setActive(n); setCounter(n);
+  secs[n].classList.remove('is-next');
   // the page we left goes back to its pre-landing state, ready for its next snapshot
   prepare(from);
   cur = n;
@@ -153,6 +200,11 @@ export async function go(n: number, push = true) {
   lockUntil = performance.now() + 400;
   busy = false;
   land(n);
+  if (queued) {
+    const [q, p] = queued;
+    queued = null;
+    if (q !== cur) go(q, p, true);
+  }
 }
 
 // ---------------------------------------------------------------- input
@@ -182,8 +234,8 @@ addEventListener('keydown', (e) => {
   let d = 0;
   if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !onControl)) d = 1;
   else if (e.key === 'ArrowUp' || e.key === 'PageUp') d = -1;
-  else if (e.key === 'Home') { e.preventDefault(); go(0); return; }
-  else if (e.key === 'End') { e.preventDefault(); go(total - 1); return; }
+  else if (e.key === 'Home') { e.preventDefault(); go(0, true, true); return; }
+  else if (e.key === 'End') { e.preventDefault(); go(total - 1, true, true); return; }
   if (!d) return;
   if (busy || performance.now() < lockUntil) { e.preventDefault(); return; }
   if (!atEdge(d)) return; // let the page scroll inside
@@ -193,26 +245,21 @@ addEventListener('keydown', (e) => {
 
 // Touch: the turn is decided while the finger moves, not on touchend — mobile browsers often send
 // touchcancel instead (address bar, pull-to-refresh), which used to swallow the swipe.
-// A page that scrolls inside turns once you keep pushing past its edge, in the same swipe:
-// the distance is measured from where the edge was reached, so reading to the bottom doesn't flip the page.
-const SWIPE = 48, SWIPE_PAST_EDGE = 72;
+// On a page that scrolls inside, a swipe turns the page only if it starts at that edge: scrolling to the
+// end of a page never flips it by itself.
+const SWIPE = 48;
 addEventListener('touchstart', (e) => {
   if (blocked() || e.touches.length > 1) { ty = null; return; }
   ty = e.touches[0].clientY;
   tUp = atEdge(-1); tDown = atEdge(1);
-  edgeUp = tUp ? ty : null; edgeDown = tDown ? ty : null;
   swiped = false;
 }, { passive: true });
 addEventListener('touchmove', (e) => {
   if (ty == null || swiped || blocked() || e.touches.length > 1) return;
   const y = e.touches[0].clientY;
   const d = y < ty ? 1 : -1; // finger moving up → next page
-  if (d > 0 && edgeDown == null && atEdge(1)) edgeDown = y;
-  if (d < 0 && edgeUp == null && atEdge(-1)) edgeUp = y;
-  const from = d > 0 ? edgeDown : edgeUp;
-  if (from == null) return;
-  const need = (d > 0 ? tDown : tUp) ? SWIPE : SWIPE_PAST_EDGE;
-  if (Math.abs(y - from) < need) return;
+  if (d > 0 ? !tDown : !tUp) return;
+  if (Math.abs(y - ty) < SWIPE) return;
   swiped = true;
   if (busy || performance.now() < lockUntil) return;
   go(cur + d);
@@ -223,14 +270,13 @@ addEventListener('touchcancel', endTouch, { passive: true });
 
 addEventListener('popstate', () => {
   const i = ids.indexOf(location.hash.slice(1));
-  if (i >= 0) go(i, false);
+  if (i >= 0) go(i, false, true);
 });
 
-// scrolling inside a page changes what's on screen → its snapshot needs a refresh
-secs.forEach((s, i) => {
-  let t = 0;
-  s.querySelector('[data-scroll]')?.addEventListener('scroll', () => { clearTimeout(t); t = window.setTimeout(() => state.onDirty(i), 160); }, { passive: true });
-});
+// page copies for the paper wait until the reader is quiet, so they never stutter scrolling or a swipe
+const touched = () => { lastInput = performance.now(); };
+for (const t of ['touchstart', 'touchmove', 'wheel', 'pointerdown', 'keydown']) addEventListener(t, touched, { capture: true, passive: true });
+secs.forEach((s) => s.querySelector('[data-scroll]')?.addEventListener('scroll', touched, { passive: true }));
 
 // ---------------------------------------------------------------- menu + links
 function openMenu() {
@@ -256,7 +302,7 @@ menu.addEventListener('keydown', (e) => {
 root.querySelectorAll<HTMLAnchorElement>('[data-go]').forEach((a) => a.addEventListener('click', (e) => {
   e.preventDefault();
   closeMenu(false);
-  go(Number(a.dataset.go));
+  go(Number(a.dataset.go), true, true);
 }));
 root.querySelector('[data-skip]')!.addEventListener('click', (e) => {
   e.preventDefault();
@@ -268,15 +314,19 @@ root.querySelector('[data-skip]')!.addEventListener('click', (e) => {
 // measuring every marker path now would force layout on pages nobody can see yet
 setActive(cur); setCounter(cur);
 try { history.replaceState(null, '', `#${ids[cur]}`); } catch { /* file:// */ }
-const start = () => land(cur, false);
+// the first landing waits for the fonts; if the reader has already turned the page by then, skip it
+const start = () => { if (!landedOnce && !busy) land(cur, false); };
 (document.fonts?.ready ?? Promise.resolve()).then(start);
 
-// The WebGL crumple (three.js, shader compile, page snapshots) loads on the first sign of a reader —
-// pointer, touch, wheel or key — so none of it competes with the first paint. ?debug loads it right away.
+// The WebGL crumple (three.js, shader compile, page copies) loads once the page has painted and settled,
+// or at the first sign of a reader, whichever comes first — so it's ready by the first swipe without
+// competing with the first paint. A gesture made while it loads waits for it.
 let crumpleLoading: Promise<unknown> | null = null;
+let crumpleStarted = false;
 if (!reduced) {
   const load = () => {
-    if (crumpleLoading) return;
+    if (crumpleStarted) return;
+    crumpleStarted = true;
     triggers.forEach((t) => removeEventListener(t, load, true));
     crumpleLoading = import('./crumple/index')
       .then((m) => m.install({ go, prepare, setTransition, state }))
@@ -285,7 +335,21 @@ if (!reduced) {
   };
   const triggers = ['pointermove', 'pointerdown', 'touchstart', 'wheel', 'keydown', 'scroll'];
   triggers.forEach((t) => addEventListener(t, load, { capture: true, passive: true }));
-  if (debug) addEventListener('load', () => setTimeout(load, 0), { once: true });
+  const idleLoad = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(load, { timeout: 1000 }) : load());
+  // the file itself downloads (only downloads: nothing runs) as soon as the page has loaded, so a quick
+  // first swipe on a phone network doesn't wait for it
+  const prefetch = () => {
+    const src = document.querySelector<HTMLMetaElement>('meta[name="crumple-chunk"]')?.content;
+    if (!src) return;
+    const l = document.createElement('link');
+    l.rel = 'prefetch'; l.href = src; l.crossOrigin = 'anonymous'; // the same request mode as import()
+    document.head.append(l);
+  };
+  const soon = () => {
+    prefetch();
+    setTimeout(idleLoad, debug ? 0 : 2500);
+  };
+  if (document.readyState === 'complete') soon(); else addEventListener('load', soon, { once: true });
 }
 
 export type Mag = { go: typeof go; prepare: typeof prepare; setTransition: typeof setTransition; state: typeof state };

@@ -98,8 +98,6 @@ export const config = {
   maxDpr: 2,
 
   // ---------- fallbacks ----------
-  /** longest a gesture waits for page snapshots before this turn uses the CSS version instead, seconds */
-  snapshotWait: 0.15,
   reducedFade: 0.2,
   cssDuration: 1.0,
 };

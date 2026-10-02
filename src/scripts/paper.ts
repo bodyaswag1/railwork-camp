@@ -12,7 +12,28 @@ const idle = (fn: () => void) =>
 
 let worker: Worker | null | undefined;
 let seq = 0;
-const waiting = new Map<number, (b: Blob) => void>();
+const waiting = new Map<number, { job: Job; done: (url: string) => void }>();
+
+function renderHere(job: Job): Promise<string> {
+  return new Promise((res) => idle(() => {
+    const c = (job.kind === 'noise' ? noise(job.rgb!, job.alpha!, job.seed) : job.kind === 'crease' ? creaseFacets(job.seed) : age(!!job.dark, job.seed)) as HTMLCanvasElement;
+    c.toBlob((b) => res(b ? URL.createObjectURL(b) : c.toDataURL('image/jpeg', job.q)), 'image/webp', job.q);
+  }));
+}
+// a worker that can't load, errors or stalls hands its jobs back to the page
+function takeBack(id: number) {
+  const w = waiting.get(id);
+  if (!w) return;
+  waiting.delete(id);
+  renderHere(w.job).then(w.done);
+}
+function dropWorker() {
+  worker?.terminate();
+  worker = null;
+  useDomCanvas();
+  [...waiting.keys()].forEach(takeBack);
+}
+
 /** started on first use, so pages that only need makeNoise() never spin one up */
 function getWorker() {
   if (worker !== undefined) return worker;
@@ -20,7 +41,15 @@ function getWorker() {
   try {
     if (typeof OffscreenCanvas !== 'undefined' && 'convertToBlob' in OffscreenCanvas.prototype) {
       worker = new Worker(new URL('./paper.worker.ts', import.meta.url), { type: 'module' });
-      worker.onmessage = (e) => { waiting.get(e.data.id)?.(e.data.blob); waiting.delete(e.data.id); };
+      worker.onmessage = (e) => {
+        const w = waiting.get(e.data.id);
+        if (!w) return;
+        if (!e.data.blob) { takeBack(e.data.id); return; }
+        waiting.delete(e.data.id);
+        w.done(URL.createObjectURL(e.data.blob));
+      };
+      worker.onerror = dropWorker;
+      worker.onmessageerror = dropWorker;
     }
   } catch { worker = null; }
   if (!worker) useDomCanvas();
@@ -28,15 +57,14 @@ function getWorker() {
 }
 
 function render(job: Job): Promise<string> {
-  const worker = getWorker();
-  if (worker) {
-    const id = ++seq;
-    return new Promise((res) => { waiting.set(id, (b) => res(URL.createObjectURL(b))); worker!.postMessage({ ...job, id }); });
-  }
-  return new Promise((res) => idle(() => {
-    const c = (job.kind === 'noise' ? noise(job.rgb!, job.alpha!, job.seed) : job.kind === 'crease' ? creaseFacets(job.seed) : age(!!job.dark, job.seed)) as HTMLCanvasElement;
-    c.toBlob((b) => res(b ? URL.createObjectURL(b) : c.toDataURL('image/jpeg', job.q)), 'image/webp', job.q);
-  }));
+  const w = getWorker();
+  if (!w) return renderHere(job);
+  const id = ++seq;
+  return new Promise((done) => {
+    waiting.set(id, { job, done });
+    w.postMessage({ ...job, id });
+    setTimeout(() => takeBack(id), 6000);
+  });
 }
 
 /**

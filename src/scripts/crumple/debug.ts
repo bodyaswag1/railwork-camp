@@ -6,7 +6,7 @@ import type { Mag } from '../magazine';
 type Api = { config: Config; seek(p: number, o?: { to?: number; seed?: number; stage?: boolean }): Promise<void>; release(): void };
 
 const groups: Record<string, (keyof Config)[]> = {
-  Timing: ['duration', 'peakRound', 'compressStart', 'releaseEnd', 'snapshotWait'],
+  Timing: ['duration', 'peakRound', 'compressStart', 'releaseEnd'],
   Folding: ['bigFolds', 'smallFolds', 'edgeTucks', 'bigAngle', 'smallAngle', 'tuckAngle', 'creaseStrength', 'creaseLines', 'foldSoftness'],
   Ball: ['ballSize', 'ballLumps', 'spherize'],
   Tumble: ['tumble', 'twist', 'yaw'],
@@ -17,7 +17,7 @@ const groups: Record<string, (keyof Config)[]> = {
   Mesh: ['segments', 'maxDpr'],
 };
 const ranges: Partial<Record<keyof Config, [number, number, number]>> = {
-  duration: [0.4, 3, 0.05], snapshotWait: [0, 3, 0.05], peakRound: [0, 0.1, 0.005], compressStart: [0.4, 0.95, 0.01], releaseEnd: [0.05, 0.6, 0.01],
+  duration: [0.4, 3, 0.05], peakRound: [0, 0.1, 0.005], compressStart: [0.4, 0.95, 0.01], releaseEnd: [0.05, 0.6, 0.01],
   bigFolds: [3, 6, 1], smallFolds: [0, 14, 1], edgeTucks: [0, 12, 1], bigAngle: [90, 179, 1], smallAngle: [20, 179, 1], tuckAngle: [20, 179, 1],
   creaseStrength: [0, 1, 0.01], creaseLines: [0, 28, 1], foldSoftness: [0, 0.03, 0.001],
   ballSize: [0.15, 0.45, 0.005], ballLumps: [0, 0.6, 0.01], spherize: [0, 1, 0.01],

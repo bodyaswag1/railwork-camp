@@ -71,30 +71,45 @@ test.describe('reduced motion (fast turns)', () => {
   });
 });
 
-test('WebGL turn by swipe on a phone: the first swipe responds quickly, later ones use WebGL', async ({ page }) => {
+test('phone swipes always use the paper crumple, and start promptly', async ({ page }) => {
   await page.goto('/#cover');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1500);
   await page.evaluate(() => {
-    const w = window as any; w.__t = { start: 0, moving: 0 };
-    addEventListener('touchmove', () => { if (!w.__t.start) w.__t.start = performance.now(); }, { capture: true });
-    const loop = () => { if (!w.__t.moving && document.querySelector('.stage.is-on')) w.__t.moving = performance.now(); requestAnimationFrame(loop); };
+    const w = window as any; w.__t = { kinds: [], css: false };
+    const loop = () => {
+      if (document.querySelector('.css-crumple')) w.__t.css = true;
+      if (document.querySelector('.paper-canvas.is-on') && w.__t.kinds.at(-1) !== 'on') w.__t.kinds.push('on');
+      if (!document.querySelector('.paper-canvas.is-on') && w.__t.kinds.at(-1) === 'on') w.__t.kinds.push('off');
+      requestAnimationFrame(loop);
+    };
     requestAnimationFrame(loop);
   });
   await swipe(page, 500, 400);
   await page.waitForFunction(() => document.querySelector('#stats.is-active'), null, { timeout: 15000 });
-  const t = await page.evaluate(() => ({ ...(window as any).__t, turn: performance.getEntriesByName('turn:start')[0]?.startTime ?? 0 }));
-  const firstLatency = Math.round(t.moving - t.turn);
-  console.log(`first swipe: finger travel ${Math.round(t.turn - t.start)} ms, then turn → stage on ${firstLatency} ms`);
-  expect(firstLatency).toBeLessThan(300);
+  const first = await page.evaluate(() => {
+    const t = performance.getEntriesByName('turn:start')[0]?.startTime ?? 0;
+    const m = performance.getEntriesByName('crumple:move-start')[0]?.startTime ?? 1e9;
+    return Math.round(m - t);
+  });
+  console.log(`first swipe: turn → paper moving ${first} ms`);
+  expect(first).toBeLessThan(2000); // the engine may still be loading on the very first swipe
   await settle(page);
-  await page.waitForTimeout(3000); // engine loaded and warmed by now
-  await page.evaluate(() => { const w = window as any; w.__seen = false; const loop = () => { if (document.querySelector('.paper-canvas.is-on')) w.__seen = true; requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
+  await page.waitForTimeout(4500); // the stats page settles, its neighbours get copied
   await page.locator('#stats [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
-  await page.waitForTimeout(1500); // a reader glances at the bottom of the page before swiping on
+  await page.waitForTimeout(400);
   await swipe(page, 500, 400);
   await page.waitForFunction(() => document.querySelector('#gallery.is-active'), null, { timeout: 15000 });
-  expect(await page.evaluate(() => (window as any).__seen)).toBe(true);
+  const second = await page.evaluate(() => {
+    const t = performance.getEntriesByName('turn:start').at(-1)!.startTime;
+    const m = performance.getEntriesByName('crumple:move-start').at(-1)!.startTime;
+    return Math.round(m - t);
+  });
+  console.log(`second swipe: turn → paper moving ${second} ms`);
+  expect(second).toBeLessThan(400);
+  const t = await page.evaluate(() => (window as any).__t);
+  expect(t.css).toBe(false); // never the CSS fallback on a device with WebGL
+  expect(t.kinds.filter((k: string) => k === 'on').length).toBe(2);
 });
 
 test('/camp "back to top"', async ({ page }) => {

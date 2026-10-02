@@ -34,6 +34,11 @@ export function showMarks(page: Element) {
   setStyle(n, 'clipPath', 'none');
 }
 
+/** Jump a running draw-on to its end, so the page is in its landed look right now. */
+export function finishMarks(page: Element) {
+  tls.get(page)?.progress(1);
+}
+
 /**
  * Draw the marks on: strokes staggered over ~600 ms, then the notes write themselves in.
  * Returns the timeline so callers can wait for it.

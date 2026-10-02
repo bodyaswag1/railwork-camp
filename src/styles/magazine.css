@@ -38,9 +38,9 @@ body { font-family: var(--font-body); color: var(--night-run); -webkit-font-smoo
 main { position: absolute; inset: 0; }
 .page { position: absolute; inset: 0; overflow: hidden; visibility: hidden; z-index: 1; }
 .page.is-active { visibility: visible; z-index: 2; }
-.page.is-snap { visibility: visible; z-index: 0; } /* off-screen snapshot of an inactive page, under the active one */
+.page.is-snap, .page.is-next { visibility: visible; z-index: 0; } /* rendered under the active page: being copied, or arriving next */
 /* pages not on screen don't render or load anything until they are shown, moving or being copied */
-.page:not(.is-active):not(.is-snap):not(.is-moving) { content-visibility: hidden; }
+.page:not(.is-active):not(.is-snap):not(.is-moving):not(.is-next) { content-visibility: hidden; }
 .page h1, .page h2 { outline: none; }
 
 .paper {

@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 
 type Board = { drop: HTMLElement; card: HTMLElement; rot: number; busy: boolean };
 
-export function initBoards(page: HTMLElement, isActive: () => boolean, reduced: boolean, onSettle: () => void) {
+export function initBoards(page: HTMLElement, isActive: () => boolean, reduced: boolean, onSettle: () => void, onBusy: () => void = () => {}) {
   const boards: Board[] = Array.from(page.querySelectorAll<HTMLElement>('[data-drop]')).map((drop) => ({
     drop, card: drop.querySelector<HTMLElement>('[data-spin]')!, rot: 0, busy: false,
   }));
@@ -48,6 +48,7 @@ export function initBoards(page: HTMLElement, isActive: () => boolean, reduced: 
     const b = boards[i];
     if (!b || b.busy || !isActive()) return;
     b.busy = true;
+    onBusy();
     const d = big ? 1620 : 360;
     gsap.to(b.card, {
       rotationY: b.rot + d, duration: reduced ? 0.01 : big ? 2.3 : 0.95, ease: 'power3.out',
@@ -62,6 +63,31 @@ export function initBoards(page: HTMLElement, isActive: () => boolean, reduced: 
     }
   };
 
+  /** Jump the drop, flips and any spin to their end (the page must look landed right now). */
+  const finish = () => {
+    intro?.progress(1);
+    boards.forEach((b) => {
+      gsap.getTweensOf(b.card).forEach((t) => t.progress(1));
+      gsap.getTweensOf(b.drop).forEach((t) => t.progress(1));
+    });
+    if (egg) { gsap.killTweensOf(egg); gsap.set(egg, { autoAlpha: 0 }); }
+  };
+
+  /** The landed look for a copy of the page while it's off screen (undone by reset()). */
+  const landedPose = () => {
+    boards.forEach((b) => { gsap.set(b.drop, { y: 0, autoAlpha: 1 }); gsap.set(b.card, { rotationY: b.rot }); });
+  };
+
+  /** nothing on the page is spinning and the 1620° note isn't showing */
+  const idle = () => boards.every((b) => !b.busy || (intro?.isActive() ?? false)) && !(egg && gsap.isTweening(egg));
+  /** the boards have dropped and stopped bouncing (only the slow intro flips may still be running), and idle */
+  const landed = () => (!intro || intro.time() > 1.62) && idle();
+  /** did the drop ever play (it doesn't if the page is left before its first landing) */
+  const introRan = () => !!intro;
+
+  /** 'spun' when a board is left showing its base (the 1620° easter egg ends on the base). */
+  const variant = () => (boards.some((b) => Math.round(b.rot / 180) % 2 !== 0) ? 'spun' : '');
+
   boards.forEach((b, i) => {
     b.card.addEventListener('click', () => spin(i, i === 0));
     b.card.addEventListener('keydown', (e) => {
@@ -71,5 +97,5 @@ export function initBoards(page: HTMLElement, isActive: () => boolean, reduced: 
   });
 
   reset();
-  return { reset, land };
+  return { reset, land, finish, landedPose, variant, landed, introRan };
 }
