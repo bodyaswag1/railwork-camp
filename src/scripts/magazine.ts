@@ -58,7 +58,8 @@ let cur = Math.max(0, ids.indexOf(location.hash.slice(1)));
 let busy = false;
 let lockUntil = 0;
 let acc = 0, lastWheel = 0, edgeAt = 0;
-let ty: number | null = null, tUp = false, tDown = false;
+let ty: number | null = null, tUp = false, tDown = false, swiped = false;
+let edgeUp: number | null = null, edgeDown: number | null = null;
 let lightboxOpen = false;
 
 export const state = {
@@ -125,6 +126,7 @@ function land(i: number, focus = true) {
 export async function go(n: number, push = true) {
   if (busy || n < 0 || n >= total || n === cur) return;
   busy = true;
+  performance.mark('turn:start');
   const from = cur, dir: 1 | -1 = n > from ? 1 : -1;
   gallery.setActive(false);
   prepare(n);
@@ -135,8 +137,8 @@ export async function go(n: number, push = true) {
   };
   try {
     if (document.hidden) throw new Error('hidden');
-    // the WebGL version loads on first interaction: give it a moment rather than falling back
-    if (crumpleLoading) await Promise.race([crumpleLoading, new Promise((r) => setTimeout(r, 2500))]);
+    // a gesture never waits: until the WebGL version is installed (it loads on the first interaction),
+    // the CSS paper version runs straight away
     await transition.run(from, n, dir, hooks);
   } catch (err) {
     if (debug) console.warn('[transition] fell back', err);
@@ -189,19 +191,35 @@ addEventListener('keydown', (e) => {
   go(cur + d);
 });
 
+// Touch: the turn is decided while the finger moves, not on touchend — mobile browsers often send
+// touchcancel instead (address bar, pull-to-refresh), which used to swallow the swipe.
+// A page that scrolls inside turns once you keep pushing past its edge, in the same swipe:
+// the distance is measured from where the edge was reached, so reading to the bottom doesn't flip the page.
+const SWIPE = 48, SWIPE_PAST_EDGE = 72;
 addEventListener('touchstart', (e) => {
-  if (blocked()) return;
-  ty = e.touches[0].clientY; tUp = atEdge(-1); tDown = atEdge(1);
+  if (blocked() || e.touches.length > 1) { ty = null; return; }
+  ty = e.touches[0].clientY;
+  tUp = atEdge(-1); tDown = atEdge(1);
+  edgeUp = tUp ? ty : null; edgeDown = tDown ? ty : null;
+  swiped = false;
 }, { passive: true });
-addEventListener('touchend', (e) => {
-  if (blocked() || ty == null) return;
-  const dy = ty - e.changedTouches[0].clientY;
-  ty = null;
-  if (Math.abs(dy) < 50 || busy || performance.now() < lockUntil) return;
-  const d = dy > 0 ? 1 : -1;
-  if (d > 0 ? !tDown : !tUp) return;
+addEventListener('touchmove', (e) => {
+  if (ty == null || swiped || blocked() || e.touches.length > 1) return;
+  const y = e.touches[0].clientY;
+  const d = y < ty ? 1 : -1; // finger moving up → next page
+  if (d > 0 && edgeDown == null && atEdge(1)) edgeDown = y;
+  if (d < 0 && edgeUp == null && atEdge(-1)) edgeUp = y;
+  const from = d > 0 ? edgeDown : edgeUp;
+  if (from == null) return;
+  const need = (d > 0 ? tDown : tUp) ? SWIPE : SWIPE_PAST_EDGE;
+  if (Math.abs(y - from) < need) return;
+  swiped = true;
+  if (busy || performance.now() < lockUntil) return;
   go(cur + d);
 }, { passive: true });
+const endTouch = () => { ty = null; };
+addEventListener('touchend', endTouch, { passive: true });
+addEventListener('touchcancel', endTouch, { passive: true });
 
 addEventListener('popstate', () => {
   const i = ids.indexOf(location.hash.slice(1));

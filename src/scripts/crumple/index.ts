@@ -133,6 +133,14 @@ export function install(mag: Mag) {
   const transition: Transition = {
     async run(from, to, dir, hooks: Hooks) {
       if (running) throw new Error('busy');
+      // Snapshots are never taken mid-move. If they aren't ready almost at once (a slow phone right after
+      // landing), this turn goes to the CSS version instead of making the reader wait; they keep warming
+      // in the background for the next turn.
+      const ready = await Promise.race([
+        Promise.all([snaps.get(pages, from, 'live'), snaps.get(pages, to, 'pre')]).then(() => true, () => false),
+        new Promise<boolean>((r) => setTimeout(() => r(false), config.snapshotWait * 1000)),
+      ]);
+      if (!ready) throw new Error('snapshots not ready');
       running = true;
       try {
         const { R, url, resAlpha, seed } = await prepareRun(from, to, dir);
@@ -169,13 +177,15 @@ export function install(mag: Mag) {
   mag.setTransition(transition);
 
   // ------------------------------------------------------------ snapshots: keep them fresh
-  state.onDirty = (i) => { snaps.markDirty(i, 'live'); schedule(); };
-  state.onLanded = (i) => { snaps.markDirty(i, 'live'); schedule(); };
+  // after a scroll or a finished animation the page is still: copy it soon. After landing, wait for the
+  // entrance animations instead, so snapshot work never stutters them.
+  state.onDirty = (i) => { snaps.markDirty(i, 'live'); schedule(250); };
+  state.onLanded = (i) => { snaps.markDirty(i, 'live'); schedule(700); };
   let warmT = 0;
   // wait until the page has settled (marks drawn, boards landed) so snapshot work never stutters an animation
-  const schedule = () => {
+  const schedule = (delay = 700) => {
     clearTimeout(warmT);
-    warmT = window.setTimeout(() => { snaps.prewarm(pages, state.cur, () => state.busy || running); planAhead(); }, 700);
+    warmT = window.setTimeout(() => { snaps.prewarm(pages, state.cur, () => state.busy || running); planAhead(); }, delay);
   };
   document.fonts?.ready.then(() => { snaps.invalidateAll(); schedule(); });
   let rt = 0;

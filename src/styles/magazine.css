@@ -3,6 +3,10 @@ body { font-family: var(--font-body); color: var(--night-run); -webkit-font-smoo
 .mag a:hover { color: var(--park-signal); }
 
 .mag { position: fixed; inset: 0; overflow: hidden; background: var(--night-run); }
+/* page turns are ours: no browser panning, pull-to-refresh or address-bar tug on the magazine
+   (pinch-zoom stays); pages that scroll inside, and the menu, keep vertical panning */
+.mag { touch-action: pinch-zoom; }
+.scroller, .menu { touch-action: pan-y pinch-zoom; }
 
 /* ---------- masthead (fixed, difference blend so it reads on dark and light) ---------- */
 .masthead {
@@ -291,8 +295,20 @@ main { position: absolute; inset: 0; }
 .coupon__cta { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 2.4vw, 34px); line-height: 1; text-transform: uppercase; }
 .coupon__bottom { font-size: 12px; color: var(--lift-tower); }
 .coupon__bottom b { color: var(--park-signal); }
+.totop {
+  position: absolute; left: var(--side); bottom: max(8px, env(safe-area-inset-bottom));
+  z-index: 3; padding: 4px 9px; font-size: 10px; letter-spacing: .14em; background: var(--night-run);
+}
+.totop:hover { color: var(--goggle-tint); }
 .coupon__note { position: absolute; right: 80px; top: -62px; transform: rotate(-6deg); font-size: 22px; color: var(--goggle-tint); white-space: nowrap; }
 @media (max-width: 600px) {
+  /* room under the coupon for the back-to-the-cover button */
+  .bc__inner { padding-bottom: calc(clamp(18px, 4.5svh, 44px) + 30px); }
+  /* the coupon's "clip it!" note gets its own gap instead of landing on the info box */
+  .bc__row { row-gap: 54px; }
+  .coupon__note { top: -46px; right: 70px; font-size: 19px; }
+  .coupon > svg.mk { top: -50px !important; height: 44px !important; }
+  .bc__info > div:last-child svg { inset: -6px -5px !important; width: calc(100% + 10px) !important; height: calc(100% + 12px) !important; }
   .bc__h2 { font-size: clamp(52px, 17vw, 80px); }
   .bc__splat { right: -40px; }
 }

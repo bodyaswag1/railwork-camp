@@ -19,7 +19,7 @@ const jsonLd = [{
 const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
 ---
 <Base title={c.title} description={c.description} path="/camp" jsonLd={jsonLd}>
-<div class="camp">
+<div class="camp" id="top" tabindex="-1">
   <a class="skip" href="#main">Skip to content</a>
   <div class="strip">
     <span>{c.strip}</span>
@@ -196,7 +196,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
         <div class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
         <div class="foot__c">Instagram <a href={rider.instagramUrl} target="_blank" rel="noopener">@{rider.instagram}</a><br />{c.footer.contacts}</div>
       </div>
-      <div class="foot__r">{c.footer.issue}<br /><a href="/">{c.footer.back}</a></div>
+      <div class="foot__r">{c.footer.issue}<br /><a href="/">{c.footer.back}</a><br /><a class="totop" href="#top">{c.footer.toTop}</a></div>
     </div>
   </footer>
 </div>

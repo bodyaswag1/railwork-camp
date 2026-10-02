@@ -200,6 +200,7 @@ export const backCover = {
     hot: 'last spots',
     note: 'clip it!',
   },
+  toTop: '↑ Back to the cover',
 };
 
 export const campPage = {
@@ -287,6 +288,7 @@ export const campPage = {
     contacts: 'Telegram [handle] · WhatsApp [number] · [email]', // TODO: contacts
     issue: 'Issue 01 · Winter 26/27',
     back: '← Back to the magazine',
+    toTop: '↑ Back to top',
   },
 };
 
