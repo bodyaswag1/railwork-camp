@@ -1,0 +1,206 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image, Picture } from 'astro:assets';
+import '../styles/camp.css';
+import studio from '../assets/photos/ilia-studio.jpg';
+import smile from '../assets/photos/ilia-smile.jpg';
+import { rider, camp, campPage as c } from '../content/site';
+
+const site = Astro.site!;
+const jsonLd = [{
+  '@context': 'https://schema.org', '@type': 'Event', name: `${camp.full} — ${camp.kind}`,
+  description: c.description, startDate: camp.startDate, endDate: camp.endDate,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: `${camp.place}, ${camp.country}`, address: { '@type': 'PostalAddress', addressLocality: camp.place, addressCountry: 'IT' } },
+  organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
+  performer: { '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] },
+  image: new URL('/og.jpg', site).href, url: new URL('/camp', site).href,
+}];
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+---
+<Base title={c.title} description={c.description} path="/camp" jsonLd={jsonLd}>
+<div class="camp">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="strip">
+    <span>{c.strip}</span>
+    <a href="/#camp-ad">{c.back}</a>
+  </div>
+
+  <main id="main">
+    <header class="hero">
+      <div class="hero__photo" aria-hidden="true">
+        <Picture src={studio} alt="" formats={['avif', 'webp']} widths={[480, 853, 1280]} sizes="(orientation: portrait) 62vh, 60vw" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="hero__fade" aria-hidden="true"></div>
+      <div class="hero__dots" aria-hidden="true"></div>
+      <div class="grain" data-grain="D" aria-hidden="true" style="opacity:.5"></div>
+      <div class="hero__inner">
+        <!-- TODO(figma): bas-camp-splatter "Italy 2026" (265:18813) replaces this logo -->
+        <div class="hero__logo">
+          <div class="hero__splat" aria-hidden="true"></div>
+          <div class="hero__box" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
+          <div class="hero__tag marker" aria-hidden="true">Italy 2026</div>
+        </div>
+        <h1>{c.h1}</h1>
+        <p class="hero__by">{camp.hostedBy}</p>
+        <dl class="facts">
+          {c.facts.map(([a, b]) => <div><dt>{a}</dt><dd>{b}</dd></div>)}
+        </dl>
+        <div class="hero__cta">
+          <a class="btn-paper" href="#apply">{c.cta}</a>
+          <div class="stamp-pink">{camp.stamps.lastSpots}</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="sec lt" aria-labelledby="h-facts">
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap two">
+        <div>
+          <div class="kicker" style="margin-bottom:8px">{c.what.kicker}</div>
+          <h2 class="h2" id="h-facts">{c.what.h2}</h2>
+          <ol class="numbered">
+            {camp.features.map((f, i) => (
+              <li><span class="n">{String(i + 1).padStart(2, '0')}</span><span class="t">{f}{i === 0 && <small> {camp.groupSize}</small>}</span></li>
+            ))}
+          </ol>
+        </div>
+        <div class="who">
+          <div class="kicker">{c.who.kicker}</div>
+          <p class="who__lead">{c.who.lead}</p>
+          <p class="who__mk marker">{c.who.marker}</p>
+          <ul>{c.who.list.map((l) => <li>{l}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec dk" aria-labelledby="h-program">
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="prog__head">
+          <h2 class="h2" id="h-program">{c.program.h2}</h2>
+          <span class="kicker">{c.program.meta}</span>
+        </div>
+        <ol class="days" style="list-style:none;margin:0;padding:0">
+          {c.program.days.map((d) => (
+            <li class="day">
+              <div class="day__top"><span class="day__date">{d.date}</span><span class="day__n">DAY {d.n}</span></div>
+              <h3>{d.title}</h3>
+              <p>{d.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec lt" aria-labelledby="h-incl">
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="incl">
+          <div>
+            <h2 class="h3big" id="h-incl">{c.included.h2}</h2>
+            <ul class="checks">{c.included.items.map((t) => <li><b aria-hidden="true">✓</b>{t}</li>)}</ul>
+          </div>
+          <div>
+            <h2 class="h3big" style="color:var(--lift-tower)">{c.notIncluded.h2}</h2>
+            <ul class="checks no">{c.notIncluded.items.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
+          </div>
+          <div class="price">
+            <div class="kicker">{c.price.kicker}</div>
+            <div class="price__v">{c.price.value}</div>
+            <div class="price__s">{c.price.spots}</div>
+            <div class="price__stamp">{camp.stamps.lastSpots}</div>
+            <a href="#apply">{c.price.cta}</a>
+          </div>
+        </div>
+
+        <article class="coach" aria-labelledby="h-coach">
+          <div class="coach__pic"><Image src={smile} alt={rider.name} widths={[260, 520]} sizes="clamp(150px, 22vw, 260px)" format="webp" loading="lazy" /></div>
+          <div class="coach__body">
+            <div class="kicker">{c.coach.kicker}</div>
+            <h2 id="h-coach">{rider.name}</h2>
+            <ul class="chips">{c.coach.chips.map((t) => <li>{t}</li>)}</ul>
+            <p>{c.coach.body}</p>
+            <a class="coach__ig" href={rider.instagramUrl} target="_blank" rel="noopener">@{rider.instagram} ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec dk faq" aria-labelledby="h-faq">
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap">
+        <h2 class="h2" id="h-faq" style="margin-bottom:8px">{c.faq.h2}</h2>
+        {c.faq.items.map((q) => (
+          <details>
+            <summary><span>{q.q}</span><span aria-hidden="true">+</span></summary>
+            <p>{q.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <section class="sec lt" id="apply" aria-labelledby="h-apply">
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap apply">
+        <div class="apply__intro">
+          <div class="kicker">{c.apply.kicker}</div>
+          <h2 id="h-apply">{c.apply.h2}</h2>
+          <p>{c.apply.lead}</p>
+          <p class="apply__mk marker">{c.apply.marker}</p>
+        </div>
+        <div class="coupon-form">
+          <span class="coupon-form__sc" aria-hidden="true">✂</span>
+          <div class="sent" role="status" hidden data-sent tabindex="-1">
+            <div class="sent__stamp">{c.apply.sent.stamp}</div>
+            <p class="sent__line" data-sent-line></p>
+            <p data-sent-reply></p>
+            <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
+          </div>
+          <form novalidate data-form data-endpoint={endpoint}>
+            <label class="fl" for="f-name">{c.apply.name}
+              <input class="in" id="f-name" name="name" autocomplete="name" required aria-describedby="e-name" />
+              <span class="err" id="e-name" aria-live="polite"></span>
+            </label>
+            <fieldset>
+              <legend>{c.apply.contactVia}</legend>
+              <div class="methods">
+                {c.apply.methods.map((m, i) => (
+                  <label><input type="radio" name="method" value={m} checked={i === 0} /><span>{m}</span></label>
+                ))}
+              </div>
+              <input class="in" id="f-contact" name="contact" placeholder={c.apply.placeholders.Telegram} aria-label="Telegram contact" required aria-describedby="e-contact" style="margin-top:4px" />
+              <span class="err" id="e-contact" aria-live="polite"></span>
+            </fieldset>
+            <label class="fl" for="f-level">{c.apply.level}
+              <select class="in" id="f-level" name="level" required aria-describedby="e-level">
+                <option value="">{c.apply.levelPick}</option>
+                {c.apply.levels.map(([v, t]) => <option value={v}>{t}</option>)}
+              </select>
+              <span class="err" id="e-level" aria-live="polite"></span>
+            </label>
+            <label class="fl" for="f-msg">{c.apply.message} <small>{c.apply.optional}</small>
+              <textarea class="in" id="f-msg" name="msg" rows="4" placeholder={c.apply.messagePh}></textarea>
+            </label>
+            <span class="err" data-net aria-live="polite"></span>
+            <button class="submit" type="submit">{c.apply.submit}</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sec dk">
+    <div class="wrap">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
+        <div class="foot__c">Instagram <a href={rider.instagramUrl} target="_blank" rel="noopener">@{rider.instagram}</a><br />{c.footer.contacts}</div>
+      </div>
+      <div class="foot__r">{c.footer.issue}<br /><a href="/">{c.footer.back}</a></div>
+    </div>
+  </footer>
+</div>
+<script>
+  import '../scripts/camp';
+</script>
+</Base>

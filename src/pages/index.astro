@@ -1,0 +1,386 @@
+---
+import Base from '../layouts/Base.astro';
+import Stage from '../components/Stage.astro';
+import { Image, Picture, getImage } from 'astro:assets';
+import '../styles/magazine.css';
+import studio from '../assets/photos/ilia-studio.jpg';
+import night from '../assets/photos/ilia-night.jpg';
+import smile from '../assets/photos/ilia-smile.jpg';
+import b1t from '../assets/boards/board-1-top.png';
+import b1b from '../assets/boards/board-1-base.png';
+import b2t from '../assets/boards/board-2-top.png';
+import b2b from '../assets/boards/board-2-base.png';
+import b3t from '../assets/boards/board-3-top.png';
+import b3b from '../assets/boards/board-3-base.png';
+import { rider, camp, issue, pages, ui, cover, stats, gallery, training, backCover, seo } from '../content/site';
+
+const photos = { studio, night, smile };
+const boardImgs: Record<string, ImageMetadata> = {
+  'board-1-top': b1t, 'board-1-base': b1b, 'board-2-top': b2t,
+  'board-2-base': b2b, 'board-3-top': b3t, 'board-3-base': b3b,
+};
+// full-size versions for the lightbox
+const big = Object.fromEntries(await Promise.all(
+  Object.entries(photos).map(async ([k, v]) => [k, (await getImage({ src: v, width: 1280, format: 'webp' })).src]),
+));
+
+const site = Astro.site!;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org', '@type': 'Person', name: rider.name,
+    jobTitle: 'Professional snowboarder and freestyle coach',
+    url: new URL('/', site).href, sameAs: [rider.instagramUrl],
+    award: rider.titles, knowsAbout: ['Snowboarding', 'Freestyle snowboarding', 'Snowboard coaching'],
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'Event', name: `${camp.full} — ${camp.kind}`,
+    startDate: camp.startDate, endDate: camp.endDate,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+    location: { '@type': 'Place', name: `${camp.place}, ${camp.country}`, address: { '@type': 'PostalAddress', addressLocality: camp.place, addressCountry: 'IT' } },
+    organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
+    performer: { '@type': 'Person', name: rider.name },
+    description: camp.pitch, url: new URL('/camp', site).href,
+  },
+];
+// boards are height-driven (see .board__drop): width = height × 205/1112
+const boardSizes = '(max-width: 700px) calc(min(36svh, 62vw) * 0.184), calc(min(62svh, max(36svh, 44vw)) * 0.184)';
+const starD = 'M30 2 L 35 22 L 56 14 L 40 30 L 58 44 L 36 40 L 30 58 L 24 40 L 2 46 L 20 30 L 4 14 L 25 22 Z';
+const boxD = 'M2 5 L 98 2 L 97 97 L 3 95 Z M5 1 L 99 7 L 95 99 L 1 93 L 4 3';
+const circleD = 'M52 6 C 90 4, 99 32, 97 56 C 95 90, 22 98, 7 70 C -3 42, 20 8, 60 10';
+const dblD = 'M1 10 C 25 3, 55 15, 99 5 M6 14 C 40 9, 70 13, 94 10';
+---
+<Base title={seo.title} description={seo.description} path="/" jsonLd={jsonLd}>
+<div class="mag" data-mag>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0">
+    <defs>
+      <filter id="jit" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="5" result="j" /><feDisplacementMap in="SourceGraphic" in2="j" scale="3.5" /></filter>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#main" data-skip>{ui.skip}</a>
+  <div class="sr-only" aria-live="polite" data-live></div>
+
+  <header class="masthead" data-chrome>
+    <a class="masthead__brand" href="#cover" data-go="0">
+      <!-- TODO(figma): swap for bas-camp-logo (white) once the export is available -->
+      <span class="logo-box">BAS<span aria-hidden="true">★</span><span class="sr-only"> </span>CAMP</span>
+      <span class="masthead__issue">{issue.label[0]}<br />{issue.label[1]}</span>
+      <span class="sr-only"> — {issue.logoAlt.replace('BAS CAMP — ', '')}</span>
+    </a>
+    <div class="masthead__right">
+      <div class="counter" aria-hidden="true">
+        <!-- TODO(figma): mascot-snowboard replaces this star -->
+        <span class="counter__mascot" data-mascot>✶</span><span data-counter>01/05</span>
+      </div>
+      <button class="btn-line" type="button" aria-haspopup="dialog" aria-controls="menu" data-menu-open>{ui.menu}</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ======================= 01 COVER ======================= -->
+    <section class="page dark is-active" id="cover" data-page="0" data-tone="D" aria-labelledby="h-cover">
+      <div class="cover__giant" aria-hidden="true">{cover.giant}</div>
+      <div class="cover__photo-wrap">
+        <div class="cover__photo" data-anchor="cover-photo">
+          <Picture src={studio} alt={cover.photoAlt} formats={['avif', 'webp']} widths={[480, 853, 1280]} sizes="min(60svh, 113vw)" loading="eager" fetchpriority="high" />
+          <svg class="marks" aria-hidden="true" viewBox="0 0 853 1280" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path data-draw d="M352 64 C 330 22, 560 -4, 760 20 C 860 34, 830 84, 640 94 C 470 102, 330 90, 350 52 C 362 32, 450 18, 540 16" stroke="#FF94E3" stroke-width="7" />
+            <path data-draw d="M470 688 C 455 636, 356 640, 338 702 C 320 762, 380 816, 442 802 C 504 788, 514 718, 468 678 C 448 660, 408 662, 390 674" stroke="#BA1422" stroke-width="8" />
+            <path data-draw d="M70 500 C 120 410, 220 352, 334 330 M298 300 L 338 328 L 300 356" stroke="#FF94E3" stroke-width="7" />
+            <path data-draw d="M800 230 L 846 262 L 800 296 L 846 330 L 800 364 M830 228 L 876 262 L 830 296 L 876 330 L 830 364" stroke="#FF94E3" stroke-width="6" />
+            <path data-draw d="M110 760 L 270 784 M90 822 L 262 832 M120 890 L 270 874" stroke="#BA1422" stroke-width="7" />
+            <path data-draw d="M690 990 L 750 1050 M748 988 L 690 1052 M770 1060 L 812 1102 M810 1058 L 772 1104" stroke="#BA1422" stroke-width="8" />
+          </svg>
+          <div class="cover__note marker" data-ink aria-hidden="true">{cover.note}</div>
+        </div>
+      </div>
+      <div class="halftone" aria-hidden="true"></div>
+      <div class="cover__top">
+        <ul class="coverlines">
+          <li><span class="spin">{cover.coverLines.spin}</span><span>{cover.coverLines.spinLabel}</span></li>
+          <li>{cover.coverLines.issue}</li>
+          <li>{cover.coverLines.champ}
+            <span class="star" aria-hidden="true"><svg class="mk" style="inset:0;width:100%;height:100%" viewBox="0 0 60 60" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} stroke="#FF94E3" stroke-width="5" /></svg></span>
+          </li>
+          <li><span class="hl">{cover.coverLines.inside}</span></li>
+        </ul>
+        <div class="issuebox-wrap">
+          <div class="issuebox">{issue.box[0]}<br />{issue.box[1]}<br />{issue.box[2]}</div>
+          <div class="barcode" aria-hidden="true"><div class="barcode__bars"></div><div class="barcode__num">{issue.barcode}</div></div>
+        </div>
+      </div>
+      <div class="cover__bottom">
+        <div class="cover__name">
+          <h1 class="cover__h1" id="h-cover" tabindex="-1"><span>{cover.h1[0]}<br />{cover.h1[1]}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-12px;width:100%;height:16px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#BA1422" stroke-width="4" /></svg></h1>
+          <p class="chip">{cover.tag}</p>
+        </div>
+        <p class="cover__intro">{cover.intro}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="2.5" /></svg></p>
+      </div>
+      <div class="wear wear--age-D" data-age="D" aria-hidden="true"></div>
+      <div class="wear wear--crease" data-crease aria-hidden="true"></div>
+      <div class="wear wear--grain-D" data-grain="D" aria-hidden="true"></div>
+      <div class="wear wear--handled is-D" data-handled aria-hidden="true"></div>
+    </section>
+
+    <!-- ======================= 02 CAREER STATS ======================= -->
+    <section class="page paper" id="stats" data-page="1" data-tone="L" aria-labelledby="h-stats">
+      <div class="staple" style="top:28%" aria-hidden="true"></div>
+      <div class="staple" style="top:72%" aria-hidden="true"></div>
+      <div class="scroller" data-scroll>
+        <div class="stats__wrap">
+          <div class="stats__left">
+            <div class="stats__head">
+              <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-10px;top:-10px;width:calc(var(--pw) + 20px);height:calc(var(--pw) + 20px);z-index:2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M3 6 L 97 2 L 98 96 L 2 98 Z M6 2 L 99 8 L 94 99 L 1 92 L 5 4" stroke="#BA1422" stroke-width="3" /></svg>
+              <div class="portrait">
+                <Image src={smile} alt={stats.portraitAlt} widths={[240, 480]} sizes="clamp(104px, 16vw, 240px)" format="webp" />
+                <div class="portrait__dots" aria-hidden="true"></div>
+              </div>
+              <div class="stats__title">
+                <svg class="mk" aria-hidden="true" viewBox="0 0 80 50" style="right:-6%;top:-34px;width:64px;height:44px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24" stroke="#BA1422" stroke-width="3" /></svg>
+                <div class="marker" data-ink aria-hidden="true" style="position:absolute;right:calc(-6% + 66px);top:-40px;transform:rotate(-8deg);font-size:clamp(15px,1.5vw,22px);color:#BA1422;white-space:nowrap">{stats.note}</div>
+                <h2 class="stats__h2" id="h-stats" tabindex="-1">{stats.h2[0]}<br />{stats.h2[1]}<span class="sr-only"> — {stats.sub}</span></h2>
+                <div class="rule5" aria-hidden="true"></div>
+                <div class="stats__sub" aria-hidden="true">{stats.sub}</div>
+                <div class="stats__meta">{stats.meta}</div>
+              </div>
+            </div>
+            <ul class="badges" role="list" style="list-style:none;margin:0;padding:0">
+              <li class="badge">
+                <div class="b-big">{stats.badges.champ.big}</div>
+                <div class="b-wide">{stats.badges.champ.small[0]}<br />{stats.badges.champ.small[1]}</div>
+                <svg class="mk" aria-hidden="true" viewBox="0 0 40 30" style="right:2%;top:-14%;width:clamp(22px,2.4vw,36px)" fill="none" stroke="#BA1422" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M4 26 L 6 6 L 14 18 L 20 2 L 26 18 L 34 6 L 36 26 Z" /></svg>
+              </li>
+              <li class="badge">
+                <div class="b-it">{stats.badges.europa.top}</div>
+                <div class="b-mk marker">{stats.badges.europa.marker} <span data-ink aria-hidden="true" style="display:inline-block">{stats.badges.europa.ink}</span></div>
+              </li>
+              <li class="badge">
+                <div class="b-cond">{stats.badges.junior.top}</div>
+                <div class="b-tiny">{stats.badges.junior.mid}</div>
+                <div class="b-low">{stats.badges.junior.low}</div>
+              </li>
+              <li class="badge">
+                <div class="b-label">{stats.badges.spin.label}</div>
+                <div class="b-num">{stats.badges.spin.value}</div>
+                <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-12% -4%;width:108%;height:124%" fill="none" stroke="#BA1422" stroke-width="2.6" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg>
+              </li>
+              <li class="badge">
+                <div class="b-label">{stats.badges.trick.label}</div>
+                <div class="b-trick marker">{stats.badges.trick.value}</div>
+                <svg class="mk mk-nf" aria-hidden="true" viewBox="0 0 100 14" preserveAspectRatio="none" style="left:8%;bottom:-10px;width:84%;height:12px" fill="none" stroke="#BA1422" stroke-width="2.4" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 10 C 30 2, 60 14, 98 4 M10 13 C 40 8, 70 12, 92 9" /></svg>
+              </li>
+              <li class="badge">
+                <div class="b-label" style="margin-bottom:4px">{stats.badges.stance.label}</div>
+                <div class="b-stance">{stats.badges.stance.value}<svg class="mk" aria-hidden="true" viewBox="0 0 20 40" style="right:-26px;top:-6px;width:20px;height:40px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M2 2 L 18 10 L 2 18 L 18 26 L 2 34" stroke="#BA1422" stroke-width="2.5" /></svg></div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="boards">
+            <div class="boards__row">
+              <svg class="mk" aria-hidden="true" viewBox="0 0 100 40" preserveAspectRatio="none" style="left:8%;top:-56px;width:88%;height:44px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 38 C 20 4, 70 -6, 96 26 M89 18 L 97 27 L 99 15" stroke="#BA1422" stroke-width="3" /><path data-draw vector-effect="non-scaling-stroke" d="M30 26 L 34 32 M50 20 L 52 27 M70 22 L 70 29" stroke="#BA1422" stroke-width="2" /></svg>
+              <div class="marker" data-ink aria-hidden="true" style="position:absolute;right:-6px;top:-84px;transform:rotate(6deg);font-size:clamp(16px,1.6vw,24px);color:#BA1422;white-space:nowrap">{stats.notes.pro}</div>
+              {stats.boards.map((b, i) => (
+                <figure class="board">
+                  {i === 0 && <svg class="mk" aria-hidden="true" viewBox="0 0 60 40" style="top:-34px;left:50%;width:46px;margin-left:-23px" fill="none" stroke="#BA1422" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 34 L 9 8 L 21 24 L 30 4 L 39 24 L 51 8 L 54 34 Z M8 38 L 52 37" /></svg>}
+                  <div class="board__tag">{b.tag && <span>{b.tag}</span>}</div>
+                  <div class="board__drop" data-drop>
+                    <div class="board__card" data-spin={i} role="button" tabindex="0" aria-label={b.spinLabel}>
+                      <div class="board__face"><Image src={boardImgs[b.top]} alt={b.alt} format="webp" loading="lazy" widths={[110, boardImgs[b.top].width]} sizes={boardSizes} /></div>
+                      <div class="board__edge" aria-hidden="true"></div>
+                      <div class="board__face board__face--base"><Image src={boardImgs[b.base]} alt="" format="webp" loading="lazy" widths={[110, boardImgs[b.base].width]} sizes={boardSizes} /></div>
+                    </div>
+                  </div>
+                  <div class="board__shadow" aria-hidden="true"></div>
+                  <figcaption><div class="board__big">{b.big}</div><div class="board__small">{b.small}</div></figcaption>
+                  {i === 0 && <div class="marker" data-ink aria-hidden="true" style="position:absolute;right:-30px;top:-40px;transform:rotate(12deg);font-size:clamp(18px,1.8vw,26px);color:#BA1422">{stats.notes.one}</div>}
+                  {i === 0 && <div class="board__egg marker" data-egg aria-hidden="true">{stats.notes.egg}</div>}
+                </figure>
+              ))}
+            </div>
+            <div class="boards__hint">{stats.hint}</div>
+          </div>
+        </div>
+      </div>
+      <div class="wear wear--age-L" data-age="L" aria-hidden="true"></div>
+      <div class="wear wear--crease" data-crease aria-hidden="true"></div>
+      <div class="wear wear--grain-L" data-grain="L" aria-hidden="true"></div>
+      <div class="wear wear--handled is-L" data-handled aria-hidden="true"></div>
+    </section>
+
+    <!-- ======================= 03 GALLERY ======================= -->
+    <section class="page paper" id="gallery" data-page="2" data-tone="L" aria-labelledby="h-gallery">
+      <div class="staple" style="top:28%" aria-hidden="true"></div>
+      <div class="staple" style="top:72%" aria-hidden="true"></div>
+      <div class="scroller gallery__scroll" data-scroll>
+        <div class="gallery__inner">
+          <div class="gallery__head">
+            <h2 class="gallery__h2" id="h-gallery" tabindex="-1">{gallery.h2}</h2>
+            <div class="gallery__meta label"><span>{gallery.meta}</span><span>{gallery.todo}</span></div>
+            <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:clamp(150px,22vw,300px);top:-16px;width:clamp(48px,5vw,72px);height:clamp(48px,5vw,72px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M34 4 L 30 96 M66 2 L 70 98 M4 34 L 96 30 M2 66 L 98 70" stroke="#BA1422" stroke-width="4" /><path data-draw d="M10 10 L 24 24 M24 10 L 10 24 M82 44 C 94 40, 96 58, 84 58 C 74 58, 72 46, 82 44 M42 76 L 58 92 M58 76 L 42 92" stroke="#BA1422" stroke-width="4" /></svg>
+            <div class="gallery__note marker" data-ink aria-hidden="true">{gallery.note}</div>
+          </div>
+          <div class="grid">
+            {gallery.tiles.map((t, i) => (
+              <button class="tile" type="button" style={`--rot:${t.rot}`} data-tile={i}
+                data-full={t.photo ? big[t.photo] : ''} data-cap={t.cap} data-f={t.f} data-kind={t.kind}
+                data-video={t.video?.src ?? ''} aria-label={gallery.open(t.f, t.cap)}>
+                <div class="tile__tape" aria-hidden="true"></div>
+                <div class="tile__img">
+                  {t.photo && <>
+                    <Image src={photos[t.photo]} alt="" widths={[300, 600]} sizes="(max-width: 600px) 45vw, 22vw" format="webp" loading="lazy"
+                      style={`object-position:${t.pos ?? '50% 50%'};transform:scale(${t.zoom ?? 1});--br:${t.photo === 'night' ? 2.1 : 1.05}`} />
+                    <div class="tile__dots" aria-hidden="true"></div>
+                  </>}
+                  {t.video && <>
+                    {t.video.src && <video muted loop playsinline preload="none" poster={t.video.poster} data-clip src={t.video.src}></video>}
+                    <div class="vhs" aria-hidden="true">
+                      <div class="vhs__top"><span class="vhs__rec">{gallery.rec}</span><span>{gallery.vhs}</span></div>
+                      <div class="vhs__play"></div>
+                      <div class="vhs__cap">{t.cap}</div>
+                    </div>
+                  </>}
+                </div>
+                <div class="tile__foot" aria-hidden="true"><span>{t.f} ▸</span><span>{t.kind}</span></div>
+                {t.mark === 'frame' && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px)" fill="none" stroke="#BA1422" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 4 L 98 2 L 97 98 L 3 96 Z M5 1 L 99 6 L 95 99 L 1 94 L 4 3" /></svg>}
+                {t.mark === 'x' && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-10px;top:-12px;width:46px;height:46px" fill="none" stroke="#BA1422" stroke-width="9" stroke-linecap="round"><path data-draw d="M18 16 L 84 86 M82 14 L 18 88" /></svg>}
+                {t.mark === 'star' && <svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="left:-14px;bottom:18px;width:40px;height:40px;z-index:3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} stroke="#BA1422" stroke-width="4" /></svg>}
+                {t.mark === 'halo' && <svg class="mk" aria-hidden="true" viewBox="0 0 100 30" style="left:22%;top:2%;width:56%" fill="none" stroke="#BA1422" stroke-width="3" stroke-linecap="round"><path data-draw d="M8 18 C 6 4, 90 0, 94 12 C 98 26, 10 30, 6 16 C 6 10, 30 6, 52 6" /></svg>}
+                {t.note && <div class="tile__note marker" data-ink aria-hidden="true">{t.note}</div>}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="wear wear--age-L" data-age="L" aria-hidden="true"></div>
+      <div class="wear wear--crease" data-crease aria-hidden="true"></div>
+      <div class="wear wear--grain-L" data-grain="L" aria-hidden="true"></div>
+      <div class="wear wear--handled is-L" data-handled aria-hidden="true"></div>
+    </section>
+
+    <!-- ======================= 04 TRAINING ======================= -->
+    <section class="page paper" id="training" data-page="3" data-tone="L" aria-labelledby="h-training">
+      <div class="staple" style="top:28%" aria-hidden="true"></div>
+      <div class="staple" style="top:72%" aria-hidden="true"></div>
+      <div class="scroller" data-scroll>
+        <div class="training__wrap">
+          <div class="training__left">
+            <div>
+              <div class="label" style="margin-bottom:6px">{training.label}</div>
+              <h2 class="training__h2" id="h-training" tabindex="-1">{training.h2}<svg class="mk" aria-hidden="true" viewBox="0 0 100 18" preserveAspectRatio="none" style="left:0;bottom:-14px;width:100%;height:18px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M1 12 C 30 2, 60 16, 99 6 M4 16 C 40 10, 76 15, 96 12" stroke="#BA1422" stroke-width="4" /></svg><svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="right:-.4em;top:-.12em;width:.32em;height:.32em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} stroke="#BA1422" stroke-width="5" /></svg></h2>
+            </div>
+            <p class="training__intro">{training.intro}</p>
+            <div class="formats">
+              {training.formats.map((f) => (
+                <article class:list={['format', { 'format--hot': f.hot }]}>
+                  {f.hot && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-7px;width:calc(100% + 14px);height:calc(100% + 14px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M3 5 L 97 2 L 98 97 L 2 96 Z M6 2 L 99 7 L 95 99 L 1 93 L 4 4" stroke="#BA1422" stroke-width="2.5" /></svg>}
+                  <h3>{f.h}</h3>
+                  <p>{f.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div class="tour">
+            <div class="tour__head"><span>{training.season}</span><span class="label">{training.tour}</span></div>
+            {training.dates.map((d) => (
+              <div class:list={['tour__row', { 'tour__row--muted': !d.hot }]}>
+                <div class="tour__when">{d.when[0]}<br />{d.when[1]}
+                  {d.hot && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-18% -16%;width:132%;height:136%" fill="none" stroke="#BA1422" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M50 4 C 92 2, 99 34, 97 58 C 94 92, 18 98, 6 68 C -4 40, 18 6, 62 8 C 72 9, 80 12, 84 16" /></svg>}
+                </div>
+                <div>
+                  <div class="tour__what">{d.what}</div>
+                  <div class="tour__where">{d.where} {d.ink && <span class="marker" data-ink aria-hidden="true" style="display:inline-block;font-size:1.5em;color:#BA1422;transform:rotate(-8deg)">{d.ink}</span>}</div>
+                </div>
+                {d.stamp && <div class="stamp">{d.stamp}</div>}
+              </div>
+            ))}
+            <div class="tour__foot">
+              <span class="marker" data-ink aria-hidden="true">{training.footNote}</span>
+              <svg aria-hidden="true" viewBox="0 0 80 50" style="width:64px;overflow:visible;filter:url(#jit)" fill="none" stroke="#BA1422" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M4 10 C 24 6, 50 14, 62 40 M48 34 L 63 42 L 70 26" /></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wear wear--age-L" data-age="L" aria-hidden="true"></div>
+      <div class="wear wear--crease" data-crease aria-hidden="true"></div>
+      <div class="wear wear--grain-L" data-grain="L" aria-hidden="true"></div>
+      <div class="wear wear--handled is-L" data-handled aria-hidden="true"></div>
+    </section>
+
+    <!-- ======================= 05 BACK COVER ======================= -->
+    <section class="page dark" id="camp-ad" data-page="4" data-tone="D" aria-labelledby="h-camp-ad">
+      <!-- TODO: mountain shot for the camp ad -->
+      <div class="bc__photo" aria-hidden="true">
+        <Picture src={night} alt="" formats={['avif', 'webp']} widths={[480, 900, 1280]} sizes="(orientation: portrait) 70vh, 60vw" loading="lazy" />
+      </div>
+      <div class="bc__fade" aria-hidden="true"></div>
+      <div class="halftone" aria-hidden="true"></div>
+      <div class="bc__inner">
+        <div class="bc__logo">
+          <!-- TODO(figma): replace with bas-camp-splatter "Italy 2026" (265:18813) -->
+          <div class="bc__splat" aria-hidden="true"></div>
+          <div class="bc__box" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
+          <div class="bc__tagnote marker" aria-hidden="true">{backCover.note}</div>
+          <svg class="mk" aria-hidden="true" viewBox="0 0 80 60" style="left:calc(100% + 70px);top:-8px;width:70px;height:56px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 6 L 30 30 M30 6 L 6 30 M44 24 L 64 44 M64 24 L 44 44" stroke="#BA1422" stroke-width="5" /><path data-draw d="M4 54 L 76 50" stroke="#FF94E3" stroke-width="3" /></svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:clamp(14px,2.6svh,26px)">
+          <h2 class="bc__h2" id="h-camp-ad" tabindex="-1">{backCover.h2[0]}<br /><span class="u">{backCover.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.04em;width:100%;height:.16em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#FF94E3" stroke-width="5" /></svg></span><br /><span class="pink">{backCover.h2[2]}<svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="right:-.62em;top:-.12em;width:.5em;height:.5em" fill="none" stroke="#FF94E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} /></svg></span></h2>
+          <div class="bc__row">
+            <div class="bc__col">
+              <p class="bc__small">{backCover.small}</p>
+              <div class="bc__info">
+                <div>{backCover.info[0][0]}<br />{backCover.info[0][1]}</div>
+                <div>{backCover.info[1][0]}<br />{backCover.info[1][1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-10px -12px;width:calc(100% + 24px);height:calc(100% + 20px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} stroke="#FF94E3" stroke-width="3" /></svg></div>
+              </div>
+            </div>
+            <a class="coupon" href="/camp">
+              <span class="coupon__scissors" aria-hidden="true">✂</span>
+              <svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="right:18px;top:-74px;width:56px;height:58px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M10 4 C 40 10, 52 28, 44 52 M32 42 L 44 54 L 54 40" stroke="#FF94E3" stroke-width="4" /></svg>
+              <span class="coupon__note marker" data-ink aria-hidden="true">{backCover.coupon.note}</span>
+              <span class="coupon__top">{backCover.coupon.top}</span>
+              <span class="coupon__cta">{backCover.coupon.cta}</span>
+              <span class="coupon__bottom">{backCover.coupon.bottom}<b>{backCover.coupon.hot}</b></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="wear wear--age-D" data-age="D" aria-hidden="true"></div>
+      <div class="wear wear--crease" data-crease aria-hidden="true"></div>
+      <div class="wear wear--grain-D" data-grain="D" aria-hidden="true"></div>
+      <div class="wear wear--handled is-D" data-handled aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <Stage />
+  <canvas class="paper-canvas" aria-hidden="true" data-paper-canvas></canvas>
+
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Contents" hidden data-menu>
+    <div class="menu__head">
+      <span class="menu__kicker">{ui.contents}</span>
+      <button class="btn-line" type="button" data-menu-close>{ui.close}</button>
+    </div>
+    <nav aria-label={ui.pagesNav}>
+      <ol>
+        {pages.map((p, i) => (
+          <li><a class="menu__item" href={`#${p.id}`} data-go={i} aria-current={i === 0 ? 'page' : undefined}><span class="menu__num">{p.num}</span><span class="menu__title">{p.title}</span></a></li>
+        ))}
+      </ol>
+    </nav>
+    <a class="menu__insert" href="/camp">{ui.insertLink}</a>
+  </div>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label={gallery.viewer} hidden data-lightbox>
+    <button class="btn-line lightbox__close" type="button" data-lb-close aria-label={gallery.closeViewer}>{ui.close}</button>
+    <div class="lightbox__stage" data-lb-stage></div>
+    <div class="lightbox__bar">
+      <button class="btn-line" type="button" data-lb-prev aria-label={gallery.prev}>←</button>
+      <p class="lightbox__cap" data-lb-cap aria-live="polite"></p>
+      <button class="btn-line" type="button" data-lb-next aria-label={gallery.next}>→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/magazine';
+</script>
+</Base>

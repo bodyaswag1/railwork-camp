@@ -1,0 +1,12 @@
+# references and local tooling never ship
+design/
+assets-src/
+prompts/
+shots/
+test-results/
+playwright-report/
+tests/
+scripts/
+node_modules/
+dist/
+.astro/
