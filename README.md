@@ -1,8 +1,24 @@
-# Ilia Baskakov — Issue 01, Winter 26/27
+# Ilia Baskakov · BAS
 
-A magazine landing page for Ilia Baskakov (pro snowboarder, freestyle coach): five full-screen pages, one
-gesture = one page, with a WebGL paper-crumple transition between them. Plus `/camp`, a scrolling pull-out
-insert for **BAS CAMP Italy 2026** (Valdidentro, December 23–27).
+The home page is an evergreen magazine for Ilia Baskakov, professional snowboarder and coach, and the BAS
+ecosystem: eight full-screen pages, one gesture = one page, with a WebGL paper-crumple transition between them.
+They answer, in order: who Ilia is, why he's an elite rider, whether he can teach, the proof (student
+progress), how to train with him, what BAS life is, and what to do next.
+
+| # | Page (`id`) | What it does |
+| --- | --- | --- |
+| 01 | Cover (`cover`) | Name, "Ride better.", 3× National Champion · Europa Cup podiums · 20 years riding, 1620°, the two CTAs |
+| 02 | The rider (`ilia`) | "20 years on snow." — a swipeable strip of proof points (1620°, 3×, Europa Cup, 20, 3 pro models, Junior World) + stance and favourite trick |
+| 03 | The coach (`coaching`) | 20 years riding / 3 years coaching, the coaching loop (watch → understand → adjust → repeat) |
+| 04 | Student progress (`progress`) | Three student stories: vertical video, starting point, what they worked on, result, quote |
+| 05 | Train with Ilia (`train`) | Private coaching (from €150/day, opens an Instagram DM) or BAS CAMP (→ `/camp`) |
+| 06 | BAS life (`life`) | "Come for the riding. Stay for the people." — a photo strip, photos open full screen |
+| 07 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, Snowboard + Freeski, 12 spots, €800 |
+| 08 | Your next level (`next-level`) | The two paths again, Instagram, footer |
+
+The masthead keeps the brand, the page counter, the nav (Ilia · Coaching · Camp · Instagram) and the
+**Join BAS CAMP** CTA on every page. `/camp` is the dedicated camp page: everything about BAS CAMP Italy 2026
+(Valdidentro, December 23–27) and the application.
 
 Astro + TypeScript, static output. GSAP (+ DrawSVG) for timelines, Three.js only for the transition (loaded
 on the first pointer/touch/key/wheel), modern-screenshot for page snapshots.
@@ -26,27 +42,50 @@ and long cache headers for hashed assets and fonts.
 
 ## Edit copy
 
-Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TODO` and shown in `[brackets]`
-on the page so they're easy to spot: price, spots, program, accommodation, the Jan–Apr schedule, board
-seasons and lengths (and which board was the first pro model), Master of Sport, gallery photos and clips,
-contacts.
+Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TODO` there and shown in
+`[brackets]` on the page so they're easy to spot. Still to fill in (the `TODO` object at the top lists them):
 
-## Swap photos and boards
+- **Student progress (`progress.cases`):** the 3 student videos and, per rider, name, where they started,
+  what they worked on, the result and an optional quote. Nothing here is invented: until a case is real it
+  stays a placeholder.
+- **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (crew dinner, spa; `life.tiles`).
+- **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €800 includes, the second
+  coach, contacts.
 
-- **Photos:** `src/assets/photos/ilia-studio.jpg` (cover, camp hero), `ilia-night.jpg` (back cover),
-  `ilia-smile.jpg` (stats portrait, coach card). Replace the files, keep the names; Astro makes AVIF/WebP
-  srcsets at build time. Higher-resolution originals will look better (TODO in `site.ts`).
-- **Gallery:** `gallery.tiles` in `site.ts`. A photo tile uses `photo: 'studio' | 'night' | 'smile'` (add more
-  in `src/pages/index.astro` → `photos`). A clip tile takes `video: { src, poster }`; put the files in
-  `public/clips/` and use `/clips/…` paths. Clips are muted, looping, lazy, and only play while the gallery is
-  on screen.
-- **Boards:** `src/assets/boards/board-{1,2,3}-{top,base}.png`, transparent cut-outs, top sheet + base,
-  about 205×1112. Captions and labels are in `stats.boards` in `site.ts`.
+Content rules from the brief, kept in `site.ts`: the public BAS CAMP price is **€800** (no other price is
+shown); BAS CAMP takes **every level, complete beginners included**, with groups by snowboard / ski,
+experience and level; no invented achievements, results, reviews or quotes; no fake urgency.
+
+## Photos, videos, boards
+
+- **Photos** (`src/assets/photos/`): `ilia-bib-27.jpg` (cover), `ilia-air.jpg`, `ilia-rail.jpg`,
+  `ilia-night.jpg`, `ilia-studio.jpg` (rider strip, final page), `ilia-smile.jpg` (BAS life, camp coach card),
+  `life-glacier.jpg` (BAS life, camp option, next-camp poster, camp hero), `life-fisheye.jpg`,
+  `life-bandana.jpg` (BAS life). Replace a file, keep its name; Astro makes AVIF/WebP srcsets at build time.
+  The current files are compressed messenger copies (≤1280 px): originals will look sharper.
+- **Rider strip:** `riderPage.slides`. A slide is `photo` (a photo + a big stat), `number` (a giant figure on
+  red) or `boards` (the three pro-model bases).
+- **Student videos:** `progress.cases[n].video = { src, poster }`, vertical clips in `public/clips/` with
+  `/clips/…` paths. A case with a video gets a play button (muted, looping, plays inline, stops when the reader
+  turns the page); without one it shows a placeholder frame.
+- **BAS life:** `life.tiles` (`photo` + caption, or `todo: true` for a placeholder). Photos open in a viewer.
+- **Boards:** `src/assets/boards/board-{1,2,3}-{top,base}.png`, transparent cut-outs, about 205×1112.
+
+## Carousels
+
+The rider strip, the student stories and BAS life are horizontal carousels (`src/scripts/carousel.ts`):
+drag or swipe, ← → buttons and keys, trackpad sideways scroll. A sideways gesture moves the strip and never
+turns the page; a vertical one turns the page as anywhere else. The strip moves with a transform (not native
+scrolling) so the paper's copy of the page shows exactly the slide the reader is on. On desktop the student
+stories fit side by side and the carousel switches itself off.
 
 ## Apply form
 
-`/camp` POSTs JSON `{ name, method, contact, level, msg, camp }` to `PUBLIC_FORM_ENDPOINT` (set it in Vercel
-or `.env`; Formspree, a Telegram-bot webhook or similar). With no endpoint it simulates a successful send.
+`/camp` POSTs JSON `{ name, discipline, method, contact, level, msg, camp }` to `PUBLIC_FORM_ENDPOINT` (set it
+in Vercel or `.env`: Formspree, a Telegram-bot webhook or similar). **With no endpoint** (the current state)
+the form never pretends to send: it writes the application out and offers "Copy & open Instagram", which
+copies it and opens a DM with @baskakov74 (`ig.me/m/baskakov74`) to paste and send. Private coaching CTAs open
+that DM directly.
 
 ## Fonts
 
@@ -73,7 +112,8 @@ then the next page opens out of the same ball (`src/scripts/crumple/`).
   ends.
 - **snapshots.ts:** page textures, copied from the DOM with modern-screenshot. Copying is the most expensive
   thing the site does, so each page is copied just twice in its life: its pre-landing look (marks hidden,
-  boards waiting to drop, what an arriving page shows) and its landed look (what a leaving page shows). A page
+  carousels on their first slide: what an arriving page shows) and its landed look (what a leaving page
+  shows; a page whose carousel was moved gets a copy per slide, keyed on it). A page
   that scrolls inside is copied as its background plus its whole content column, so any scroll position is
   composed in a few milliseconds. The wear layers and left-over creases are drawn on with the CSS blend modes.
   One capture context is reused (fonts and photos are fetched and encoded once, in modern-screenshot's worker),
@@ -81,8 +121,9 @@ then the next page opens out of the same ball (`src/scripts/crumple/`).
   8 ms. Copies run in the background only while the reader is quiet and the page on screen has finished
   animating in. A touch, scroll or key press pauses a background copy, and it carries on from where it was
   once the reader has been still for 0.4 s. A page turn stops it, unless it's a copy that turn needs: then it
-  carries on as the turn's own. A copy of a page that changed meanwhile (a board spun, the lightbox opened) is
-  thrown away and redone. A copy that makes no progress for 9 s is given up and the capture context rebuilt,
+  carries on as the turn's own. A copy of a page that changed meanwhile (a slide moved, the photo viewer
+  opened) is thrown away and redone. Photos in carousel slides that are off screen aren't copied (their boxes
+  are, so the strip keeps its layout). A copy that makes no progress for 9 s is given up and the capture context rebuilt,
   so a stalled download can't block page turns. Never taken during a move. On a turn, the leaving page's
   entrance animations jump to their end so the screen matches its landed copy. `<video>` clips aren't
   copied (the paper shows the tile under them).
@@ -124,7 +165,7 @@ Run against `npm run preview` (or set `BASE_URL`):
 
 | Command | What it checks |
 | --- | --- |
-| `npm test` | Playwright: every page at 390×844 and 1440×900, plus reduced motion and `/camp`. Fails on sideways overflow, or if a page other than the gallery doesn't fit one screen. Then real page turns through WebGL, the no-WebGL CSS fallback and reduced motion. Screenshots go to `shots/`. |
+| `npm test` | Playwright: every page at 390×844 and 1440×900, plus reduced motion and `/camp`. Fails on sideways overflow, or if a page doesn't fit one screen at those sizes. Then real page turns through WebGL, the no-WebGL CSS fallback and reduced motion; phone gestures (swipes, carousels, the "back to the cover" button); the `/camp` DM hand-off; failure modes (workers, WebGL context loss, fonts late, back pressed twice); copies matching the page. Screenshots go to `shots/`. |
 | `npm run check:contrast` | Red text only on light paper, pink text only on dark, WCAG AA for every visible text element. |
 | `npm run compare` | Our unfold vs the reference GIF at the same relative times, side by side, with size and solidity → `design/compare.png`, `design/compare.json`. Needs the GIF frames in `design/ref/crumple-frames/` (from the handoff package; not in the repo). |
 | `npm run perf [-- url w h cpuThrottle mobile]` | Frame times during real page turns, e.g. `npm run perf -- http://localhost:4322 390 844 4 mobile`. |
@@ -137,22 +178,21 @@ Run against `npm run preview` (or set `BASE_URL`):
 
 Latest results (local preview, Windows, AMD integrated GPU):
 
-- **Lighthouse (mobile):** `/` Performance 93–94 (TBT 90 ms), Accessibility 100, Best Practices 100, SEO 100.
-  `/camp`: 98, 100, 100, 100.
-- **Move frame rate:** 57–60 fps at 1440×900; at 390×844 @3x with the CPU slowed 2× or 4×, median and p95
-  frame 16.7 ms in every move.
-- **Phone reader (390×844 @3x), wait from the swipe to the paper moving:** reading each page, CPU 2×: under
-  0.05 s for every turn; CPU 4×: ~0.5–0.6 s for the first two turns after load, then under 0.05 s. Swiping on
-  as soon as each page lands (no quiet moment to copy ahead): CPU 2× ~0.5–0.7 s for the first three turns,
-  CPU 4× ~1–1.3 s, then instant (every page has been copied by then). Scrolling inside pages has no dropped
-  frames.
-- **Hand-offs:** mean difference 0.5–1.2/255 (stats page at p = 0: 2.2/255, the 3D board cards rasterise
-  slightly differently from the flat copy); what remains is sub-pixel anti-aliasing.
+- **Lighthouse (mobile):** `/` Performance 93–98 (TBT 20–70 ms), Accessibility 100, Best Practices 100,
+  SEO 100. `/camp`: 99, 100, 100, 100.
+- **Move frame rate:** at 390×844 @3x with the CPU slowed 2× or 4×, median and p95 frame 16.7 ms in every move.
+- **Phone reader (390×844 @3x), wait from the swipe to the paper moving:** CPU 2×, reading or skimming: ~0.4–0.5 s
+  for the first turn after load, then instant for every turn. CPU 4×: ~2 s for a first turn made within ~4 s
+  of load (the engine is still starting and copying the first pages), then instant. Scrolling inside pages has
+  no dropped frames.
+- **Hand-offs:** mean difference 0.4–1.2/255 on every page at p = 0 and p = 1 (sub-pixel anti-aliasing); a
+  carousel left on slide 3: 0.9/255.
 - **Size curve vs GIF** (relative to the flat sheet): ours 0.19 / 0.32 / 0.40 / 0.44 / 0.55 / 1, GIF
   0.26 / 0.37 / 0.45 / 0.52 / 0.68 / 1. Our ball is sized to the spec's ¼–⅓ of the short side.
 
-Known trade-off: a page copy costs ~60–200 ms on desktop and ~0.3–0.7 s on a CPU slowed 4×, mostly in small
-slices, but the final rasterisation of each copy is one task (~0.1–0.3 s at 4×) that can't be split. That's
+Known trade-off: a page copy costs ~60–200 ms on desktop and ~0.5–0.7 s on a CPU slowed 4× (photos are a small
+part of it: the fixed cost is cloning the page and rasterising it with its fonts), mostly in small slices, but
+the final rasterisation of each copy is one task (~0.2–0.5 s at 4×) that can't be split. That's
 why copies wait for quiet moments and never run while the page on screen animates in: a turn made before a
 page could be copied in the background waits for its copies instead.
 
@@ -161,8 +201,8 @@ page could be copied in the background waits for its copies instead.
 - **Figma exports.** The Figma MCP hit the Starter plan's call limit. These are in from Figma:
   `punk_starburst`, `snowboard_jump_arrow`, `photo_frame`, `freestyle_snowboard`, `snowboard_carve_track`,
   `leopard_goggles_drips` (`src/assets/figma/`). Still to swap in (look for `TODO(figma)`):
-  `bas-camp-logo` (masthead), `mascot-snowboard` (page counter), `bas-camp-splatter` "Italy 2026" (back
-  cover, camp hero) and the rest of the marker set.
+  `bas-camp-logo` (masthead), `mascot-snowboard` (page counter), `bas-camp-splatter` "Italy 2026" (camp
+  hero) and the rest of the marker set.
 - **`design/`, `assets-src/`, `prompts/`** are references only and never ship. The third-party mood images
   (`assets-src/ref-*.jpg`) and the watermarked reference GIF and its frames are kept out of the repo; they're
   in the original handoff package.

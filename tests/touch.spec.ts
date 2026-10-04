@@ -3,17 +3,18 @@ import { test, expect, type Page } from '@playwright/test';
 
 test.use({ viewport: { width: 390, height: 664 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
 
-/** One finger drag from y0 to y1 in `steps` moves (~16 ms apart), like a real swipe. */
-async function swipe(page: Page, y0: number, y1: number, steps = 12, x = 200) {
+/** One finger drag from (x0, y0) to (x1, y1) in `steps` moves (~16 ms apart), like a real swipe. */
+async function drag(page: Page, x0: number, y0: number, x1: number, y1: number, steps = 12) {
   const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: y0 }] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: y0 }] });
   for (let i = 1; i <= steps; i++) {
-    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y0 + ((y1 - y0) * i) / steps }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x0 + ((x1 - x0) * i) / steps, y: y0 + ((y1 - y0) * i) / steps }] });
     await page.waitForTimeout(16);
   }
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await cdp.detach();
 }
+const swipe = (page: Page, y0: number, y1: number, steps = 12, x = 200) => drag(page, x, y0, x, y1, steps);
 const active = (page: Page) => page.evaluate(() => document.querySelector('.page.is-active')?.id);
 const settle = (page: Page) => page.waitForFunction(() => !document.querySelector('.stage.is-on, .paper-canvas.is-on'), null, { timeout: 15000 }).then(() => page.waitForTimeout(700));
 
@@ -23,45 +24,73 @@ test.describe('reduced motion (fast turns)', () => {
   test('one short swipe turns one page, both ways', async ({ page }) => {
     await page.goto('/#cover');
     await page.waitForLoadState('networkidle');
+    // the cover may scroll inside on a short phone: from its bottom, a swipe up turns the page
+    await page.locator('#cover [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await swipe(page, 500, 410); // 90 px
     await settle(page);
-    expect(await active(page)).toBe('stats');
-    // stats may scroll inside on a short phone: at its top, a swipe down goes back
+    expect(await active(page)).toBe('ilia');
+    // at the top of the next page, a swipe down goes back
     await swipe(page, 200, 300);
     await settle(page);
     expect(await active(page)).toBe('cover');
   });
 
   test('a long swipe never skips a page', async ({ page }) => {
-    await page.goto('/#cover');
+    await page.goto('/#ilia');
     await page.waitForLoadState('networkidle');
+    await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await swipe(page, 600, 60, 30);
     await settle(page);
-    expect(await active(page)).toBe('stats');
+    expect(await active(page)).toBe('coaching');
   });
 
   test('a page that scrolls inside: read to the end, keep pushing in the same swipe → next page', async ({ page }) => {
-    await page.goto('/#gallery');
+    await page.goto('/#train');
     await page.waitForLoadState('networkidle');
-    const scroller = page.locator('#gallery [data-scroll]');
+    const scroller = page.locator('#train [data-scroll]');
     const before = await scroller.evaluate((el) => el.scrollHeight - el.clientHeight);
-    expect(before).toBeGreaterThan(100); // it does scroll on a phone
+    expect(before).toBeGreaterThan(100); // it does scroll on a short phone
     // short swipe mid-page: just scrolls
     await swipe(page, 500, 380);
     await settle(page);
-    expect(await active(page)).toBe('gallery');
+    expect(await active(page)).toBe('train');
     // scroll to the bottom, then one more swipe turns the page
     await scroller.evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.waitForTimeout(400);
     await swipe(page, 500, 410);
     await settle(page);
-    expect(await active(page)).toBe('training');
+    expect(await active(page)).toBe('life');
+  });
+
+  test('a sideways swipe on a carousel moves the slides, never the page', async ({ page }) => {
+    await page.goto('/#ilia');
+    await page.waitForLoadState('networkidle');
+    const strip = page.locator('#ilia [data-car-viewport]');
+    const box = (await strip.boundingBox())!;
+    const y = box.y + Math.min(box.height / 2, 200);
+    await drag(page, 300, y, 80, y + 18); // mostly sideways, a little downward drift
+    await page.waitForTimeout(900);
+    expect(await active(page)).toBe('ilia');
+    expect(await page.locator('#ilia [data-car-count]').textContent()).toBe('02/' + (await page.locator('#ilia [data-car-count]').textContent())!.split('/')[1]);
+    // and back
+    await drag(page, 80, y, 320, y - 14);
+    await page.waitForTimeout(900);
+    expect((await page.locator('#ilia [data-car-count]').textContent())!.startsWith('01/')).toBe(true);
+    // a vertical swipe on the carousel still turns the page (from the bottom of the page)
+    await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    await page.waitForTimeout(300);
+    const b2 = (await strip.boundingBox())!;
+    const yy = Math.min(600, b2.y + b2.height - 20);
+    await swipe(page, yy, yy - 90, 12, 200);
+    await settle(page);
+    expect(await active(page)).toBe('coaching');
   });
 
   test('back cover → "back to the cover" button', async ({ page }) => {
-    await page.goto('/#camp-ad');
+    await page.goto('/#next-level');
     await page.waitForLoadState('networkidle');
     const btn = page.getByRole('link', { name: '↑ Back to the cover', exact: true });
+    await btn.scrollIntoViewIfNeeded();
     await expect(btn).toBeVisible();
     const box = (await btn.boundingBox())!;
     expect(box.y + box.height).toBeLessThanOrEqual(664);
@@ -85,8 +114,9 @@ test('phone swipes always use the paper crumple, and start promptly', async ({ p
     };
     requestAnimationFrame(loop);
   });
+  await page.locator('#cover [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
   await swipe(page, 500, 400);
-  await page.waitForFunction(() => document.querySelector('#stats.is-active'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#ilia.is-active'), null, { timeout: 15000 });
   const first = await page.evaluate(() => {
     const t = performance.getEntriesByName('turn:start')[0]?.startTime ?? 0;
     const m = performance.getEntriesByName('crumple:move-start')[0]?.startTime ?? 1e9;
@@ -95,11 +125,11 @@ test('phone swipes always use the paper crumple, and start promptly', async ({ p
   console.log(`first swipe: turn → paper moving ${first} ms`);
   expect(first).toBeLessThan(2000); // the engine may still be loading on the very first swipe
   await settle(page);
-  await page.waitForTimeout(4500); // the stats page settles, its neighbours get copied
-  await page.locator('#stats [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  await page.waitForTimeout(4500); // the page settles, its neighbours get copied
+  await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
   await page.waitForTimeout(400);
   await swipe(page, 500, 400);
-  await page.waitForFunction(() => document.querySelector('#gallery.is-active'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#coaching.is-active'), null, { timeout: 15000 });
   const second = await page.evaluate(() => {
     const t = performance.getEntriesByName('turn:start').at(-1)!.startTime;
     const m = performance.getEntriesByName('crumple:move-start').at(-1)!.startTime;
@@ -120,4 +150,24 @@ test('/camp "back to top"', async ({ page }) => {
   await btn.scrollIntoViewIfNeeded();
   await btn.tap();
   await page.waitForFunction(() => window.scrollY < 5, null, { timeout: 5000 });
+});
+
+test('/camp without a form backend: the application goes to Ilia as an Instagram DM, never a fake "sent"', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/camp');
+  await page.waitForLoadState('networkidle');
+  await page.fill('#f-name', 'Test Rider');
+  await page.check('input[name=discipline][value=Snowboard]', { force: true });
+  await page.fill('#f-contact', '@testrider');
+  await page.selectOption('#f-level', 'first');
+  await page.locator('form .submit').click({ force: true });
+  await expect(page.locator('[data-handoff]')).toBeVisible();
+  await expect(page.locator('[data-sent]')).toBeHidden();
+  const msg = await page.locator('[data-handoff-msg]').inputValue();
+  expect(msg).toContain('Name: Test Rider');
+  expect(msg).toContain('Level: Never been on snow');
+  const popup = page.waitForEvent('popup');
+  await page.locator('[data-handoff-copy]').click({ force: true });
+  expect((await popup).url()).toMatch(/ig\.me\/m\/baskakov74|instagram\.com/);
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Name: Test Rider');
 });

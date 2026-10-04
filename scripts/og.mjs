@@ -7,7 +7,8 @@ const browser = await chromium.launch({ args: ['--enable-gpu', '--ignore-gpu-blo
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 2 });
 await page.goto(`${base}/#cover`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(3500);
-await page.addStyleTag({ content: '.skip{display:none}' });
+// a share card, not a screenshot: no navigation chrome
+await page.addStyleTag({ content: '.skip,.masthead__nav,.masthead__menu,.counter,.cover__hint{display:none!important}' });
 const png = await page.screenshot();
 await sharp(png).resize(1200, 630).jpeg({ quality: 84, mozjpeg: true }).toFile('public/og.jpg');
 await browser.close();

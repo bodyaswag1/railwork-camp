@@ -34,9 +34,9 @@ for (const file of ['folds.worker', 'paper.worker', '_astro/worker.']) {
     await page.goto('/#cover');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3500);
-    for (const want of ['stats', 'cover']) {
+    for (const want of ['ilia', 'cover']) {
       await page.waitForTimeout(600); // past the post-landing lock that swallows trackpad inertia
-      await page.keyboard.press(want === 'stats' ? 'ArrowDown' : 'ArrowUp');
+      await page.keyboard.press(want === 'ilia' ? 'ArrowDown' : 'ArrowUp');
       await page.waitForFunction((w) => document.querySelector('.page.is-active')?.id === w && !document.querySelector('.stage.is-on, .paper-canvas.is-on, .page.is-next'), want, { timeout: 15000 });
     }
     expect(await activeId(page)).toBe('cover');
@@ -52,26 +52,29 @@ test('a lost WebGL context gives a fade, not a blank sheet, and the paper comes 
   await page.evaluate((x) => x!.loseContext(), ext);
   await page.evaluate(() => { (window as any).__canvasSeen = false; const l = () => { if (document.querySelector('.paper-canvas.is-on')) (window as any).__canvasSeen = true; requestAnimationFrame(l); }; requestAnimationFrame(l); });
   await page.keyboard.press('ArrowDown');
-  await page.waitForFunction(() => document.querySelector('#stats.is-active') && !document.querySelector('.page.is-moving, .page.is-next'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#ilia.is-active') && !document.querySelector('.page.is-moving, .page.is-next'), null, { timeout: 15000 });
   expect(await page.evaluate(() => (window as any).__canvasSeen)).toBe(false);
   await page.evaluate((x) => x!.restoreContext(), ext);
   await page.waitForTimeout(5500);
   await page.evaluate(() => { (window as any).__canvasSeen = false; });
-  await page.locator('#stats [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
   await page.waitForTimeout(400);
   await page.keyboard.press('ArrowDown');
-  await page.waitForFunction(() => document.querySelector('#gallery.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#coaching.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
   expect(await page.evaluate(() => (window as any).__canvasSeen)).toBe(true);
 });
 
-test('copies of the stats page show the boards the way the page does (base side after 1620 deg, no note)', async ({ page }) => {
-  await page.goto('/?debug#stats');
+test('a copy of a page shows its carousel on the slide the reader left it on', async ({ page }) => {
+  await page.goto('/?debug#ilia');
   await page.waitForFunction(() => !!(window as any).__crumple);
   await page.addStyleTag({ content: '.lil-gui{display:none!important}' });
-  await page.waitForTimeout(6000); // boards dropped and flipped back
-  await page.locator('[data-spin="0"]').tap(); // 1620 deg: ends on its base, and the note shows
-  await page.waitForTimeout(6500); // spin done, note faded out
-  const box = (await page.locator('.boards').boundingBox())!;
+  await page.waitForTimeout(3000); // marks drawn
+  await page.locator('#ilia [data-car-next]').click();
+  await page.waitForTimeout(700);
+  await page.locator('#ilia [data-car-next]').click();
+  await page.waitForTimeout(3000); // slide settled, the page copied again once quiet
+  expect(await page.locator('#ilia [data-car-count]').textContent()).toMatch(/^03\//);
+  const box = (await page.locator('#ilia [data-car-viewport]').boundingBox())!;
   const x = Math.max(0, box.x), y = Math.max(0, box.y);
   const clip = { x, y, width: Math.min(box.width, 390 - x), height: Math.min(box.height, 844 - y) };
   const dom = await page.screenshot({ clip });
@@ -79,7 +82,7 @@ test('copies of the stats page show the boards the way the page does (base side 
   expect(await page.evaluate(() => !!document.querySelector('.paper-canvas.is-on'))).toBe(true);
   const cv = await page.screenshot({ clip });
   const { mean } = await meanDiff(dom, cv);
-  console.log(`boards strip, canvas vs page: mean diff ${mean.toFixed(2)}`);
+  console.log(`carousel strip on slide 3, canvas vs page: mean diff ${mean.toFixed(2)}`);
   expect(mean).toBeLessThan(6);
 });
 
@@ -89,7 +92,7 @@ test('a swipe made before the fonts arrive still leaves a copy with the marks', 
   await page.goto('/?debug#cover');
   await page.waitForFunction(() => !!(window as any).__crumple, null, { timeout: 30000 });
   await page.keyboard.press('ArrowDown');
-  await page.waitForFunction(() => document.querySelector('#stats.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 30000 });
+  await page.waitForFunction(() => document.querySelector('#ilia.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 30000 });
   // the cached landed copy of the cover must show its marks: after a turn back, the canvas at p=0
   // matches the page
   await page.waitForTimeout(6000);
@@ -110,8 +113,8 @@ test('back pressed twice quickly ends with the page and the address bar agreeing
   await page.waitForLoadState('networkidle');
   await page.mouse.move(100, 100);
   await page.waitForTimeout(4000);
-  for (const t of ['stats', 'gallery']) {
-    if (t === 'gallery') await page.locator('#stats [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  for (const t of ['ilia', 'coaching']) {
+    if (t === 'coaching') await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.keyboard.press('ArrowDown');
     await page.waitForFunction((w) => document.querySelector(`#${w}.is-active`) && !document.querySelector('.paper-canvas.is-on'), t, { timeout: 15000 });
     await page.waitForTimeout(800);
@@ -129,7 +132,7 @@ test('reading and turning pages raises no unhandled errors', async ({ page }) =>
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(3500);
   await swipe(page);
-  await page.waitForFunction(() => document.querySelector('#stats.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#ilia.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
   // touch around while background copies run, so some give way
   for (let i = 0; i < 6; i++) { await page.waitForTimeout(900); await page.mouse.move(50 + i * 10, 300); await page.touchscreen.tap(20, 700); }
   await page.waitForTimeout(1500);

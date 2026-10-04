@@ -33,8 +33,9 @@ await page.evaluate(() => {
   requestAnimationFrame(loop);
 });
 
+const ids = await page.evaluate(() => Array.from(document.querySelectorAll('[data-page]')).map((p) => p.id));
 const results = [];
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < Math.min(7, ids.length - 1); i++) {
   await page.evaluate(() => { window.__frames.length = 0; });
   const t0 = Date.now();
   if (mobile) {
@@ -50,7 +51,7 @@ for (let i = 0; i < 4; i++) {
     await page.keyboard.press('ArrowDown');
   }
   // wait for the turn to finish (hash changes after landing)
-  await page.waitForFunction((n) => location.hash !== ['#cover', '#stats', '#gallery', '#training', '#camp-ad'][n], i, { timeout: 30000 });
+  await page.waitForFunction((from) => location.hash !== `#${from}`, ids[i], { timeout: 30000 });
   const took = Date.now() - t0;
   const all = await page.evaluate(() => {
     const s = performance.getEntriesByName('crumple:move-start').pop()?.startTime ?? 0;

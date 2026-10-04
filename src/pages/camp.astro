@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import { Image, Picture } from 'astro:assets';
 import '../styles/camp.css';
-import studio from '../assets/photos/ilia-studio.jpg';
+import glacier from '../assets/photos/life-glacier.jpg';
 import smile from '../assets/photos/ilia-smile.jpg';
-import { rider, camp, campPage as c } from '../content/site';
+import { rider, camp, campPage as c, nav, ui } from '../content/site';
 
 const site = Astro.site!;
 const jsonLd = [{
@@ -14,54 +14,61 @@ const jsonLd = [{
   location: { '@type': 'Place', name: `${camp.place}, ${camp.country}`, address: { '@type': 'PostalAddress', addressLocality: camp.place, addressCountry: 'IT' } },
   organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
   performer: { '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] },
+  maximumAttendeeCapacity: camp.spots,
+  offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
   image: new URL('/og.jpg', site).href, url: new URL('/camp', site).href,
 }];
 const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+const ext = { target: '_blank', rel: 'noopener' };
 ---
 <Base title={c.title} description={c.description} path="/camp" jsonLd={jsonLd}>
 <div class="camp" id="top" tabindex="-1">
   <a class="skip" href="#main">Skip to content</a>
-  <div class="strip">
-    <span>{c.strip}</span>
-    <a href="/#camp-ad">{c.back}</a>
-  </div>
+  <header class="topbar">
+    <a class="topbar__brand" href="/"><span class="logo-box" aria-hidden="true">BAS<b>★</b>CAMP</span><span class="sr-only">{c.back}</span></a>
+    <nav class="topbar__nav" aria-label={nav.label}>
+      <a href="/#ilia">Ilia</a>
+      <a href="/#coaching">Coaching</a>
+      <a href="/camp" aria-current="page">Camp</a>
+      <a href={rider.instagramUrl} {...ext}>Instagram<span aria-hidden="true"> ↗</span><span class="sr-only"> {ui.newTab}</span></a>
+    </nav>
+    <a class="btn btn--red btn--sm topbar__cta" href="#apply">{nav.cta}</a>
+  </header>
 
   <main id="main">
     <header class="hero">
       <div class="hero__photo" aria-hidden="true">
-        <Picture src={studio} alt="" formats={['avif', 'webp']} widths={[480, 853, 1280]} sizes="(orientation: portrait) 62vh, 60vw" loading="eager" fetchpriority="high" />
+        <Picture src={glacier} alt="" formats={['avif', 'webp']} widths={[480, 960]} sizes="(min-width: 900px) 55vw, 100vw" loading="eager" fetchpriority="high" />
       </div>
       <div class="hero__fade" aria-hidden="true"></div>
-      <div class="hero__dots" aria-hidden="true"></div>
-      <div class="grain" data-grain="D" aria-hidden="true" style="opacity:.5"></div>
+      <div class="grain" data-grain="D" aria-hidden="true" style="opacity:.4"></div>
       <div class="hero__inner">
-        <!-- TODO(figma): bas-camp-splatter "Italy 2026" (265:18813) replaces this logo -->
         <div class="hero__logo">
-          <div class="hero__splat" aria-hidden="true"></div>
           <div class="hero__box" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
-          <div class="hero__tag marker" aria-hidden="true">Italy 2026</div>
+          <span class="hero__issue">{camp.issue} · {camp.country} 2026</span>
         </div>
-        <h1>{c.h1}</h1>
-        <p class="hero__by">{camp.hostedBy}</p>
+        <h1>{c.h1[0]}<br />{c.h1[1]}</h1>
+        <p class="hero__by">{c.by}</p>
         <dl class="facts">
           {c.facts.map(([a, b]) => <div><dt>{a}</dt><dd>{b}</dd></div>)}
         </dl>
+        <p class="hero__levels">{c.levels}</p>
         <div class="hero__cta">
-          <a class="btn-paper" href="#apply">{c.cta}</a>
-          <div class="stamp-pink">{camp.stamps.lastSpots}</div>
+          <a class="btn btn--ice btn--lg" href="#apply">{c.cta}</a>
+          <span class="hero__price">{camp.price}</span>
         </div>
       </div>
     </header>
 
-    <section class="sec lt" aria-labelledby="h-facts">
+    <section class="sec lt" aria-labelledby="h-what">
       <div class="grain" data-grain="L" aria-hidden="true"></div>
       <div class="wrap two">
         <div>
           <div class="kicker" style="margin-bottom:8px">{c.what.kicker}</div>
-          <h2 class="h2" id="h-facts">{c.what.h2}</h2>
+          <h2 class="h2" id="h-what">{c.what.h2}</h2>
           <ol class="numbered">
-            {camp.features.map((f, i) => (
-              <li><span class="n">{String(i + 1).padStart(2, '0')}</span><span class="t">{f}{i === 0 && <small> {camp.groupSize}</small>}</span></li>
+            {c.what.items.map((f, i) => (
+              <li><span class="n">{String(i + 1).padStart(2, '0')}</span><span class="t">{f.t}<small>{f.s}</small></span></li>
             ))}
           </ol>
         </div>
@@ -69,6 +76,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
           <div class="kicker">{c.who.kicker}</div>
           <p class="who__lead">{c.who.lead}</p>
           <p class="who__mk marker">{c.who.marker}</p>
+          <p class="who__body">{c.who.body}</p>
           <ul>{c.who.list.map((l) => <li>{l}</li>)}</ul>
         </div>
       </div>
@@ -82,9 +90,9 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
           <span class="kicker">{c.program.meta}</span>
         </div>
         <ol class="days" style="list-style:none;margin:0;padding:0">
-          {c.program.days.map((d) => (
+          {c.program.days.map((d, i) => (
             <li class="day">
-              <div class="day__top"><span class="day__date">{d.date}</span><span class="day__n">DAY {d.n}</span></div>
+              <div class="day__top"><span class="day__date">{d.date}</span><span class="day__n">DEC · DAY {i + 1}</span></div>
               <h3>{d.title}</h3>
               <p>{d.body}</p>
             </li>
@@ -93,8 +101,19 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
       </div>
     </section>
 
-    <section class="sec lt" aria-labelledby="h-incl">
+    <section class="sec lt" aria-labelledby="h-beyond">
       <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="kicker" style="margin-bottom:8px">{c.beyond.kicker}</div>
+        <h2 class="h2" id="h-beyond">{c.beyond.h2}</h2>
+        <ul class="beyond" role="list">
+          {c.beyond.items.map((b) => <li><h3>{b.t}</h3><p>{b.s}</p></li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec dk" aria-labelledby="h-incl">
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
       <div class="wrap">
         <div class="incl">
           <div>
@@ -102,28 +121,43 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
             <ul class="checks">{c.included.items.map((t) => <li><b aria-hidden="true">✓</b>{t}</li>)}</ul>
           </div>
           <div>
-            <h2 class="h3big" style="color:var(--lift-tower)">{c.notIncluded.h2}</h2>
+            <h2 class="h3big">{c.notIncluded.h2}</h2>
             <ul class="checks no">{c.notIncluded.items.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
           </div>
           <div class="price">
             <div class="kicker">{c.price.kicker}</div>
             <div class="price__v">{c.price.value}</div>
             <div class="price__s">{c.price.spots}</div>
-            <div class="price__stamp">{camp.stamps.lastSpots}</div>
-            <a href="#apply">{c.price.cta}</a>
+            <a class="btn btn--red" href="#apply">{c.price.cta}</a>
           </div>
         </div>
+      </div>
+    </section>
 
-        <article class="coach" aria-labelledby="h-coach">
-          <div class="coach__pic"><Image src={smile} alt={rider.name} widths={[260, 520]} sizes="clamp(150px, 22vw, 260px)" format="webp" loading="lazy" /></div>
-          <div class="coach__body">
-            <div class="kicker">{c.coach.kicker}</div>
-            <h2 id="h-coach">{rider.name}</h2>
-            <ul class="chips">{c.coach.chips.map((t) => <li>{t}</li>)}</ul>
-            <p>{c.coach.body}</p>
-            <a class="coach__ig" href={rider.instagramUrl} target="_blank" rel="noopener">@{rider.instagram} ↗</a>
-          </div>
-        </article>
+    <section class="sec lt" aria-labelledby="h-coaches">
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="kicker" style="margin-bottom:8px">{c.coach.kicker}</div>
+        <h2 class="h2" id="h-coaches" style="margin-bottom:clamp(24px,4vw,40px)">{c.coach.h2}</h2>
+        <div class="coaches">
+          <article class="coach" aria-labelledby="h-coach-1">
+            <div class="coach__pic"><Image src={smile} alt={rider.name} widths={[260, 520]} sizes="clamp(150px, 22vw, 260px)" format="webp" loading="lazy" /></div>
+            <div class="coach__body">
+              <h3 id="h-coach-1">{rider.name}</h3>
+              <p class="coach__role">{rider.role}</p>
+              <ul class="chips">{c.coach.chips.map((t) => <li>{t}</li>)}</ul>
+              <p>{c.coach.body}</p>
+              <a class="coach__ig" href={rider.instagramUrl} {...ext}>@{rider.instagram} <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <article class="coach coach--todo" aria-labelledby="h-coach-2">
+            <div class="coach__pic coach__pic--todo" aria-hidden="true"><span>?</span></div>
+            <div class="coach__body">
+              <h3 id="h-coach-2">{c.coach.second.name}</h3>
+              <p class="coach__role">{c.coach.second.role}</p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -147,6 +181,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
           <div class="kicker">{c.apply.kicker}</div>
           <h2 id="h-apply">{c.apply.h2}</h2>
           <p>{c.apply.lead}</p>
+          <p class="apply__facts">{camp.datesLong} · {camp.country} · {camp.disciplines} · {camp.price} · {camp.spots} spots</p>
           <p class="apply__mk marker">{c.apply.marker}</p>
         </div>
         <div class="coupon-form">
@@ -157,11 +192,32 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
             <p data-sent-reply></p>
             <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
           </div>
-          <form novalidate data-form data-endpoint={endpoint}>
+          <div class="handoff" role="status" hidden data-handoff tabindex="-1">
+            <div class="sent__stamp">{c.apply.handoff.stamp}</div>
+            <p class="sent__line">{c.apply.handoff.line}</p>
+            <p class="handoff__body">{c.apply.handoff.body}</p>
+            <label class="fl" for="f-handoff">{c.apply.handoff.label}
+              <textarea class="in handoff__msg" id="f-handoff" rows="7" readonly data-handoff-msg></textarea>
+            </label>
+            <div class="handoff__cta">
+              <button class="submit" type="button" data-handoff-copy>{c.apply.handoff.copy} ↗</button>
+              <a class="linkbtn" href={rider.dmUrl} {...ext} data-handoff-open>{c.apply.handoff.open}</a>
+              <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
+            </div>
+          </div>
+          <form novalidate data-form data-endpoint={endpoint} data-dm={rider.dmUrl}>
             <label class="fl" for="f-name">{c.apply.name}
               <input class="in" id="f-name" name="name" autocomplete="name" required aria-describedby="e-name" />
               <span class="err" id="e-name" aria-live="polite"></span>
             </label>
+            <fieldset>
+              <legend>{c.apply.discipline}</legend>
+              <div class="methods">
+                {c.apply.disciplines.map((m, i) => (
+                  <label><input type="radio" name="discipline" value={m} checked={i === 0} /><span>{m}</span></label>
+                ))}
+              </div>
+            </fieldset>
             <fieldset>
               <legend>{c.apply.contactVia}</legend>
               <div class="methods">
@@ -194,7 +250,7 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
     <div class="wrap">
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</div>
-        <div class="foot__c">Instagram <a href={rider.instagramUrl} target="_blank" rel="noopener">@{rider.instagram}</a><br />{c.footer.contacts}</div>
+        <div class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br />{c.footer.contacts}</div>
       </div>
       <div class="foot__r">{c.footer.issue}<br /><a href="/">{c.footer.back}</a><br /><a class="totop" href="#top">{c.footer.toTop}</a></div>
     </div>

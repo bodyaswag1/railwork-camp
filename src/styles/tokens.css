@@ -67,6 +67,25 @@ img, video, svg { max-width: none; }
 
 .marker { font-family: var(--font-graffiti); font-weight: 400; text-transform: none; letter-spacing: 0; }
 
+/* buttons: one solid shape, three colourways, thumb-sized */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45em;
+  min-height: 48px; padding: 0 20px; border: 1.5px solid transparent; border-radius: 0;
+  font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 14px; letter-spacing: .06em;
+  line-height: 1; text-transform: uppercase; text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: transform .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn:active { transform: scale(.97); }
+.btn--red { background: var(--park-signal); color: var(--airbag-ice); }
+.btn--red:hover { background: #A0101C; color: var(--airbag-ice) !important; }
+.btn--ice { background: var(--airbag-ice); color: var(--night-run); }
+.btn--ice:hover { background: #fff; color: var(--park-signal) !important; }
+.btn--ghost { background: transparent; color: inherit; border-color: currentColor; }
+.btn--ghost:hover { background: var(--airbag-ice); color: var(--night-run) !important; border-color: var(--airbag-ice); }
+.btn--sm { min-height: 36px; padding: 0 12px; font-size: 12px; }
+.btn--lg { min-height: 58px; padding: 0 26px; font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+
 /* marker layer: hidden until drawn on (DrawSVG for strokes, a stepped mask for handwriting).
    Without JS, or under reduced motion (.marks-static), the marks simply show. */
 .js [data-draw], .js [data-ink] { visibility: hidden; }

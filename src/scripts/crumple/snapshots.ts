@@ -1,8 +1,8 @@
 // Page textures for the paper. Copying the DOM (modern-screenshot) is the most expensive thing the site
 // does, so each page is copied as few times as possible and never during a move:
 //
-//  - every page is captured twice in its life: its pre-landing state (marks hidden, boards waiting to drop:
-//    what the incoming page shows) and its landed state (marks drawn, boards standing: what the outgoing
+//  - every page is captured twice in its life: its pre-landing state (marks hidden, carousels on their
+//    first slide: what the incoming page shows) and its landed state (marks drawn: what the outgoing
 //    page shows). The landed state of a page that isn't on screen is set up for the copy and undone after.
 //  - a page that scrolls inside is captured as two layers, its background and its whole content column,
 //    so any scroll position is composed in a few milliseconds instead of being re-captured.
@@ -59,8 +59,8 @@ const yieldToBrowser = (): Promise<void> => {
 };
 // A background copy steps aside while the reader touches, scrolls or presses a key, and carries on from
 // where it was once they've been still for a moment. A page turn stops it, unless it's a copy the turn needs:
-// that one carries on as the turn's own. A copy of a page that changed meanwhile (a board spun, the lightbox
-// opened) is thrown away and redone later.
+// that one carries on as the turn's own. A copy of a page that changed meanwhile (a slide changed, the photo
+// viewer opened) is thrown away and redone later.
 let holding = false;
 const wanted = new Set<string>();
 let current: { key: string; background: boolean } | null = null;
@@ -174,18 +174,26 @@ async function context() {
   return made;
 }
 
-/** faces of the 3D board cards that point away from the viewer (the copy flattens 3D and ignores backface-visibility) */
-const matrixOf = (el: Element) => { const t = getComputedStyle(el).transform; return t && t !== 'none' ? new DOMMatrix(t) : new DOMMatrix(); };
-const facingAway = (n: HTMLElement) => {
-  try { return matrixOf(n.parentElement!).multiply(matrixOf(n)).m33 < 0; } catch { return false; }
+/** a carousel slide that's entirely off its strip right now: nothing of it is on screen */
+const offscreenSlide = (el: Element) => {
+  const vp = el.closest('[data-car-viewport]');
+  if (!vp) return false;
+  const a = el.getBoundingClientRect(), b = vp.getBoundingClientRect();
+  return a.right <= b.left + 1 || a.left >= b.right - 1;
 };
+// the slides off screen for the copy being made: their photos aren't copied (the boxes stay, so the strip
+// keeps its layout), which keeps a page with a long carousel as cheap to copy as one without
+let offscreen = new Set<Element>();
+const findOffscreen = (page: HTMLElement) => new Set(Array.from(page.querySelectorAll('[data-slide]')).filter(offscreenSlide));
+const inOffscreenSlide = (n: Element) => { const sl = n.closest('[data-slide]'); return !!sl && offscreen.has(sl); };
 
 const skipAlways = (n: Node) =>
   // <source> would point a cloned <picture> at a file the SVG renderer can't load; a cloned <video> waits for
-  // data that a preload="none" clip never loads; the wear layers are composited separately (compositeWear);
-  // the 1620° note is never part of a landed look (a turn hides it)
+  // data that a preload="none" clip never loads (the poster or placeholder under it is copied instead); the
+  // wear layers are composited separately (compositeWear); [data-nocopy] is never part of a page's look
   n instanceof HTMLSourceElement || n instanceof HTMLVideoElement ||
-  (n instanceof HTMLElement && (n.classList.contains('wear') || n.hasAttribute('data-egg') || (n.classList.contains('board__face') && facingAway(n))));
+  (n instanceof HTMLImageElement && offscreen.size > 0 && inOffscreenSlide(n)) ||
+  (n instanceof HTMLElement && (n.classList.contains('wear') || n.hasAttribute('data-nocopy')));
 
 async function capture(node: HTMLElement, w: number, h: number, bg: string | null, style: Partial<CSSStyleDeclaration> | null, skip?: (n: Node) => boolean) {
   const c = await context();
@@ -217,7 +225,7 @@ async function capture(node: HTMLElement, w: number, h: number, bg: string | nul
 }
 
 async function decodeImages(el: HTMLElement) {
-  const imgs = Array.from(el.querySelectorAll('img'));
+  const imgs = Array.from(el.querySelectorAll('img')).filter((img) => !inOffscreenSlide(img));
   await Promise.all(imgs.map((img) => {
     if (img.loading === 'lazy') img.loading = 'eager';
     return img.complete && img.naturalWidth ? Promise.resolve() : img.decode().catch(() => {});
@@ -248,8 +256,11 @@ async function shoot(page: HTMLElement, look: Look, setLook: (look: Look) => (()
   let undo: (() => void) | void = undefined;
   if (hidden) { page.classList.add('is-snap'); undo = setLook(look); } // rendered under the active page while we copy it
   try {
+    offscreen = findOffscreen(page);
     await interruptible(decodeImages(page));
-    await interruptible(new Promise((r) => { requestAnimationFrame(() => r(null)); setTimeout(r, 80); }));
+    // two frames: the first lays the page out, and what reacts to that (a carousel measuring itself in a
+    // ResizeObserver) runs before the second
+    await interruptible(new Promise((r) => { requestAnimationFrame(() => requestAnimationFrame(() => r(null))); setTimeout(r, 120); }));
     check();
     // from here on, any change to the page means the copy no longer shows it as it is
     changed = false;
@@ -277,7 +288,7 @@ export const has = (i: number, look: Look, variant = '') => fresh(store.get(key(
 
 /**
  * Capture (or reuse) one look of a page. Serialised: two copies never run at once. `variant` names a
- * landed look that differs from the default one (a board left showing its base after the 1620° spin);
+ * landed look that differs from the default one (a carousel left on another slide);
  * `variantNow` re-reads it when the copy is done, so a copy taken while it changed isn't kept.
  */
 export function ensure(

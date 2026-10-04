@@ -1,4 +1,6 @@
-// /camp: grain textures + the apply form (validation, POST to PUBLIC_FORM_ENDPOINT, success state).
+// /camp: grain textures + the apply form (validation, then either a POST to PUBLIC_FORM_ENDPOINT, or —
+// with no form backend configured — the application written out for the rider to send Ilia as an
+// Instagram DM; it never pretends to have sent anything).
 import { makeNoise } from './paper';
 import { camp, campPage } from '../content/site';
 
@@ -8,6 +10,9 @@ document.querySelectorAll<HTMLElement>('[data-grain]').forEach((el) => { el.styl
 const t = campPage.apply;
 const form = document.querySelector<HTMLFormElement>('[data-form]')!;
 const sent = document.querySelector<HTMLElement>('[data-sent]')!;
+const handoff = document.querySelector<HTMLElement>('[data-handoff]')!;
+const handoffMsg = handoff.querySelector<HTMLTextAreaElement>('[data-handoff-msg]')!;
+const copyBtn = handoff.querySelector<HTMLButtonElement>('[data-handoff-copy]')!;
 const net = form.querySelector<HTMLElement>('[data-net]')!;
 const contact = form.querySelector<HTMLInputElement>('#f-contact')!;
 const submit = form.querySelector<HTMLButtonElement>('.submit')!;
@@ -45,6 +50,8 @@ function validate() {
   return e;
 }
 
+const levelText = (v: string) => t.levels.find(([k]) => k === v)?.[1] ?? v;
+
 form.addEventListener('input', () => { if (tried) validate(); });
 form.addEventListener('submit', async (ev) => {
   ev.preventDefault();
@@ -53,17 +60,29 @@ form.addEventListener('submit', async (ev) => {
   const first = Object.keys(e)[0];
   if (first) { form.querySelector<HTMLElement>(`#f-${first}`)?.focus(); return; }
   const d = new FormData(form);
-  const body = { name: d.get('name'), method: method(), contact: d.get('contact'), level: d.get('level'), msg: d.get('msg'), camp: camp.full };
+  const body = {
+    name: String(d.get('name') ?? '').trim(), discipline: String(d.get('discipline') ?? ''), method: method(),
+    contact: String(d.get('contact') ?? '').trim(), level: String(d.get('level') ?? ''), msg: String(d.get('msg') ?? '').trim(), camp: camp.full,
+  };
+  const endpoint = form.dataset.endpoint;
+  if (!endpoint) {
+    // TODO(formEndpoint): no backend yet — hand the application over as a DM the rider sends themselves
+    handoffMsg.value = [
+      t.handoff.intro,
+      `Name: ${body.name}`,
+      `I ride: ${body.discipline}`,
+      `Level: ${levelText(body.level)}`,
+      `Contact: ${body.method} ${body.contact}`,
+      body.msg ? `Message: ${body.msg}` : '',
+    ].filter(Boolean).join('\n');
+    form.hidden = true; handoff.hidden = false; handoff.focus();
+    return;
+  }
   submit.disabled = true; submit.textContent = t.sending;
   try {
-    const endpoint = form.dataset.endpoint;
-    if (endpoint) {
-      const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-      if (!res.ok) throw new Error(String(res.status));
-    } else {
-      await new Promise((r) => setTimeout(r, 600)); // TODO: set PUBLIC_FORM_ENDPOINT
-    }
-    const firstName = String(body.name).trim().split(/\s+/)[0] || 'rider';
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(String(res.status));
+    const firstName = body.name.split(/\s+/)[0] || 'rider';
     sent.querySelector('[data-sent-line]')!.textContent = t.sent.line(firstName);
     sent.querySelector('[data-sent-reply]')!.textContent = t.sent.reply(method());
     form.hidden = true; sent.hidden = false; sent.focus();
@@ -74,10 +93,22 @@ form.addEventListener('submit', async (ev) => {
   }
 });
 
-sent.querySelector('[data-again]')!.addEventListener('click', () => {
+// all synchronous, inside the tap: the copy needs this page focused, and Safari only opens a new window
+// while the tap still counts as a user gesture (an await in between loses it)
+copyBtn.addEventListener('click', () => {
+  const text = handoffMsg.value;
+  try { navigator.clipboard.writeText(text).catch(() => {}); } catch { /* older browsers: the fallback below */ }
+  handoffMsg.focus(); handoffMsg.setSelectionRange(0, text.length);
+  try { document.execCommand('copy'); } catch { /* the text is selected: the rider can still copy it */ }
+  copyBtn.textContent = t.handoff.copied;
+  window.open(form.dataset.dm, '_blank', 'noopener');
+});
+
+document.querySelectorAll('[data-again]').forEach((b) => b.addEventListener('click', () => {
   form.reset(); tried = false; validate();
   form.querySelectorAll('.err').forEach((el) => { el.textContent = ''; });
   form.querySelectorAll('[aria-invalid]').forEach((el) => el.setAttribute('aria-invalid', 'false'));
-  sent.hidden = true; form.hidden = false;
+  copyBtn.textContent = `${t.handoff.copy} ↗`;
+  sent.hidden = true; handoff.hidden = true; form.hidden = false;
   form.querySelector<HTMLElement>('#f-name')!.focus();
-});
+}));

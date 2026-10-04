@@ -1,11 +1,13 @@
-// Landing page controller: five full-screen pages, one gesture = one page.
-// Wheel / trackpad, touch swipe, ↑ ↓ PgUp PgDn Space Home End, menu links, hashes, back/forward.
+// Landing page controller: eight full-screen pages, one gesture = one page.
+// Wheel / trackpad, touch swipe, ↑ ↓ PgUp PgDn Space Home End, menu and nav links, hashes, back/forward.
 // The page change itself is delegated to a Transition (WebGL crumple, CSS fallback or reduced-motion fade).
+// Sideways drags belong to the carousels inside the pages, never to page turns.
 import { pages, ui } from '../content/site';
 import { agePaper } from './paper';
 import { drawMarks, hideMarks, showMarks, finishMarks } from './marks';
-import { initBoards } from './boards';
-import { initGallery } from './gallery';
+import { initCarousel, type Carousel } from './carousel';
+import { initLightbox } from './lightbox';
+import { initCases } from './cases';
 import { fadeTransition, cssTransition, type Transition, type Hooks } from './transitions';
 
 const root = document.querySelector<HTMLElement>('[data-mag]')!;
@@ -14,6 +16,7 @@ const ids = pages.map((p) => p.id) as string[];
 const total = secs.length;
 const live = root.querySelector<HTMLElement>('[data-live]')!;
 const counter = root.querySelector<HTMLElement>('[data-counter]')!;
+const masthead = root.querySelector<HTMLElement>('[data-chrome]')!;
 const menu = root.querySelector<HTMLElement>('[data-menu]')!;
 const menuBtn = root.querySelector<HTMLButtonElement>('[data-menu-open]')!;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,7 +62,7 @@ let cur = Math.max(0, ids.indexOf(location.hash.slice(1)));
 let busy = false;
 let lockUntil = 0;
 let acc = 0, lastWheel = 0, edgeAt = 0;
-let ty: number | null = null, tUp = false, tDown = false, swiped = false;
+let ty: number | null = null, tx = 0, tUp = false, tDown = false, swiped = false, axis: '' | 'x' | 'y' = '';
 let lightboxOpen = false;
 let lastInput = 0;
 const settled = new Set<number>(); // pages whose entrance animations have finished
@@ -73,23 +76,25 @@ export const state = {
   quietFor: () => performance.now() - lastInput,
   /** the page's entrance animations are done (its DOM shows the landed look) */
   isSettled: (i: number) => settled.has(i),
-  /** the page's busy entrance animations are over: marks drawn, boards landed and not spinning (slow intro flips may still run) */
-  isCalm: (i: number) => marked.has(i) && (i !== 1 || boards.landed()),
-  /** which landed look a page has right now ('' = the default one) */
-  variant: (i: number) => (i === 1 ? boards.variant() : ''),
+  /** the page's entrance animations are over: its marks have drawn on */
+  isCalm: (i: number) => marked.has(i),
+  /** which landed look a page has right now ('' = the default one): the slide each of its carousels is on */
+  variant: (i: number) => {
+    const at = (carousels.get(i) ?? []).map((c) => c.index());
+    return at.some((n) => n > 0) ? at.join('.') : '';
+  },
   /** jump a page's entrance animations to their end, so its DOM shows the landed look */
   finishLanding: (i: number) => {
     finishMarks(secs[i]);
     // a page left before it ever drew its marks (a swipe before the fonts arrived) still shows them now
     if (!marked.has(i)) showMarks(secs[i]);
-    if (i === 1) { boards.finish(); if (!boards.introRan()) boards.landedPose(); }
+    carousels.get(i)?.forEach((c) => c.finish());
     marked.add(i); settled.add(i);
   },
   /** put an off-screen page into a look for a copy; returns how to undo it */
   setLook: (i: number, look: 'pre' | 'landed'): (() => void) | void => {
     if (look === 'pre') return;
     showMarks(secs[i]);
-    if (i === 1) boards.landedPose();
     return () => prepare(i);
   },
   /** called when a page's look changes after landing (marks done, a board spun) */
@@ -98,11 +103,20 @@ export const state = {
   onLanded: (_i: number) => {},
 };
 
-const boards = initBoards(secs[1], () => cur === 1 && !busy, reduced,
-  () => { settled.add(1); state.onDirty(1); },
-  // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
-  () => { settled.delete(1); lastInput = performance.now(); });
-const gallery = initGallery(secs[2], (open) => { lightboxOpen = open; });
+// carousels, per page: the slide they're on is part of the page's look
+const carousels = new Map<number, Carousel[]>();
+secs.forEach((s, i) => {
+  const list = Array.from(s.querySelectorAll<HTMLElement>('[data-carousel]')).map((el) => initCarousel(el, {
+    reduced,
+    // a new slide is a new look for the page (copied again once the reader is quiet)
+    onChange: () => { lastInput = performance.now(); if (i === cur) state.onDirty(i); },
+  }));
+  if (list.length) carousels.set(i, list);
+});
+const lifePage = secs.find((s) => s.querySelector('[data-tile]'));
+const lightbox = lifePage ? initLightbox(lifePage, (open) => { lightboxOpen = open; }) : null;
+const casesPage = secs.find((s) => s.querySelector('[data-case]'));
+const cases = casesPage ? initCases(casesPage) : null;
 
 let transition: Transition = reduced ? fadeTransition : cssTransition;
 export const setTransition = (t: Transition) => { if (!reduced) transition = t; };
@@ -122,8 +136,13 @@ export function prepare(i: number) {
   if (reduced) showMarks(s); else hideMarks(s);
   const sc = scroller(i);
   if (sc) sc.scrollTop = 0;
-  if (i === 1) boards.reset();
+  carousels.get(i)?.forEach((c) => c.reset());
+  if (s === casesPage) cases?.pauseAll();
 }
+
+/** the masthead takes the colours of the page under it ('dark' while the paper is on the black stage) */
+const setHead = (tone: string) => { masthead.dataset.head = tone; };
+const setAt = (i: number) => { masthead.dataset.at = ids[i]; };
 
 function setActive(i: number) {
   secs.forEach((s, k) => {
@@ -139,6 +158,9 @@ const setCounter = (i: number) => {
   menu.querySelectorAll('[data-go]').forEach((a, k) => {
     if (k === i) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
+  masthead.querySelectorAll<HTMLElement>('[data-nav]').forEach((a) => {
+    if (a.dataset.nav === ids[i]) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+  });
 };
 
 let landedOnce = false;
@@ -147,9 +169,7 @@ function land(i: number, focus = true) {
   const s = secs[i];
   settled.delete(i); marked.delete(i);
   const tl = drawMarks(s, reduced);
-  tl.eventCallback('onComplete', () => { marked.add(i); if (i !== 1) settled.add(i); state.onDirty(i); });
-  if (i === 1) boards.land();
-  gallery.setActive(i === 2);
+  tl.eventCallback('onComplete', () => { marked.add(i); settled.add(i); state.onDirty(i); });
   if (focus) s.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
   state.onLanded(i);
 }
@@ -166,13 +186,14 @@ export async function go(n: number, push = true, explicit = false) {
   landedOnce = true;
   performance.mark('turn:start');
   const from = cur, dir: 1 | -1 = n > from ? 1 : -1;
-  gallery.setActive(false);
+  lightbox?.close();
+  cases?.pauseAll();
   prepare(n);
   // the arriving page renders underneath from now on, so it's ready to take over the moment the paper lands
   secs[n].classList.add('is-next');
   const hooks: Hooks = {
-    showIn: () => setActive(n),
-    hideOut: () => secs[from].classList.remove('is-active'),
+    showIn: () => { setActive(n); setHead(secs[n].dataset.head ?? 'dark'); },
+    hideOut: () => { secs[from].classList.remove('is-active'); setHead('dark'); setAt(n); },
     atBall: () => setCounter(n),
   };
   try {
@@ -190,7 +211,7 @@ export async function go(n: number, push = true, explicit = false) {
     // without WebGL the CSS paper version is the page turn; if the WebGL turn itself fails, a quiet fade
     try { await (transition === cssTransition ? cssTransition : fadeTransition).run(from, n, dir, hooks); } catch { /* last resort below */ }
   }
-  setActive(n); setCounter(n);
+  setActive(n); setCounter(n); setHead(secs[n].dataset.head ?? 'dark'); setAt(n);
   secs[n].classList.remove('is-next');
   // the page we left goes back to its pre-landing state, ready for its next snapshot
   prepare(from);
@@ -213,6 +234,7 @@ addEventListener('wheel', (e) => {
   const now = performance.now();
   // during a transition and right after it, swallow the trackpad's inertia (the lock keeps extending)
   if (busy || now < lockUntil) { lockUntil = Math.max(lockUntil, now + 140); acc = 0; return; }
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // sideways: a carousel's
   const dir = Math.sign(e.deltaY);
   if (!dir) return;
   if (!atEdge(dir)) { edgeAt = now; acc = 0; return; }
@@ -247,16 +269,23 @@ addEventListener('keydown', (e) => {
 // touchcancel instead (address bar, pull-to-refresh), which used to swallow the swipe.
 // On a page that scrolls inside, a swipe turns the page only if it starts at that edge: scrolling to the
 // end of a page never flips it by itself.
+// A gesture that starts sideways is a carousel's (or nothing), never a page turn.
 const SWIPE = 48;
 addEventListener('touchstart', (e) => {
   if (blocked() || e.touches.length > 1) { ty = null; return; }
-  ty = e.touches[0].clientY;
+  ty = e.touches[0].clientY; tx = e.touches[0].clientX;
   tUp = atEdge(-1); tDown = atEdge(1);
-  swiped = false;
+  swiped = false; axis = '';
 }, { passive: true });
 addEventListener('touchmove', (e) => {
   if (ty == null || swiped || blocked() || e.touches.length > 1) return;
   const y = e.touches[0].clientY;
+  if (!axis) {
+    const dx = e.touches[0].clientX - tx, dy = y - ty;
+    if (Math.hypot(dx, dy) < 10) return;
+    axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
+  if (axis === 'x') return;
   const d = y < ty ? 1 : -1; // finger moving up → next page
   if (d > 0 ? !tDown : !tUp) return;
   if (Math.abs(y - ty) < SWIPE) return;
@@ -310,9 +339,9 @@ root.querySelector('[data-skip]')!.addEventListener('click', (e) => {
 });
 
 // ---------------------------------------------------------------- start
-// hidden pages start in their pre-landing state through CSS (marks hidden, boards reset in initBoards);
+// hidden pages start in their pre-landing state through CSS (marks hidden, carousels on their first slide);
 // measuring every marker path now would force layout on pages nobody can see yet
-setActive(cur); setCounter(cur);
+setActive(cur); setCounter(cur); setHead(secs[cur].dataset.head ?? 'dark'); setAt(cur);
 try { history.replaceState(null, '', `#${ids[cur]}`); } catch { /* file:// */ }
 // the first landing waits for the fonts; if the reader has already turned the page by then, skip it
 const start = () => { if (!landedOnce && !busy) land(cur, false); };
