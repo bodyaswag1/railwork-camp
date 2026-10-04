@@ -8,16 +8,18 @@
 //  - no invented achievements, results, reviews or quotes: student cases stay placeholders until they're real
 
 export const TODO = {
-  studentCases: 'TODO: the 3 student videos (vertical) + starting point, what they worked on, result, optional quote',
+  studentCases: 'TODO: the 3 student videos (vertical) + start, what we worked on, progress, optional quote; BEFORE / AFTER only if it really is',
   coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
-  lifeMedia: 'TODO: crew / dinner / spa / travel photos for BAS life',
-  campProgram: 'TODO: day-by-day program (3 riding days), hotel, St. Moritz itinerary, spa',
-  campIncluded: 'TODO: what the €800 includes and excludes',
-  secondCoach: 'TODO: name + discipline of the second coach',
+  lifeMedia: 'TODO: crew / dinner / spa / St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
+  secondCoach: "TODO: Aleksey's surname (if he wants it shown) and his action photos",
+  hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
+  campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
+  campVideo: 'TODO: a photo or clip of an evening video-analysis session',
   boardSeasons: 'TODO: board seasons + which board was the first pro model',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   contacts: 'TODO: Telegram handle, WhatsApp number, email',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
+  promoEndpoint: 'TODO: optional PUBLIC_PROMO_ENDPOINT (POST {code} → {valid, message}); until then codes travel with the application and are checked by hand',
   figma: 'TODO: Figma exports hit the MCP rate limit — swap in bas-camp-logo, mascot-snowboard, bas-camp-splatter and the rest of the marker set',
 } as const;
 
@@ -321,128 +323,304 @@ export const nextLevel = {
 };
 
 // ---------------------------------------------------------------- /camp
+// A multi-day progression camp first (ride → feedback → video → adjust → ride again), the coaches second,
+// the trip third. Public price €800 only; a promo code is collected with the application and checked later
+// (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
 export const campPage = {
-  title: 'BAS CAMP Italy 2026 — Snowboard + Freeski camp with Ilia Baskakov, Dec 23–27',
-  description: '5 days in the Italian Alps with pro snowboarder Ilia Baskakov: 3 focused riding days, two coaches, 12 spots. Snowboard + Freeski, all levels welcome, complete beginners included. December 23–27, 2026. €800.',
+  title: 'BAS CAMP Issue 01 — Snowboard + Freeski progression camp in Italy, 23–27 Dec 2026',
+  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey. Coaching, video analysis, 4 nights with breakfast. All levels, 12 spots, €800. Valdidentro, 23–27 December 2026.',
+  nav: [
+    { label: 'Coaches', href: '#coaches' },
+    { label: 'Level', href: '#level' },
+    { label: 'Schedule', href: '#schedule' },
+    { label: 'Price', href: '#price' },
+    { label: 'FAQ', href: '#faq' },
+  ],
+  join: 'Join',
+  menu: 'Menu',
+  close: 'Close ✕',
   back: '← Ilia Baskakov',
-  h1: ['5 days', 'in the Alps.'],
-  by: 'With pro snowboarder & coach Ilia Baskakov',
-  facts: [['23–27 Dec', '2026'], ['Italy', 'Valdidentro'], ['Snowboard', '+ Freeski'], ['12 spots', '€800']],
-  cta: 'Take the spot ↓',
-  levels: 'All levels welcome — complete beginners included.',
-  what: {
-    kicker: 'The camp',
-    h2: 'What you get',
-    items: [
-      { t: '3 focused riding days', s: 'Five days in the Alps, three of them all about riding.' },
-      { t: 'Two coaches', s: 'One camp, Snowboard + Freeski.' },
-      { t: 'Your group, your level', s: 'Grouped by snowboard or ski, experience and level.' },
-      { t: 'Video feedback', s: 'See your riding, understand it, fix it.' },
-      { t: '12 spots', s: 'A small crew, so every rider gets real coaching time.' },
-    ],
+
+  // 01 poster
+  hero: {
+    issue: 'Issue 01',
+    season: 'Winter 26/27',
+    h1: ['5 days in the Alps.', '3 days to ride better.'],
+    dates: ['23—27', 'Dec', '2026'],
+    place: 'Italy',
+    disciplines: ['Snowboard', 'Freeski'],
+    spots: '12 spots',
+    price: '€800',
+    cta: 'Join the camp',
+    how: 'How it works ↓',
+    notes: { ride: 'ride / learn / repeat', tourist: 'No tourist mode', date: '23—27.12' },
+    photoAlt: 'Ilia Baskakov in a one-hand plant on a rainbow rail, mountains behind',
+    insetAlt: 'Ilia upside down in the air above a kicker',
   },
-  who: {
-    kicker: "Who it's for",
-    lead: 'Everyone who wants to ride better.',
-    marker: 'first-timers too!',
-    body: 'BAS CAMP takes every level — including people who have never skied or snowboarded. Riders are split into groups by discipline (snowboard or ski), experience and level, so every session is pitched right for you.',
-    list: ['Never been on snow? Start from your very first turns.', 'Riding the whole mountain? Build carving, park and control.', 'Already in the park? Work on new tricks with video feedback.'],
-  },
-  program: {
-    h2: 'Five days',
-    meta: 'December 23–27, 2026 · 3 riding days · [program to confirm]',
+
+  // 02 the idea
+  idea: {
+    kicker: 'The idea',
+    pre: 'Not just a lesson.',
+    h2: ['3 days', 'of progression.'],
     days: [
-      { date: '23', title: '[Day 1]', body: '[Program to confirm]' },
-      { date: '24', title: '[Day 2]', body: '[Program to confirm]' },
-      { date: '25', title: '[Day 3]', body: '[Program to confirm]' },
-      { date: '26', title: '[Day 4]', body: '[Program to confirm]' },
-      { date: '27', title: '[Day 5]', body: '[Program to confirm]' },
+      { n: 'Day 01', t: 'Find it.', lines: ['Observe riding.', 'Choose the problem worth solving.'] },
+      { n: 'Day 02', t: 'Work on it.', lines: ['Exercise.', 'Ride.', 'Feedback.', 'Film.', 'Repeat.'] },
+      { n: 'Day 03', t: 'Lock it in.', lines: ['Adjust.', 'Repeat.', 'Understand what to work on next.'] },
     ],
+    loopLabel: 'The loop',
+    loop: ['Ride', 'Feedback', 'Video', 'Adjust', 'Ride again'],
+    loopNote: 'again. and again.',
+    support: ['A normal lesson ends after a few hours.', 'At BAS, your next session starts where the previous one stopped.'],
+    notes: ['eyes up', 'earlier!', 'better.'],
   },
-  beyond: {
-    kicker: 'Off the slopes',
-    h2: 'Not just riding',
+
+  // 03 a training day
+  day: {
+    kicker: 'A training day at BAS',
+    h2: ['Your day.', 'More or less.'],
+    caveat: 'An example training day — not every day of the trip runs like this.',
+    small: [
+      { t: '07:00', w: 'Wake up' },
+      { t: '07:30', w: 'Warm-up' },
+      { t: '08:00', w: 'Breakfast' },
+      { t: '08:30', w: 'Out' },
+    ],
+    mountain: { t: '09:00—14:00', w: 'Mountain.', lines: ['Riding', 'Coaching', 'Exercises', 'Feedback', 'Filming'], alt: 'Ilia upside down above a kicker, a drone filming him' },
+    cool: { t: '15:00—15:30', w: 'Cool-down' },
+    video: { t: '19:00—20:00', w: 'Video.', line: 'Video analysis: the day’s riding on the screen, what changed, what’s next.', cap: '[Photo or clip: evening video session]' },
+    notes: { mountain: 'the main thing', video: 'the other main thing' },
+  },
+
+  // 04 coaches
+  coaches: {
+    kicker: 'The coaches',
+    h2: ['Who’s yelling', '“at least one more”?'],
+    ilia: {
+      discipline: 'Snowboard',
+      name: ['Ilia', 'Baskakov'],
+      big: [
+        { v: '3×', l: 'National Champion' },
+        { v: '1620°', l: 'Biggest spin' },
+      ],
+      facts: [
+        { v: '20', l: 'Years riding' },
+        { v: '3', l: 'Years coaching' },
+        { v: 'Europa Cup', l: 'Podiums' },
+        { v: 'Junior World', l: 'Championship · participant' },
+        { v: '3', l: 'Snowboard pro models' },
+      ],
+      details: [{ l: 'Stance', v: 'Regular' }, { l: 'Favorite trick', v: 'Miller Flip' }],
+      alt: 'Ilia Baskakov upside down in the air above a kicker',
+      alt2: 'Ilia in a red competition bib, number 27',
+      note: 'the face of BAS',
+    },
+    aleksey: {
+      discipline: 'Freeski',
+      name: ['Aleksey', ''],
+      role: 'Freeski coach',
+      big: [
+        { v: '14+', l: 'Years on skis' },
+        { v: '25 m', l: 'Biggest gap' },
+      ],
+      facts: [
+        { v: 'Lifesteez Media', l: 'Rider + filmer' },
+        { v: 'Action sports', l: 'Cinematographer' },
+      ],
+      bio: [
+        'Started freeskiing in 2012 after 10+ years of aggressive inline skating.',
+        'Coaches beginner → advanced. Based in the Austrian Alps.',
+        'Works across skiing, snowboarding and action-sports film production.',
+      ],
+      tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
+      photo: '[Photo: Aleksey riding]', // TODO(secondCoach): Aleksey's action photos
+      note: 'behind the camera too',
+    },
+  },
+
+  // 05 level
+  level: {
+    kicker: 'Your level',
+    h2: ['Start where', 'you are.'],
+    sub: 'From your first turn to your next trick.',
+    steps: [
+      { k: 'Zero', t: 'Never skied or snowboarded?', s: 'We can start from the beginning.' },
+      { k: 'Beginner', t: 'Build confidence,', s: 'turns, control and fundamentals.' },
+      { k: 'Intermediate', t: 'Clean up technique', s: 'and build stronger riding.' },
+      { k: 'Progression', t: 'Carving. Freestyle. Park.', s: 'Specific skills.' },
+    ],
+    caveat: 'Depending on ability, readiness and mountain conditions.',
+    groups: { a: 'Snowboard', b: 'Ski', mid: ['Groups', 'by level'] },
+    groupLine: 'Split by discipline first, then by level: experienced riders don’t train in the same group as first-day beginners.',
+    note: 'all levels. for real.',
+  },
+
+  // 06 student progress
+  progress: {
+    kicker: 'Real student progress',
+    h2: ['Don’t believe the copy.', 'Watch this.'],
+    labels: { start: 'Start', work: 'What we worked on', result: 'Progress', quote: 'Quote', play: (n: string) => `Play rider ${n}'s video`, pause: (n: string) => `Pause rider ${n}'s video` },
+    // TODO(studentCases): the 3 real student videos; label BEFORE / AFTER only if the footage really is
+    cases: [1, 2, 3].map((n) => ({
+      n: String(n).padStart(2, '0'),
+      rider: `[Rider ${n}]`,
+      tag: '[Snowboard / Ski · level]',
+      start: '[Where they started]',
+      work: '[What we worked on]',
+      result: '[What changed]',
+      quote: '[Quote, if they have one]',
+      video: {} as { src?: string; poster?: string },
+    })),
+    notes: ['frame 01', 'press play', 'yes!!'],
+    swipe: 'swipe →',
+  },
+
+  // 07 the five days
+  schedule: {
+    kicker: 'The five days',
+    h2: ['5 days.', 'No copy-paste days.'],
+    days: [
+      { d: '23', m: 'Dec', t: ['Ride.'], body: 'Coached riding / training day.', small: 'Exact hours depend on arrival and logistics.', tone: 'paper' },
+      { d: '24', m: 'Dec', t: ['Ride.', 'Then spa.'], body: 'Training day. Spa in the evening.', stamp: 'Spa entrance not included', tone: 'ice' },
+      { d: '25', m: 'Dec', t: ['Off.', 'St. Moritz.'], body: 'Recovery, a day trip, hanging out. Current plan: St. Moritz.', small: 'What you spend in St. Moritz isn’t part of the €800.', tone: 'pink' },
+      { d: '26', m: 'Dec', t: ['Back on.'], body: 'Coached riding day: apply and lock in what you worked on.', tone: 'red' },
+      { d: '27', m: 'Dec', t: ['One more?'], body: 'Departure. Optional riding until lunch, depending on your travel plans and mountain conditions.', tone: 'dark' },
+    ],
+    notes: { xmas: 'christmas!!', arrow: 'then →' },
+  },
+
+  // 08 camp life
+  life: {
+    kicker: 'Camp life',
+    h2: ['Yes, we leave', 'the slope sometimes.'],
+    line: 'Coming alone is fine: you ride, have breakfast and watch the footage with the same small crew.',
+    tiles: [
+      { photo: 'glacier', cap: 'Alps', alt: 'A rider in a red jacket pulling on goggles above a glacier', pos: '50% 40%' },
+      { cap: 'Spa', todo: '[Photo: spa]' },
+      { photo: 'fisheye', cap: 'Snow', alt: 'Fisheye shot of a rider in yellow doing a handplant in the park', pos: '50% 50%' },
+      { cap: 'St. Moritz', todo: '[Photo: St. Moritz]' },
+      { photo: 'bandana', cap: 'Crew', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
+      { cap: 'Christmas', todo: '[Photo: Christmas]' },
+      { photo: 'smile', cap: 'Evenings', alt: 'Ilia laughing in a bandana at night', pos: '50% 35%' },
+      { cap: 'Breakfast', todo: '[Photo: hotel breakfast]' },
+    ] as { photo?: 'glacier' | 'fisheye' | 'bandana' | 'smile' | 'night'; cap: string; alt?: string; pos?: string; todo?: string }[],
+    swipe: 'swipe →',
+  },
+
+  // 09 hotel
+  hotel: {
+    kicker: 'Where we stay',
+    h2: 'Base camp.',
+    name: 'Meublè Rosalpina',
+    place: ['Valdidentro', 'Italy'],
+    facts: [['23—27 Dec', 'Check-in → check-out'], ['4 nights', 'Accommodation'], ['Breakfast', 'Included']],
+    address: ['Via San Carlo 16', 'Valdidentro, Italy'],
+    map: 'Open in Maps ↗',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=Meubl%C3%A8+Rosalpina%2C+Via+San+Carlo+16%2C+Valdidentro%2C+Italy',
+    photos: ['[Photo: hotel outside]', '[Photo: room]'], // TODO(hotelPhotos)
+    note: 'home for 4 nights',
+  },
+
+  // 10 price
+  price: {
+    kicker: 'Price',
+    value: '€800',
+    h2: 'What’s in the €800?',
+    inLabel: 'In',
+    outLabel: 'Out',
+    included: ['4 nights accommodation', 'Hotel breakfast', 'Snowboard or ski coaching', 'Coached riding program', 'Video analysis', 'Morning warm-up', 'Cool-down / recovery', 'Camp organization'],
+    excluded: ['Ski pass', 'Travel to / from the camp', 'Equipment rental', 'Lunch, dinner and other meals', 'Spa entrance'],
+    note: 'no small print',
+    cta: 'Join the camp',
+  },
+
+  // 11 numbers
+  numbers: {
+    kicker: 'The numbers',
     items: [
-      { t: 'The hotel', s: '[Hotel name and details]' },
-      { t: 'St. Moritz', s: '[St. Moritz itinerary]' },
-      { t: 'Spa', s: '[Spa details]' },
+      { v: '3', l: 'Coached riding days' },
+      { v: '09—14', l: 'Planned on-mountain training window', s: 'on a typical training day' },
+      { v: '4', l: 'Nights' },
+      { v: '2', l: 'Coaches' },
+      { v: '12', l: 'Riders max' },
+      { v: '5', l: 'Days in the Alps' },
     ],
   },
-  included: { h2: 'Included', items: ['Coaching on 3 riding days', 'Video feedback', '[Accommodation — to confirm]', '[Anything else included — to confirm]'] },
-  notIncluded: { h2: 'Not included', items: ['[Lift pass — to confirm]', '[Travel to Italy — to confirm]', '[Insurance — to confirm]'] },
-  price: { kicker: 'Price & spots', value: '€800', spots: '12 spots · Snowboard + Freeski', cta: 'Take the spot →' },
-  coach: {
-    kicker: 'Two coaches · Snowboard + Freeski',
-    h2: 'Your coaches',
-    chips: ['20 yrs riding', '3 yrs coaching', '3× National Champion', '1620° biggest spin', '3 Joint pro models'],
-    body: 'Europa Cup podiums, Junior World Championship participant. Regular stance; favourite trick, the Miller flip.',
-    second: { name: '[Second coach]', role: '[Discipline · background]' },
-  },
+
+  // 12 faq
   faq: {
+    kicker: 'Questions',
     h2: 'FAQ',
     items: [
-      { q: "I've never been on snow. Can I come?", a: 'Yes. Complete beginners are welcome, including people who have never skied or snowboarded. Groups are set by discipline, experience and level.' },
-      { q: 'Ski or snowboard?', a: 'Both. BAS CAMP is a Snowboard + Freeski camp, with two coaches.' },
-      { q: 'Where exactly in Italy?', a: 'Valdidentro, in Lombardy, next to Bormio and Livigno. [Meeting point / resort details to confirm]' },
-      { q: 'Is accommodation included?', a: '[To confirm]' },
-      { q: 'How do I secure my spot?', a: 'Send the form below. Ilia replies personally with the details and payment. [Deposit and payment details to confirm]' },
-      { q: 'What should I bring?', a: '[Kit list: helmet, back protector, etc.]' },
-    ],
+      { q: 'I’ve never been on a snowboard / skis. Can I come?', a: 'Yes. Complete beginners are welcome.' },
+      { q: 'Can experienced riders join?', a: 'Yes. Groups are divided by discipline and level.' },
+      { q: 'Can I come alone?', a: 'Yes.' },
+      { q: 'Snowboard or ski?', a: 'Both. There is a snowboard coach and a freeski coach.' },
+      { q: 'How many people?', a: 'Maximum 12 participants.' },
+      { q: 'Is the hotel included?', a: 'Yes. 4 nights.' },
+      { q: 'Is breakfast included?', a: 'Yes.' },
+      { q: 'Is the ski pass included?', a: 'No.' },
+      { q: 'Is the spa included?', a: 'No.' },
+      { q: 'Is rental included?', a: 'No.' },
+      { q: 'What happens on December 25?', a: 'Current plan: day off / St. Moritz.' },
+      { q: 'Can I ride on December 27?', a: 'Potentially until lunch, depending on departure plans and conditions.' },
+      // TODO(campFaq): confirm these three before launch — nothing is promised until then
+      { q: 'How do we get there?', a: '[To be confirmed: travel to Valdidentro]', todo: true },
+      { q: 'Payment / deposit?', a: '[To be confirmed: payment and deposit]', todo: true },
+      { q: 'Cancellation?', a: '[To be confirmed: cancellation policy]', todo: true },
+    ] as { q: string; a: string; todo?: boolean }[],
   },
+
+  // 13 final poster + application
   apply: {
+    issue: 'Issue 01',
+    h2: ['See you', 'on the mountain.'],
+    poster: [['Italy', ''], ['23—27 Dec', '2026'], ['12 spots', ''], ['€800', '']],
     kicker: 'Apply',
-    h2: 'Take the spot',
-    lead: 'Tell us who you are and how you ride. Ilia replies personally with the details and payment.',
-    marker: 'ride hard. learn fast.',
+    lead: 'Not a payment — an application. We’ll contact you to confirm your place, riding group and next steps.',
     name: 'Name',
-    discipline: 'You ride',
+    contact: 'Contact',
+    contactHint: 'Instagram / Telegram / email',
+    contactPh: '@yourname or you@example.com',
+    discipline: 'Discipline',
     disciplines: ['Snowboard', 'Ski'] as const,
-    contactVia: 'Contact via',
-    methods: ['Telegram', 'WhatsApp', 'Email'] as const,
-    placeholders: { Telegram: '@username', WhatsApp: '+39 …', Email: 'you@example.com' },
-    level: 'Your level',
-    levelPick: 'Pick one',
-    levels: [
-      ['first', 'Never been on snow'],
-      ['beginner', 'Beginner — a few days on snow'],
-      ['piste', 'Confident on the whole mountain'],
-      ['park', 'Riding park regularly'],
-      ['advanced', 'Spinning 5s and up'],
-    ],
+    level: 'Level',
+    levels: [['first', 'First time'], ['beginner', 'Beginner'], ['intermediate', 'Intermediate'], ['advanced', 'Advanced']] as [string, string][],
     message: 'Message',
     optional: '(optional)',
-    messagePh: 'What do you want to get out of the camp?',
-    submit: 'Send →',
+    messagePh: 'Anything we should know? What do you want to work on?',
+    promo: { toggle: 'Got a code?', label: 'Code', apply: 'Apply', saved: 'Got it — we’ll check it when we confirm your place.', checking: 'Checking…', bad: 'That code didn’t work. Check it, or leave it empty.' },
+    submit: 'Apply for BAS CAMP',
     sending: 'Sending…',
     errors: {
       name: 'Your name, please.',
-      contact: 'How should Ilia reach you?',
+      contact: 'How can we reach you? Instagram, Telegram or email.',
       email: 'That email looks off.',
-      phone: 'Use a phone number, with country code.',
       level: 'Pick your level.',
-      network: "Couldn't send it. Check your connection and try again.",
+      network: 'Couldn’t send it. Check your connection and try again.',
     },
     sent: {
-      stamp: 'Received',
-      line: (first: string) => `See you on the hill, ${first}.`,
-      reply: (method: string) => `Ilia will reach you via ${method}.`,
+      stamp: 'Application in',
+      line: (first: string) => `See you on the mountain, ${first}.`,
+      reply: 'We’ll contact you to confirm your place, riding group and next steps.',
       again: 'Send another',
     },
     // no form backend yet: the application goes to Ilia as an Instagram DM the rider sends themselves
     handoff: {
       stamp: 'One last step',
       line: 'Send it to Ilia on Instagram.',
-      body: 'Your application is ready. Copy it, then paste it into the chat with @baskakov74 and hit send.',
+      body: 'Your application is ready. Copy it, paste it into the chat with @baskakov74 and hit send. We’ll contact you to confirm your place, riding group and next steps.',
       copy: 'Copy & open Instagram',
       copied: 'Copied — paste it in the chat',
       open: 'Open Instagram only',
       label: 'Your application',
-      intro: 'Hi Ilia! I want to join BAS CAMP Italy, 23–27 Dec 2026.',
+      intro: 'Hi Ilia! I’d like to join BAS CAMP Issue 01, Italy, 23–27 Dec 2026.',
     },
   },
+  sticky: { dates: '23—27 Dec', price: '€800', cta: 'Join →' },
   footer: {
-    contacts: 'Telegram [handle] · WhatsApp [number] · [email]', // TODO: contacts
-    issue: 'BAS CAMP · Issue 01',
+    contacts: 'Telegram [handle] · WhatsApp [number] · [email]', // TODO(contacts)
+    issue: 'BAS CAMP · Issue 01 · Winter 26/27',
     back: '← Back to Ilia Baskakov',
     toTop: '↑ Back to top',
   },

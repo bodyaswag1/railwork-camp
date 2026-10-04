@@ -4,6 +4,7 @@ import Stage from '../components/Stage.astro';
 import Wear from '../components/Wear.astro';
 import Splat from '../components/Splat.astro';
 import { Image, Picture, getImage } from 'astro:assets';
+import '../styles/punk.css';
 import '../styles/magazine.css';
 import bib from '../assets/photos/ilia-bib-27.jpg';
 import air from '../assets/photos/ilia-air.jpg';
@@ -154,10 +155,9 @@ const ext = { target: '_blank', rel: 'noopener' };
                   <div class="car__viewport" data-car-viewport>
                     <ol class="car__track" data-car-track role="list">
                       {riderPage.pics.slides.map((p, i) => (
-                        <li class="slide pic" data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
+                        <li class="slide pic" data-slide data-slide-sized aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
                           <Image src={photos[p.photo]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading="lazy" style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />
-                          <span class="pic__dots" aria-hidden="true"></span>
-                          <span class="pic__cap" aria-hidden="true"><b>02{String.fromCharCode(65 + i)} ▸</b> {p.cap}</span>
+                          <span class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</span>
                         </li>
                       ))}
                     </ol>
@@ -214,7 +214,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <div class="boards__row">
               <svg class="mk" aria-hidden="true" viewBox="0 0 100 40" preserveAspectRatio="none" style="left:8%;top:-56px;width:88%;height:44px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 38 C 20 4, 70 -6, 96 26 M89 18 L 97 27 L 99 15" stroke="#BA1422" stroke-width="3" /><path data-draw vector-effect="non-scaling-stroke" d="M30 26 L 34 32 M50 20 L 52 27 M70 22 L 70 29" stroke="#BA1422" stroke-width="2" /></svg>
               <span class="boards__pro marker" data-ink aria-hidden="true">{riderPage.notes.pro}</span>
-              <span class="stamp stamp--boards" data-stamp="1.7" aria-hidden="true">{riderPage.notes.stamp}</span>
+              <span class="stamp stamp--boards" data-stamp="1.15" aria-hidden="true">{riderPage.notes.stamp}</span>
               {riderPage.boards.map((b, i) => (
                 <figure class="board">
                   {i === 0 && <svg class="mk" aria-hidden="true" viewBox="0 0 60 40" style="top:-34px;left:50%;width:46px;margin-left:-23px" fill="none" stroke="#BA1422" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 34 L 9 8 L 21 24 L 30 4 L 39 24 L 51 8 L 54 34 Z M8 38 L 52 37" /></svg>}

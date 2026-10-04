@@ -163,13 +163,14 @@ test('/camp without a form backend: the application goes to Ilia as an Instagram
   await page.fill('#f-name', 'Test Rider');
   await page.check('input[name=discipline][value=Snowboard]', { force: true });
   await page.fill('#f-contact', '@testrider');
-  await page.selectOption('#f-level', 'first');
+  await page.check('input[name=level][value=first]', { force: true });
   await page.locator('form .submit').click({ force: true });
   await expect(page.locator('[data-handoff]')).toBeVisible();
   await expect(page.locator('[data-sent]')).toBeHidden();
   const msg = await page.locator('[data-handoff-msg]').inputValue();
   expect(msg).toContain('Name: Test Rider');
-  expect(msg).toContain('Level: Never been on snow');
+  expect(msg).toContain('Level: First time');
+  expect(msg).not.toContain('750');
   const popup = page.waitForEvent('popup');
   await page.locator('[data-handoff-copy]').click({ force: true });
   expect((await popup).url()).toMatch(/ig\.me\/m\/baskakov74|instagram\.com/);

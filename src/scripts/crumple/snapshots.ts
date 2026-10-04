@@ -186,6 +186,8 @@ const offscreenSlide = (el: Element) => {
 let offscreen = new Set<Element>();
 const findOffscreen = (page: HTMLElement) => new Set(Array.from(page.querySelectorAll('[data-slide]')).filter(offscreenSlide));
 const inOffscreenSlide = (n: Element) => { const sl = n.closest('[data-slide]'); return !!sl && offscreen.has(sl); };
+/** inside an off-screen slide that keeps its size without its content ([data-slide-sized]): nothing to copy */
+const inOffscreenSizedSlide = (n: Element) => { const sl = n.parentElement?.closest('[data-slide-sized]'); return !!sl && offscreen.has(sl); };
 
 /** faces of the 3D board cards that point away from the viewer (the copy flattens 3D and ignores backface-visibility) */
 const matrixOf = (el: Element) => { const t = getComputedStyle(el).transform; return t && t !== 'none' ? new DOMMatrix(t) : new DOMMatrix(); };
@@ -200,6 +202,7 @@ const skipAlways = (n: Node) =>
   // 1620° note); a board face turned away would show through the flattened copy
   n instanceof HTMLSourceElement || n instanceof HTMLVideoElement ||
   (n instanceof HTMLImageElement && offscreen.size > 0 && inOffscreenSlide(n)) ||
+  (n instanceof Element && offscreen.size > 0 && inOffscreenSizedSlide(n)) ||
   (n instanceof HTMLElement && (n.classList.contains('wear') || n.hasAttribute('data-nocopy') || (n.classList.contains('board__face') && facingAway(n))));
 
 async function capture(node: HTMLElement, w: number, h: number, bg: string | null, style: Partial<CSSStyleDeclaration> | null, skip?: (n: Node) => boolean) {
