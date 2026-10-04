@@ -64,17 +64,19 @@ test('a lost WebGL context gives a fade, not a blank sheet, and the paper comes 
   expect(await page.evaluate(() => (window as any).__canvasSeen)).toBe(true);
 });
 
-test('a copy of a page shows its carousel on the slide the reader left it on', async ({ page }) => {
+test('a copy of a page shows its photo pile with the print the reader left on top', async ({ page }) => {
   await page.goto('/?debug#ilia');
   await page.waitForFunction(() => !!(window as any).__crumple);
   await page.addStyleTag({ content: '.lil-gui{display:none!important}' });
   await page.waitForTimeout(3000); // marks drawn
-  await page.locator('#ilia [data-car-next]').click();
+  const pile = page.locator('#ilia [data-pile]');
+  await pile.focus();
+  await page.keyboard.press('ArrowRight');
   await page.waitForTimeout(700);
-  await page.locator('#ilia [data-car-next]').click();
-  await page.waitForTimeout(3000); // slide settled, the page copied again once quiet
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(3000); // prints settled, the page copied again once quiet
   expect(await page.locator('#ilia [data-car-count]').textContent()).toMatch(/^03\//);
-  const box = (await page.locator('#ilia [data-car-viewport]').boundingBox())!;
+  const box = (await page.locator('#ilia .pics__stack').boundingBox())!;
   const x = Math.max(0, box.x), y = Math.max(0, box.y);
   const clip = { x, y, width: Math.min(box.width, 390 - x), height: Math.min(box.height, 844 - y) };
   const dom = await page.screenshot({ clip });
@@ -82,7 +84,7 @@ test('a copy of a page shows its carousel on the slide the reader left it on', a
   expect(await page.evaluate(() => !!document.querySelector('.paper-canvas.is-on'))).toBe(true);
   const cv = await page.screenshot({ clip });
   const { mean } = await meanDiff(dom, cv);
-  console.log(`carousel strip on slide 3, canvas vs page: mean diff ${mean.toFixed(2)}`);
+  console.log(`photo pile on print 3, canvas vs page: mean diff ${mean.toFixed(2)}`);
   expect(mean).toBeLessThan(6);
 });
 

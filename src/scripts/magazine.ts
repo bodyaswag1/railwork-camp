@@ -6,7 +6,7 @@ import { pages, ui } from '../content/site';
 import { agePaper } from './paper';
 import { drawMarks, hideMarks, showMarks, finishMarks } from './marks';
 import { initCarousel, type Carousel } from './carousel';
-import { initLightbox } from './lightbox';
+import { initPile } from './pile';
 import { initCases } from './cases';
 import { initBoards } from './boards';
 import { fadeTransition, cssTransition, type Transition, type Hooks } from './transitions';
@@ -64,7 +64,6 @@ let busy = false;
 let lockUntil = 0;
 let acc = 0, lastWheel = 0, edgeAt = 0;
 let ty: number | null = null, tx = 0, tUp = false, tDown = false, swiped = false, axis: '' | 'x' | 'y' = '';
-let lightboxOpen = false;
 let lastInput = 0;
 const settled = new Set<number>(); // pages whose entrance animations have finished
 const marked = new Set<number>(); // pages whose marks have finished drawing on
@@ -112,7 +111,7 @@ export const state = {
 // carousels, per page: the slide they're on is part of the page's look
 const carousels = new Map<number, Carousel[]>();
 secs.forEach((s, i) => {
-  const list = Array.from(s.querySelectorAll<HTMLElement>('[data-carousel]')).map((el) => initCarousel(el, {
+  const list = Array.from(s.querySelectorAll<HTMLElement>('[data-carousel]')).map((el) => (el.hasAttribute('data-pile') ? initPile : initCarousel)(el, {
     reduced,
     // a new slide is a new look for the page (copied again once the reader is quiet)
     onChange: () => { lastInput = performance.now(); if (i === cur) state.onDirty(i); },
@@ -125,8 +124,6 @@ const boards = initBoards(secs[BOARDS], () => cur === BOARDS && !busy, reduced,
   () => { settled.add(BOARDS); state.onDirty(BOARDS); },
   // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
   () => { settled.delete(BOARDS); lastInput = performance.now(); });
-const lifePage = secs.find((s) => s.querySelector('[data-tile]'));
-const lightbox = lifePage ? initLightbox(lifePage, (open) => { lightboxOpen = open; }) : null;
 const casesPage = secs.find((s) => s.querySelector('[data-case]'));
 const cases = casesPage ? initCases(casesPage) : null;
 
@@ -140,7 +137,7 @@ const atEdge = (dir: number) => {
   if (!el || el.scrollHeight <= el.clientHeight + 2) return true;
   return dir > 0 ? el.scrollTop + el.clientHeight >= el.scrollHeight - 2 : el.scrollTop <= 1;
 };
-const blocked = () => !menu.hidden || lightboxOpen;
+const blocked = () => !menu.hidden;
 
 /** Put a page in its pre-landing state: marks hidden, entrance animations at their start. */
 export function prepare(i: number) {
@@ -200,7 +197,6 @@ export async function go(n: number, push = true, explicit = false) {
   landedOnce = true;
   performance.mark('turn:start');
   const from = cur, dir: 1 | -1 = n > from ? 1 : -1;
-  lightbox?.close();
   cases?.pauseAll();
   prepare(n);
   // the arriving page renders underneath from now on, so it's ready to take over the moment the paper lands

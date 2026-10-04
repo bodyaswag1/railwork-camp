@@ -22,7 +22,7 @@ import b2b from '../assets/boards/board-2-base.png';
 import b3t from '../assets/boards/board-3-top.png';
 import b3b from '../assets/boards/board-3-base.png';
 import {
-  rider, camp, brand, pages, pageIndex, nav, ui, hero, riderPage, coachPage, progress, train, life, nextCamp, nextLevel, seo,
+  rider, camp, brand, pages, pageIndex, nav, ui, hero, riderPage, coachPage, progress, train, nextCamp, nextLevel, seo,
 } from '../content/site';
 
 const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye, bib };
@@ -33,9 +33,6 @@ const boardImgs: Record<string, ImageMetadata> = {
 // boards are height-driven (see .board__drop): width = height × 205/1112
 const boardSizes = '(max-width: 899px) calc(min(34svh, 60vw) * 0.184), calc(min(60svh, max(36svh, 42vw)) * 0.184)';
 // full-size versions for the photo viewer
-const full = Object.fromEntries(await Promise.all(
-  life.tiles.filter((t) => t.photo).map(async (t) => [t.photo!, (await getImage({ src: photos[t.photo!], width: 1280, format: 'webp' })).src]),
-));
 const P = (id: Parameters<typeof pageIndex>[0]) => pageIndex(id);
 
 const site = Astro.site!;
@@ -103,7 +100,7 @@ const ext = { target: '_blank', rel: 'noopener' };
     <!-- ======================= 01 COVER ======================= -->
     <section class="page dark cover is-active" id="cover" data-page="0" data-tone="D" data-head="dark" aria-labelledby="h-cover">
       <div class="cover__photo">
-        <Picture src={bib} alt={hero.photoAlt} formats={['avif', 'webp']} widths={[480, 854]} sizes="(min-width: 900px) 50vw, 100vw" loading="eager" fetchpriority="high" />
+        <Picture src={studio} alt={hero.photoAlt} formats={['avif', 'webp']} widths={[480, 854]} sizes="(min-width: 900px) 50vw, 100vw" loading="eager" fetchpriority="high" />
       </div>
       <div class="cover__scrim" aria-hidden="true"></div>
       <div class="cover__inner scroller" data-scroll>
@@ -148,26 +145,18 @@ const ext = { target: '_blank', rel: 'noopener' };
           <span class="crop crop--tl" aria-hidden="true"></span><span class="crop crop--br" aria-hidden="true"></span>
           <div class="stats__left">
             <div class="stats__head">
-              <div class="pics car" data-carousel role="region" aria-roledescription="carousel" aria-label={riderPage.pics.label}>
-                <div class="pics__frame">
-                  <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-10px;top:-10px;width:calc(100% + 20px);height:calc(100% + 20px);z-index:3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="3" /></svg>
-                  <span class="tape tape--pics" aria-hidden="true"></span>
-                  <div class="car__viewport" data-car-viewport>
-                    <ol class="car__track" data-car-track role="list">
-                      {riderPage.pics.slides.map((p, i) => (
-                        <li class="slide pic" data-slide data-slide-sized aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
-                          <Image src={photos[p.photo]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading="lazy" style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />
-                          <span class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
+              <div class="pics" data-carousel data-pile role="region" aria-roledescription="carousel" aria-label={riderPage.pics.label} tabindex="0">
+                <div class="pics__stack">
+                  <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12px;top:-12px;width:calc(100% + 24px);height:calc(100% + 24px);z-index:20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="3" /></svg>
+                  {riderPage.pics.slides.map((p, i) => (
+                    <figure class="pic" data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
+                      <span class="tape tape--pic" aria-hidden="true"></span>
+                      <Image src={photos[p.photo]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 4 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />
+                      <figcaption class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</figcaption>
+                    </figure>
+                  ))}
                 </div>
-                <div class="pics__bar">
-                  <button class="car__btn" type="button" data-car-prev aria-label={ui.prev}>←</button>
-                  <span class="car__count" data-car-count aria-hidden="true">01/06</span>
-                  <button class="car__btn" type="button" data-car-next aria-label={ui.next}>→</button>
-                </div>
+                <span class="pics__count" data-car-count aria-hidden="true">01/06</span>
                 <span class="pics__note marker" data-ink aria-hidden="true">{riderPage.pics.note}</span>
               </div>
               <div class="stats__title">
@@ -393,57 +382,8 @@ const ext = { target: '_blank', rel: 'noopener' };
       <Wear tone="D" />
     </section>
 
-    <!-- ======================= 06 BAS LIFE ======================= -->
-    <section class="page paper life" id="life" data-page="5" data-tone="L" data-head="light" aria-labelledby="h-life">
-      <div class="staple" style="top:28%" aria-hidden="true"></div>
-      <div class="staple" style="top:72%" aria-hidden="true"></div>
-      <div class="scroller" data-scroll>
-        <div class="pg life__grid">
-          <div class="decor" aria-hidden="true">
-            <span class="crop crop--tl"></span><span class="crop crop--br"></span>
-            <svg class="mk life__burst" viewBox="0 0 100 100" fill="none" stroke-linejoin="round"><path data-draw d={burstD} stroke="#BA1422" stroke-width="3" /></svg>
-          </div>
-          <header class="pg__head life__head">
-            <p class="kicker"><span class="kicker__n">06</span>{life.kicker}</p>
-            <h2 class="h2" id="h-life" tabindex="-1">{life.h2[0]} <br /><span class="red-t u">{life.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
-            <span class="stamp life__stamp" data-stamp="0.7" aria-hidden="true">{life.stamp}</span>
-            <span class="life__crew marker" data-ink aria-hidden="true">{life.crew}</span>
-          </header>
-          <div class="car car--life" data-carousel role="region" aria-roledescription="carousel" aria-label={life.carousel}>
-            <div class="car__viewport" data-car-viewport>
-              <ol class="car__track" data-car-track role="list">
-                {life.tiles.map((t, i) => (
-                  <li class:list={['slide', 'print', `print--${t.shape}`, { 'print--todo': t.todo }]} data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, life.tiles.length)}>
-                    <span class="tape print__tape" aria-hidden="true"></span>
-                    {t.photo ? (
-                      <button class="print__img" type="button" data-tile data-full={full[t.photo]} data-cap={t.cap} data-alt={t.alt} aria-label={life.open(t.cap)}>
-                        <Image src={photos[t.photo]} alt={t.alt ?? ''} widths={[360, 720]} sizes="(min-width: 900px) 24vw, 62vw" format="webp" loading="lazy" style={`object-position:${t.pos ?? '50% 50%'}`} draggable="false" />
-                      </button>
-                    ) : (
-                      // TODO(lifeMedia): a real photo replaces this placeholder
-                      <div class="print__img print__ph"><span>{t.cap}</span></div>
-                    )}
-                    {!t.todo && <p class="print__cap"><span class="print__n" aria-hidden="true">06{String.fromCharCode(65 + i)} ▸</span> {t.cap}</p>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div class="car__bar">
-              <span class="car__note marker" data-ink aria-hidden="true">{life.note}</span>
-              <div class="car__ctrl">
-                <button class="car__btn" type="button" data-car-prev aria-label={ui.prev}>←</button>
-                <span class="car__count" data-car-count aria-hidden="true">01/06</span>
-                <button class="car__btn" type="button" data-car-next aria-label={ui.next}>→</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Wear tone="L" />
-    </section>
-
-    <!-- ======================= 07 NEXT CAMP ======================= -->
-    <section class="page signal nextcamp" id="next-camp" data-page="6" data-tone="L" data-head="red" aria-labelledby="h-next-camp">
+    <!-- ======================= 06 NEXT CAMP ======================= -->
+    <section class="page signal nextcamp" id="next-camp" data-page="5" data-tone="L" data-head="red" aria-labelledby="h-next-camp">
       <div class="nextcamp__photo" aria-hidden="true">
         <Image src={glacier} alt="" widths={[480, 960]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
       </div>
@@ -475,10 +415,10 @@ const ext = { target: '_blank', rel: 'noopener' };
       <Wear tone="L" />
     </section>
 
-    <!-- ======================= 08 YOUR NEXT LEVEL ======================= -->
-    <section class="page dark final" id="next-level" data-page="7" data-tone="D" data-head="dark" aria-labelledby="h-next-level">
+    <!-- ======================= 07 YOUR NEXT LEVEL ======================= -->
+    <section class="page dark final" id="next-level" data-page="6" data-tone="D" data-head="dark" aria-labelledby="h-next-level">
       <div class="final__photo" aria-hidden="true">
-        <Image src={studio} alt="" widths={[480, 853]} sizes="(min-width: 900px) 40vw, 90vw" format="webp" loading="lazy" />
+        <Image src={bib} alt="" widths={[480, 854]} sizes="(min-width: 900px) 40vw, 90vw" format="webp" loading="lazy" />
       </div>
       <div class="final__inner scroller" data-scroll>
         <div class="decor" aria-hidden="true">
@@ -533,15 +473,6 @@ const ext = { target: '_blank', rel: 'noopener' };
     </div>
   </div>
 
-  <div class="lightbox" role="dialog" aria-modal="true" aria-label={life.viewer} hidden data-lightbox>
-    <button class="btn-line lightbox__close" type="button" data-lb-close aria-label={life.closeViewer}>{ui.close}</button>
-    <div class="lightbox__stage" data-lb-stage></div>
-    <div class="lightbox__bar">
-      <button class="btn-line" type="button" data-lb-prev aria-label={ui.prev}>←</button>
-      <p class="lightbox__cap" data-lb-cap aria-live="polite"></p>
-      <button class="btn-line" type="button" data-lb-next aria-label={ui.next}>→</button>
-    </div>
-  </div>
 </div>
 
 <script>

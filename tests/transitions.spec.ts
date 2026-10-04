@@ -43,8 +43,8 @@ async function turn(page: Page, shotPrefix: string) {
 const landedOk = (state: Awaited<ReturnType<typeof turn>>['state']) => {
   expect(state.active).toBe('ilia');
   expect(state.focused).toBe('h-ilia');
-  expect(state.live).toBe('Page 2 of 8: The rider');
-  expect(state.counter).toBe('02/08');
+  expect(state.live).toBe('Page 2 of 7: The rider');
+  expect(state.counter).toBe('02/07');
   expect(state.canvasOff).toBe(true);
   expect(state.stageOff).toBe(true);
 };

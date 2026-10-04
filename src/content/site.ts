@@ -78,9 +78,8 @@ export const pages = [
   { id: 'coaching', num: '03', title: 'The coach', stageNote: 'watch.', head: 'dark' },
   { id: 'progress', num: '04', title: 'Student progress', stageNote: 'proof', head: 'light' },
   { id: 'train', num: '05', title: 'Train with Ilia', stageNote: 'your call', head: 'dark' },
-  { id: 'life', num: '06', title: 'BAS life', stageNote: 'crew!', head: 'light' },
-  { id: 'next-camp', num: '07', title: 'Next camp', stageNote: 'italy!', head: 'red' },
-  { id: 'next-level', num: '08', title: 'Your next level', stageNote: 'go!', head: 'dark' },
+  { id: 'next-camp', num: '06', title: 'Next camp', stageNote: 'italy!', head: 'red' },
+  { id: 'next-level', num: '07', title: 'Your next level', stageNote: 'go!', head: 'dark' },
 ] as const;
 export const pageIndex = (id: (typeof pages)[number]['id']) => pages.findIndex((p) => p.id === id);
 
@@ -120,7 +119,7 @@ export const hero = {
   spin: { label: 'Biggest spin', value: '1620°' },
   ctaCamp: 'Join BAS CAMP',
   ctaCoaching: 'Private coaching',
-  photoAlt: 'Ilia Baskakov on the snow in a red competition bib, number 27, making a peace sign',
+  photoAlt: 'Studio portrait of Ilia Baskakov in white goggles, holding up a gloved hand with his ring',
   hint: 'Swipe up',
   hintDesktop: 'Scroll',
 };
@@ -138,7 +137,7 @@ export const riderPage = {
   note: 'the legend',
   pics: {
     label: 'Photos of Ilia',
-    note: 'swipe →',
+    note: '← swipe →',
     slides: [
       { photo: 'rail', pos: '58% 50%', cap: 'Rainbow rail', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
       { photo: 'air', pos: '42% 38%', cap: 'Upside down', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
@@ -266,29 +265,6 @@ export const train = {
     cta: 'Explore camp',
     alt: 'A rider in a red jacket pulling on goggles above a glacier',
   },
-};
-
-// ---------------------------------------------------------------- 06 BAS life
-export type LifeTile = { photo?: 'glacier' | 'fisheye' | 'bandana' | 'night' | 'smile'; pos?: string; cap: string; alt?: string; todo?: boolean; shape: 'tall' | 'square' | 'wide' };
-
-export const life = {
-  kicker: 'BAS life',
-  h2: ['Come for the riding.', 'Stay for the people.'],
-  stamp: 'No. 06 · Off the clock',
-  crew: 'crew!',
-  carousel: 'BAS life photos',
-  note: 'good times',
-  tiles: [
-    { photo: 'glacier', pos: '50% 45%', shape: 'tall', cap: 'Top of the glacier', alt: 'A rider in a red jacket and white mittens pulling on goggles, a peak behind' },
-    { photo: 'fisheye', pos: '50% 50%', shape: 'square', cap: 'Park laps', alt: 'Fisheye shot of a rider in yellow doing a handplant on a blue park feature' },
-    { photo: 'bandana', pos: '50% 30%', shape: 'tall', cap: 'Between runs', alt: 'A rider in a skull bandana and silver sunglasses looking out over the park' },
-    { shape: 'square', todo: true, cap: '[Photo: crew dinner]' },
-    { photo: 'smile', pos: '50% 35%', shape: 'tall', cap: 'Evenings', alt: 'Ilia laughing in a bandana at night' },
-    { shape: 'square', todo: true, cap: '[Photo: spa / recovery]' },
-  ] as LifeTile[],
-  viewer: 'Photo viewer',
-  closeViewer: 'Close viewer',
-  open: (cap: string) => `Open photo: ${cap}`,
 };
 
 // ---------------------------------------------------------------- 07 next camp teaser

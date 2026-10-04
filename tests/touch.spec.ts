@@ -59,35 +59,43 @@ test.describe('reduced motion (fast turns)', () => {
     await page.waitForTimeout(400);
     await swipe(page, 500, 410);
     await settle(page);
-    expect(await active(page)).toBe('life');
+    expect(await active(page)).toBe('next-camp');
   });
 
-  test('a sideways swipe on a carousel moves the slides, never the page', async ({ page }) => {
+  test('the photo pile: a sideways swipe sends the top print to the bottom, never turns the page', async ({ page }) => {
     await page.goto('/#ilia');
     await page.waitForLoadState('networkidle');
-    // the photo slider on the career-stats page
-    const strip = page.locator('#ilia [data-car-viewport]');
-    const box = (await strip.boundingBox())!;
+    const pile = page.locator('#ilia [data-pile]');
+    const count = page.locator('#ilia [data-car-count]');
+    const box = (await pile.boundingBox())!;
     const y = box.y + Math.min(box.height / 2, 200);
-    const [l, r] = [box.x + 12, box.x + box.width - 12];
+    const [l, r] = [box.x + 20, box.x + box.width - 20];
     await drag(page, r, y, l, y + 18); // mostly sideways, a little downward drift
     await page.waitForTimeout(900);
     expect(await active(page)).toBe('ilia');
-    expect(await page.locator('#ilia [data-car-count]').textContent()).toBe('02/' + (await page.locator('#ilia [data-car-count]').textContent())!.split('/')[1]);
-    // and back
+    expect(await count.textContent()).toBe('02/06');
+    // the print that was on top is now at the bottom of the pile
+    expect(await page.locator('#ilia [data-slide]').first().evaluate((el) => Number(getComputedStyle(el).zIndex))).toBe(1);
+    // a swipe the other way brings it back
     await drag(page, l, y, r, y - 14);
     await page.waitForTimeout(900);
-    expect((await page.locator('#ilia [data-car-count]').textContent())!.startsWith('01/')).toBe(true);
-    // a vertical swipe on a carousel still turns the page (from the bottom of the page)
-    await page.goto('/#life');
+    expect(await count.textContent()).toBe('01/06');
+    // a tap turns to the next print too
+    await page.locator('#ilia [data-slide]').first().tap();
+    await page.waitForTimeout(800);
+    expect(await count.textContent()).toBe('02/06');
+  });
+
+  test('a vertical swipe on a carousel still turns the page', async ({ page }) => {
+    await page.goto('/#progress');
     await page.waitForLoadState('networkidle');
-    await page.locator('#life [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    await page.locator('#progress [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.waitForTimeout(300);
-    const b2 = (await page.locator('#life [data-car-viewport]').boundingBox())!;
-    const yy = Math.min(600, b2.y + b2.height - 20);
+    const b2 = (await page.locator('#progress [data-car-viewport]').boundingBox())!;
+    const yy = Math.max(120, Math.min(600, b2.y + b2.height - 20));
     await swipe(page, yy, yy - 90, 12, 200);
     await settle(page);
-    expect(await active(page)).toBe('next-camp');
+    expect(await active(page)).toBe('train');
   });
 
   test('back cover → "back to the cover" button', async ({ page }) => {

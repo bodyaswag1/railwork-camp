@@ -180,6 +180,12 @@ main { position: absolute; inset: 0; }
 .cover__photo { position: absolute; inset: 0; }
 .cover__photo picture, .cover__photo img { display: block; width: 100%; height: 100%; }
 .cover__photo img { object-fit: cover; object-position: 50% 28%; }
+/* the studio portrait (goggles at the top of the frame): on a phone it starts under the name and fades into
+   the black page, so "BASKAKOV" never sits on the white goggles */
+@media (max-width: 899px) {
+  .cover__photo { top: clamp(120px, 17svh, 170px); }
+  .cover__photo img { object-position: 50% 0%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%); mask-image: linear-gradient(180deg, transparent 0, #000 12%); }
+}
 .cover__scrim {
   position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, rgba(16,19,20,.62) 0%, rgba(16,19,20,.34) 26%, rgba(16,19,20,0) 40%, rgba(16,19,20,0) 50%, rgba(16,19,20,.72) 68%, rgba(16,19,20,.94) 84%, var(--night-run) 100%);
@@ -241,15 +247,18 @@ main { position: absolute; inset: 0; }
 .stats__head { --pw: clamp(150px, 16.5vw, 250px); position: relative; display: flex; gap: clamp(18px, 2.2vw, 32px); align-items: flex-start; }
 
 /* the photo slider sits where the portrait was: a pink print, taped on and scribbled round */
-.pics { position: relative; flex: none; width: var(--pw); }
-.pics__frame { position: relative; padding: 8px 8px 0; transform: rotate(-2deg); background: var(--goggle-tint); box-shadow: var(--shadow-hard); transition: transform .25s ease; }
-.pics:hover .pics__frame { transform: rotate(0deg); }
-.pics .car__viewport { margin-right: 0; }
-.pics .car__track { --gap: 0px; padding: 0; }
-.pic { --iw: calc(var(--pw) - 16px); width: var(--iw); }
-.pic img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; filter: contrast(1.12) saturate(1.1); background: var(--night-run); }
+/* a pile of prints (scripts/pile.ts): the top one is on show, the rest lie under it, turned a little */
+.pics { position: relative; flex: none; width: var(--pw); padding: 0 12px 0 2px; touch-action: pan-y pinch-zoom; cursor: grab; user-select: none; -webkit-user-select: none; outline-offset: 10px; }
+.pics.is-dragging { cursor: grabbing; }
+.pics__stack { position: relative; display: grid; }
+.pic { grid-area: 1 / 1; position: relative; margin: 0; padding: 8px 8px 0; background: var(--goggle-tint); box-shadow: var(--shadow-hard); }
+.pic:nth-child(3n+2) { background: var(--airbag-ice); }
+.pic:nth-child(3n) { background: #F6E7B8; }
+.pic img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; filter: contrast(1.12) saturate(1.1); background: var(--night-run); pointer-events: none; -webkit-user-drag: none; }
 .pic__cap { display: block; padding: 7px 0 8px; color: var(--night-run); font-family: var(--font-display); font-weight: 800; font-stretch: 112%; font-size: 10px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pics__bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 16px; }
+.tape--pic { left: 30%; top: -9px; width: 40%; rotate: -3deg; }
+.pic:nth-child(even) .tape--pic { rotate: 4deg; left: 26%; }
+.pics__count { display: block; margin-top: 18px; font-family: var(--font-display); font-weight: 800; font-size: 12px; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: var(--lift-tower); }
 .pics__note { position: absolute; right: -18px; top: -26px; z-index: 4; transform: rotate(8deg); color: var(--park-signal); font-size: clamp(18px, 1.6vw, 24px); white-space: nowrap; pointer-events: none; }
 
 .stats__title { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding-top: 2px; }
@@ -472,7 +481,7 @@ main { position: absolute; inset: 0; }
 
 /* ---------- 08 your next level ---------- */
 .final__photo { position: absolute; top: 0; bottom: 0; right: -10vw; width: 85vw; pointer-events: none; }
-.final__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 20%; filter: grayscale(1) contrast(1.3) brightness(.9); mix-blend-mode: screen; opacity: .34; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); }
+.final__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 30%; filter: grayscale(1) contrast(1.3) brightness(.9); mix-blend-mode: screen; opacity: .34; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); }
 .final__inner { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: safe center; gap: clamp(18px, 3.2svh, 34px); padding: var(--top) var(--side) max(12px, env(safe-area-inset-bottom)); }
 .final__h2 { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; font-size: clamp(60px, 18vw, 180px); line-height: .82; text-transform: uppercase; }
 .final__h2 .u { color: var(--goggle-tint); }
@@ -513,8 +522,8 @@ main { position: absolute; inset: 0; }
 .cover__head { position: relative; }
 .cover__stamp { right: 0; top: 14px; rotate: -4deg; }
 .cover__vt { left: 3px; top: 50%; translate: 0 -50%; }
-.cover__splat { width: 190px; height: 134px; right: -26px; top: 30%; }
-.cover__x { width: 48px; height: 32px; right: 22px; top: 52%; }
+.cover__splat { width: 190px; height: 134px; left: -44px; top: 36%; }
+.cover__x { width: 48px; height: 32px; right: 18px; top: 67%; }
 .cover__note { left: 44%; top: 63%; rotate: -8deg; color: var(--goggle-tint); font-size: clamp(26px, 2.6vw, 40px); }
 .cover__arrow { left: calc(44% + 150px); top: 55%; width: 84px; height: 54px; }
 .cover__bar { left: calc(var(--side) + 120px); bottom: var(--bottom); color: var(--slush-concrete); }
