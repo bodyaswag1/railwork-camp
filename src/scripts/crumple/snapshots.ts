@@ -187,13 +187,20 @@ let offscreen = new Set<Element>();
 const findOffscreen = (page: HTMLElement) => new Set(Array.from(page.querySelectorAll('[data-slide]')).filter(offscreenSlide));
 const inOffscreenSlide = (n: Element) => { const sl = n.closest('[data-slide]'); return !!sl && offscreen.has(sl); };
 
+/** faces of the 3D board cards that point away from the viewer (the copy flattens 3D and ignores backface-visibility) */
+const matrixOf = (el: Element) => { const t = getComputedStyle(el).transform; return t && t !== 'none' ? new DOMMatrix(t) : new DOMMatrix(); };
+const facingAway = (n: HTMLElement) => {
+  try { return matrixOf(n.parentElement!).multiply(matrixOf(n)).m33 < 0; } catch { return false; }
+};
+
 const skipAlways = (n: Node) =>
   // <source> would point a cloned <picture> at a file the SVG renderer can't load; a cloned <video> waits for
   // data that a preload="none" clip never loads (the poster or placeholder under it is copied instead); the
-  // wear layers are composited separately (compositeWear); [data-nocopy] is never part of a page's look
+  // wear layers are composited separately (compositeWear); [data-nocopy] is never part of a page's look (the
+  // 1620° note); a board face turned away would show through the flattened copy
   n instanceof HTMLSourceElement || n instanceof HTMLVideoElement ||
   (n instanceof HTMLImageElement && offscreen.size > 0 && inOffscreenSlide(n)) ||
-  (n instanceof HTMLElement && (n.classList.contains('wear') || n.hasAttribute('data-nocopy')));
+  (n instanceof HTMLElement && (n.classList.contains('wear') || n.hasAttribute('data-nocopy') || (n.classList.contains('board__face') && facingAway(n))));
 
 async function capture(node: HTMLElement, w: number, h: number, bg: string | null, style: Partial<CSSStyleDeclaration> | null, skip?: (n: Node) => boolean) {
   const c = await context();

@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Stage from '../components/Stage.astro';
 import Wear from '../components/Wear.astro';
+import Splat from '../components/Splat.astro';
 import { Image, Picture, getImage } from 'astro:assets';
 import '../styles/magazine.css';
 import bib from '../assets/photos/ilia-bib-27.jpg';
@@ -13,15 +14,23 @@ import smile from '../assets/photos/ilia-smile.jpg';
 import bandana from '../assets/photos/life-bandana.jpg';
 import glacier from '../assets/photos/life-glacier.jpg';
 import fisheye from '../assets/photos/life-fisheye.jpg';
-import b1 from '../assets/boards/board-1-base.png';
-import b2 from '../assets/boards/board-2-base.png';
-import b3 from '../assets/boards/board-3-base.png';
+import b1t from '../assets/boards/board-1-top.png';
+import b1b from '../assets/boards/board-1-base.png';
+import b2t from '../assets/boards/board-2-top.png';
+import b2b from '../assets/boards/board-2-base.png';
+import b3t from '../assets/boards/board-3-top.png';
+import b3b from '../assets/boards/board-3-base.png';
 import {
   rider, camp, brand, pages, pageIndex, nav, ui, hero, riderPage, coachPage, progress, train, life, nextCamp, nextLevel, seo,
 } from '../content/site';
 
-const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye };
-const boards = [b1, b2, b3];
+const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye, bib };
+const boardImgs: Record<string, ImageMetadata> = {
+  'board-1-top': b1t, 'board-1-base': b1b, 'board-2-top': b2t,
+  'board-2-base': b2b, 'board-3-top': b3t, 'board-3-base': b3b,
+};
+// boards are height-driven (see .board__drop): width = height × 205/1112
+const boardSizes = '(max-width: 899px) calc(min(34svh, 60vw) * 0.184), calc(min(60svh, max(36svh, 42vw)) * 0.184)';
 // full-size versions for the photo viewer
 const full = Object.fromEntries(await Promise.all(
   life.tiles.filter((t) => t.photo).map(async (t) => [t.photo!, (await getImage({ src: photos[t.photo!], width: 1280, format: 'webp' })).src]),
@@ -54,6 +63,12 @@ const jsonLd = [
 const dblD = 'M1 10 C 25 3, 55 15, 99 5 M6 14 C 40 9, 70 13, 94 10';
 const circleD = 'M52 6 C 90 4, 99 32, 97 56 C 95 90, 22 98, 7 70 C -3 42, 20 8, 60 10';
 const starD = 'M30 2 L 35 22 L 56 14 L 40 30 L 58 44 L 36 40 L 30 58 L 24 40 L 2 46 L 20 30 L 4 14 L 25 22 Z';
+const boxD = 'M2 5 L 98 2 L 97 97 L 3 95 Z M5 1 L 99 7 L 95 99 L 1 93 L 4 3';
+const burstD = 'M50 4 L 57 32 L 84 14 L 68 41 L 97 48 L 69 58 L 87 86 L 57 70 L 50 97 L 43 70 L 13 86 L 31 58 L 3 48 L 32 41 L 16 14 L 43 32 Z';
+const xD = 'M4 6 L 24 30 M24 4 L 6 32 M34 10 L 54 34 M52 8 L 36 36';
+const zigD = 'M2 2 L 18 10 L 2 18 L 18 26 L 2 34';
+const curveD = 'M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24';
+const downD = 'M20 2 C 8 20, 32 36, 18 62 M7 50 L 18 64 L 30 51';
 const ext = { target: '_blank', rel: 'noopener' };
 ---
 <Base title={seo.title} description={seo.description} path="/" jsonLd={jsonLd}>
@@ -91,7 +106,17 @@ const ext = { target: '_blank', rel: 'noopener' };
       </div>
       <div class="cover__scrim" aria-hidden="true"></div>
       <div class="cover__inner scroller" data-scroll>
+        <div class="decor" aria-hidden="true">
+          <span class="crop crop--tl"></span><span class="crop crop--tr"></span>
+          <span class="vtext cover__vt">Issue 01 · Winter 26/27 · BAS · Ride / learn / repeat</span>
+          <Splat class="cover__splat" stamp="0.9" />
+          <span class="scrawl marker cover__note hide-m" data-ink>the coach</span>
+          <svg class="mk cover__arrow hide-m" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={curveD} stroke="#FF94E3" stroke-width="3" /></svg>
+          <svg class="mk cover__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
+          <span class="barcode cover__bar hide-m"><i></i><span>4 607162 001620</span></span>
+        </div>
         <div class="cover__head">
+          <span class="stamp stamp--pink cover__stamp" data-stamp="0.75" aria-hidden="true">No. 01 · Winter 26/27</span>
           <p class="cover__kicker">{hero.kicker}</p>
           <h1 class="cover__h1" id="h-cover" tabindex="-1"><span class="cover__first">{hero.h1[0]}</span> <span class="cover__last">{hero.h1[1]}</span></h1>
         </div>
@@ -100,7 +125,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           <span class="cover__spin-v">{hero.spin.value}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-4% -12% -18%;width:124%;height:122%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></span>
         </p>
         <div class="cover__foot">
-          <p class="cover__claim"><span>{hero.claim}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.16em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#BA1422" stroke-width="5" /></svg></span></p>
+          <p class="cover__claim"><span>{hero.claim}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.16em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#BA1422" stroke-width="5" /></svg><svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-.42em;top:-.22em;width:.4em;height:.4em" fill="none" stroke="#FF94E3" stroke-width="5" stroke-linejoin="round"><path data-draw d={burstD} /></svg></span></p>
           <p class="cover__sub">{hero.sub}</p>
           <ul class="cover__proof" role="list">{hero.proof.map((p) => <li>{p}</li>)}</ul>
           <div class="cover__ctas">
@@ -114,51 +139,101 @@ const ext = { target: '_blank', rel: 'noopener' };
     </section>
 
     <!-- ======================= 02 THE RIDER ======================= -->
-    <section class="page paper rider" id="ilia" data-page="1" data-tone="L" data-head="light" aria-labelledby="h-ilia">
+    <section class="page paper stats" id="ilia" data-page="1" data-tone="L" data-head="light" aria-labelledby="h-ilia">
       <div class="staple" style="top:28%" aria-hidden="true"></div>
       <div class="staple" style="top:72%" aria-hidden="true"></div>
       <div class="scroller" data-scroll>
-        <div class="pg rider__grid">
-          <header class="pg__head rider__head">
-            <p class="kicker"><span class="kicker__n">02</span>{riderPage.kicker}</p>
-            <h2 class="h2" id="h-ilia" tabindex="-1">{riderPage.h2[0]}<br /><span class="u">{riderPage.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.06em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#BA1422" stroke-width="4" /></svg></span></h2>
-            <dl class="rider__details">
-              {riderPage.details.map((d) => <div><dt>{d.label}</dt><dd>{d.value}</dd></div>)}
-            </dl>
-          </header>
-          <div class="car car--rider" data-carousel role="region" aria-roledescription="carousel" aria-label={riderPage.carousel}>
-            <div class="car__viewport" data-car-viewport>
-              <ol class="car__track" data-car-track role="list">
-                {riderPage.slides.map((s, i) => (
-                  <li class:list={['slide', 'rs', `rs--${s.kind}`]} data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.slides.length)}>
-                    <div class="rs__media">
-                      {s.kind === 'photo' && <Image src={photos[s.photo!]} alt={s.alt ?? ''} widths={[400, 800]} sizes="(min-width: 900px) 26vw, 80vw" format="webp" loading="lazy" style={`object-position:${s.pos ?? '50% 50%'}`} draggable="false" />}
-                      {s.kind === 'number' && <span class="rs__giant" aria-hidden="true">{s.big}</span>}
-                      {s.kind === 'boards' && (
-                        <div class="rs__boards" role="img" aria-label={riderPage.boardsAlt}>
-                          {boards.map((b) => <Image src={b} alt="" widths={[90, 180]} sizes="(min-width: 900px) 4vw, 14vw" format="webp" loading="lazy" draggable="false" />)}
-                        </div>
-                      )}
-                    </div>
-                    <p class="rs__stat">
-                      {s.kind === 'number'
-                        ? <span class="sr-only">{s.big} </span>
-                        : <span class:list={['rs__big', { 'rs__big--words': s.big.length > 5 }]}>{s.big}</span>}
-                      <span class="rs__label">{s.label}</span>
-                      {s.sub && <span class="rs__sub">{s.sub}</span>}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div class="car__bar">
-              <span class="car__note marker" data-ink aria-hidden="true">{riderPage.note}</span>
-              <div class="car__ctrl">
-                <button class="car__btn" type="button" data-car-prev aria-label={ui.prev}>←</button>
-                <span class="car__count" data-car-count aria-hidden="true">01/06</span>
-                <button class="car__btn" type="button" data-car-next aria-label={ui.next}>→</button>
+        <div class="stats__wrap">
+          <span class="crop crop--tl" aria-hidden="true"></span><span class="crop crop--br" aria-hidden="true"></span>
+          <div class="stats__left">
+            <div class="stats__head">
+              <div class="pics car" data-carousel role="region" aria-roledescription="carousel" aria-label={riderPage.pics.label}>
+                <div class="pics__frame">
+                  <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-10px;top:-10px;width:calc(100% + 20px);height:calc(100% + 20px);z-index:3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="3" /></svg>
+                  <span class="tape tape--pics" aria-hidden="true"></span>
+                  <div class="car__viewport" data-car-viewport>
+                    <ol class="car__track" data-car-track role="list">
+                      {riderPage.pics.slides.map((p, i) => (
+                        <li class="slide pic" data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
+                          <Image src={photos[p.photo]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading="lazy" style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />
+                          <span class="pic__dots" aria-hidden="true"></span>
+                          <span class="pic__cap" aria-hidden="true"><b>02{String.fromCharCode(65 + i)} ▸</b> {p.cap}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                </div>
+                <div class="pics__bar">
+                  <button class="car__btn" type="button" data-car-prev aria-label={ui.prev}>←</button>
+                  <span class="car__count" data-car-count aria-hidden="true">01/06</span>
+                  <button class="car__btn" type="button" data-car-next aria-label={ui.next}>→</button>
+                </div>
+                <span class="pics__note marker" data-ink aria-hidden="true">{riderPage.pics.note}</span>
+              </div>
+              <div class="stats__title">
+                <p class="kicker"><span class="kicker__n">02</span>{riderPage.kicker}</p>
+                <svg class="mk stats__arrow" aria-hidden="true" viewBox="0 0 80 50" style="right:4%;top:-30px;width:64px;height:44px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24" stroke="#BA1422" stroke-width="3" /></svg>
+                <span class="stats__legend marker" data-ink aria-hidden="true">{riderPage.note}</span>
+                <h2 class="stats__h2" id="h-ilia" tabindex="-1">{riderPage.h2[0]}<br />{riderPage.h2[1]}<span class="sr-only"> — {riderPage.sub}</span></h2>
+                <div class="rule5" aria-hidden="true"></div>
+                <div class="stats__sub" aria-hidden="true">{riderPage.sub}</div>
+                <p class="stats__meta">{riderPage.meta}</p>
               </div>
             </div>
+            <ul class="badges" role="list">
+              <li class="badge badge--champ">
+                <span class="b-big">{riderPage.badges.champ.big}</span>
+                <span class="b-wide">{riderPage.badges.champ.small[0]} {riderPage.badges.champ.small[1]}</span>
+                <svg class="mk" aria-hidden="true" viewBox="0 0 40 30" style="right:6%;top:-10%;width:clamp(26px,2.8vw,42px)" fill="none" stroke="#BA1422" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M4 26 L 6 6 L 14 18 L 20 2 L 26 18 L 34 6 L 36 26 Z" /></svg>
+              </li>
+              <li class="badge">
+                <span class="b-it">{riderPage.badges.europa.top}</span>
+                <span class="b-mk marker">{riderPage.badges.europa.marker} <span data-ink aria-hidden="true" style="display:inline-block">{riderPage.badges.europa.ink}</span></span>
+              </li>
+              <li class="badge">
+                <span class="b-cond">{riderPage.badges.junior.top}</span>
+                <span class="b-tiny">{riderPage.badges.junior.mid}</span>
+                <span class="b-low">{riderPage.badges.junior.low}</span>
+              </li>
+              <li class="badge badge--spin">
+                <span class="b-label">{riderPage.badges.spin.label}</span>
+                <span class="b-num">{riderPage.badges.spin.value}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-10%;top:-12%;width:120%;height:122%" fill="none" stroke="#BA1422" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></span>
+              </li>
+              <li class="badge">
+                <span class="b-label">{riderPage.badges.trick.label}</span>
+                <span class="b-trick marker">{riderPage.badges.trick.value}<svg class="mk mk-nf" aria-hidden="true" viewBox="0 0 100 14" preserveAspectRatio="none" style="left:0;bottom:-10px;width:100%;height:12px" fill="none" stroke="#BA1422" stroke-width="2.4" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 10 C 30 2, 60 14, 98 4 M10 13 C 40 8, 70 12, 92 9" /></svg></span>
+              </li>
+              <li class="badge">
+                <span class="b-label">{riderPage.badges.stance.label}</span>
+                <span class="b-stance">{riderPage.badges.stance.value}<svg class="mk" aria-hidden="true" viewBox="0 0 20 40" style="right:-26px;top:-6px;width:20px;height:40px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M2 2 L 18 10 L 2 18 L 18 26 L 2 34" stroke="#BA1422" stroke-width="2.5" /></svg></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="boards">
+            <div class="boards__row">
+              <svg class="mk" aria-hidden="true" viewBox="0 0 100 40" preserveAspectRatio="none" style="left:8%;top:-56px;width:88%;height:44px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M2 38 C 20 4, 70 -6, 96 26 M89 18 L 97 27 L 99 15" stroke="#BA1422" stroke-width="3" /><path data-draw vector-effect="non-scaling-stroke" d="M30 26 L 34 32 M50 20 L 52 27 M70 22 L 70 29" stroke="#BA1422" stroke-width="2" /></svg>
+              <span class="boards__pro marker" data-ink aria-hidden="true">{riderPage.notes.pro}</span>
+              <span class="stamp stamp--boards" data-stamp="1.7" aria-hidden="true">{riderPage.notes.stamp}</span>
+              {riderPage.boards.map((b, i) => (
+                <figure class="board">
+                  {i === 0 && <svg class="mk" aria-hidden="true" viewBox="0 0 60 40" style="top:-34px;left:50%;width:46px;margin-left:-23px" fill="none" stroke="#BA1422" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 34 L 9 8 L 21 24 L 30 4 L 39 24 L 51 8 L 54 34 Z M8 38 L 52 37" /></svg>}
+                  <div class="board__tag">{b.tag && <span>{b.tag}</span>}</div>
+                  <div class="board__drop" data-drop>
+                    <div class="board__card" data-spin={i} role="button" tabindex="0" aria-label={b.spinLabel}>
+                      <div class="board__face"><Image src={boardImgs[b.top]} alt={b.alt} format="webp" loading="lazy" widths={[110, boardImgs[b.top].width]} sizes={boardSizes} draggable="false" /></div>
+                      <div class="board__edge" aria-hidden="true"></div>
+                      <div class="board__face board__face--base"><Image src={boardImgs[b.base]} alt="" format="webp" loading="lazy" widths={[110, boardImgs[b.base].width]} sizes={boardSizes} draggable="false" /></div>
+                    </div>
+                  </div>
+                  <div class="board__shadow" aria-hidden="true"></div>
+                  <figcaption><span class="board__big">{b.big}</span><span class="board__small">{b.small}</span></figcaption>
+                  {i === 0 && <span class="board__one marker" data-ink aria-hidden="true">{riderPage.notes.one}</span>}
+                  {i === 0 && <span class="board__egg marker" data-egg data-nocopy aria-hidden="true">{riderPage.notes.egg}</span>}
+                </figure>
+              ))}
+            </div>
+            <p class="boards__hint">{riderPage.hint}</p>
           </div>
         </div>
       </div>
@@ -169,15 +244,23 @@ const ext = { target: '_blank', rel: 'noopener' };
     <section class="page dark coach" id="coaching" data-page="2" data-tone="D" data-head="dark" aria-labelledby="h-coaching">
       <div class="scroller" data-scroll>
         <div class="pg coach__grid">
+          <div class="decor" aria-hidden="true">
+            <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+            <span class="vtext coach__vt hide-m">Watch · Understand · Adjust · Repeat · Watch · Understand</span>
+            <svg class="mk coach__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#FF94E3" stroke-width="3.5" /></svg>
+            <Splat class="coach__splat hide-m" a="#BA1422" b="#FF94E3" stamp="1.1" />
+          </div>
           <header class="pg__head coach__head">
             <p class="kicker"><span class="kicker__n">03</span>{coachPage.kicker}</p>
+            <span class="stamp stamp--ice coach__stamp" data-stamp="0.8" aria-hidden="true">Coach mode: on</span>
             <h2 class="h2 coach__h2" id="h-coaching" tabindex="-1">
-              {coachPage.h2.map(([n, rest]) => <span class="coach__line"><em>{n}</em> {rest}</span>)}
+              {coachPage.h2.map(([n, rest], i) => <span class="coach__line"><em>{n}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-28%;top:-8%;width:156%;height:112%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg>}</em> {rest}</span>)}
             </h2>
             <p class="coach__lead"><strong>{coachPage.lead}</strong> {coachPage.leadMore}</p>
           </header>
           <div class="loop">
-            <p class="loop__label">{coachPage.loopLabel}</p>
+            <p class="loop__label">{coachPage.loopLabel}<svg class="mk" aria-hidden="true" viewBox="0 0 20 40" style="right:-28px;top:-8px;width:14px;height:28px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={zigD} stroke="#FF94E3" stroke-width="2.5" /></svg></p>
+            <span class="loop__more marker" data-ink aria-hidden="true">{coachPage.more}</span>
             <ol class="loop__steps" role="list">
               {coachPage.loop.map((s, i) => (
                 <li class="loop__step"><span class="loop__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="loop__w">{s.word}</span><span class="loop__l">{s.line}</span></li>
@@ -187,7 +270,8 @@ const ext = { target: '_blank', rel: 'noopener' };
             <span class="loop__note marker" data-ink aria-hidden="true">{coachPage.loopNote}</span>
           </div>
           <ul class="tags coach__tags" role="list">{coachPage.support.map((t) => <li>{t}</li>)}</ul>
-          <figure class="coach__media">
+          <figure class="coach__media tilt">
+            <span class="tape coach__tape1" aria-hidden="true"></span><span class="tape coach__tape2" aria-hidden="true"></span>
             <!-- TODO(coachingMedia): a coaching photo or clip replaces this placeholder -->
             <div class="ph ph--dark" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{coachPage.media.label}</span></span><span class="ph__play"></span><span class="ph__cap">{coachPage.media.cap}</span></div>
           </figure>
@@ -202,9 +286,15 @@ const ext = { target: '_blank', rel: 'noopener' };
       <div class="staple" style="top:72%" aria-hidden="true"></div>
       <div class="scroller" data-scroll>
         <div class="pg progress__grid">
+          <div class="decor" aria-hidden="true">
+            <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+            <span class="reg progress__reg hide-m"></span>
+          </div>
           <header class="pg__head progress__head">
             <p class="kicker"><span class="kicker__n">04</span>{progress.kicker}</p>
-            <h2 class="h2 progress__h2" id="h-progress" tabindex="-1"><span class="progress__pre">{progress.h2[0]}</span> <span class="progress__main">{progress.h2[1]}</span></h2>
+            <span class="stamp progress__stamp" data-stamp="0.7" aria-hidden="true">{progress.stamp}</span>
+            <h2 class="h2 progress__h2" id="h-progress" tabindex="-1"><span class="progress__pre">{progress.h2[0]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="left:-1%;top:46%;width:102%;height:.5em" fill="none" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M1 12 C 30 6, 60 15, 99 7" stroke="#BA1422" stroke-width="3" /></svg></span> <span class="progress__main">{progress.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
+            <span class="progress__note marker" data-ink aria-hidden="true">{progress.note}</span>
           </header>
           <div class="car car--cases" data-carousel role="region" aria-roledescription="carousel" aria-label={progress.carousel}>
             <div class="car__viewport" data-car-viewport>
@@ -212,6 +302,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                 {progress.cases.map((c, i) => (
                   <li class="slide case" data-slide data-case aria-roledescription="slide" aria-label={ui.slide(i + 1, progress.cases.length)}>
                     <figure class="case__media">
+                      <span class="tape case__tape" aria-hidden="true"></span>
                       {/* TODO(studentCases): set video.src (vertical clip) and video.poster in site.ts */}
                       {c.video?.poster && <img class="case__poster" src={c.video.poster} alt="" loading="lazy" />}
                       {!c.video?.src && !c.video?.poster && (
@@ -253,17 +344,23 @@ const ext = { target: '_blank', rel: 'noopener' };
     <section class="page dark train" id="train" data-page="4" data-tone="D" data-head="dark" aria-labelledby="h-train">
       <div class="scroller" data-scroll>
         <div class="pg train__grid">
+          <div class="decor" aria-hidden="true">
+            <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+            <Splat class="train__splat hide-m" stamp="1" />
+            <svg class="mk train__x hide-m" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
+          </div>
           <header class="pg__head train__head">
             <p class="kicker"><span class="kicker__n">05</span>{train.kicker}</p>
-            <h2 class="h2" id="h-train" tabindex="-1">{train.h2[0]} {train.h2[1]}</h2>
+            <h2 class="h2" id="h-train" tabindex="-1">{train.h2[0]} <span class="u">{train.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#FF94E3" stroke-width="4" /></svg></span></h2>
+            <span class="train__note marker" data-ink aria-hidden="true">{train.note}</span>
           </header>
           <div class="options">
-            <article class="opt" aria-labelledby="h-opt-a">
+            <article class="opt tilt" aria-labelledby="h-opt-a">
               <div class="opt__media"><Image src={rail} alt={train.coaching.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 35%" /></div>
               <div class="opt__body">
                 <p class="opt__label"><span>{train.coaching.label}</span></p>
                 <h3 class="opt__title" id="h-opt-a">{train.coaching.title}</h3>
-                <p class="opt__price"><span class="opt__from">{train.coaching.from}</span> <strong>{train.coaching.price}</strong> <span class="opt__per">{train.coaching.per}</span></p>
+                <p class="opt__price"><span class="opt__from">{train.coaching.from}</span> <strong>{train.coaching.price}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12%;top:-14%;width:124%;height:128%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></strong> <span class="opt__per">{train.coaching.per}</span></p>
                 <p class="opt__text">{train.coaching.body}</p>
                 <ul class="tags tags--sm" role="list">{train.coaching.areas.map((a) => <li>{a}</li>)}</ul>
                 <div class="opt__cta">
@@ -272,7 +369,9 @@ const ext = { target: '_blank', rel: 'noopener' };
                 </div>
               </div>
             </article>
-            <article class="opt opt--camp" aria-labelledby="h-opt-b">
+            <article class="opt opt--camp tilt" aria-labelledby="h-opt-b">
+              <span class="sticker sticker--red opt__sticker" data-stamp="0.9" aria-hidden="true">{train.camp.sticker}</span>
+              <span class="train__or marker" data-ink aria-hidden="true">{train.or}</span>
               <div class="opt__media"><Image src={glacier} alt={train.camp.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 40%" /></div>
               <div class="opt__body">
                 <p class="opt__label"><span>{train.camp.label}</span></p>
@@ -300,15 +399,22 @@ const ext = { target: '_blank', rel: 'noopener' };
       <div class="staple" style="top:72%" aria-hidden="true"></div>
       <div class="scroller" data-scroll>
         <div class="pg life__grid">
+          <div class="decor" aria-hidden="true">
+            <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+            <svg class="mk life__burst" viewBox="0 0 100 100" fill="none" stroke-linejoin="round"><path data-draw d={burstD} stroke="#BA1422" stroke-width="3" /></svg>
+          </div>
           <header class="pg__head life__head">
             <p class="kicker"><span class="kicker__n">06</span>{life.kicker}</p>
-            <h2 class="h2" id="h-life" tabindex="-1">{life.h2[0]} <br /><span class="red-t">{life.h2[1]}</span></h2>
+            <h2 class="h2" id="h-life" tabindex="-1">{life.h2[0]} <br /><span class="red-t u">{life.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
+            <span class="stamp life__stamp" data-stamp="0.7" aria-hidden="true">{life.stamp}</span>
+            <span class="life__crew marker" data-ink aria-hidden="true">{life.crew}</span>
           </header>
           <div class="car car--life" data-carousel role="region" aria-roledescription="carousel" aria-label={life.carousel}>
             <div class="car__viewport" data-car-viewport>
               <ol class="car__track" data-car-track role="list">
                 {life.tiles.map((t, i) => (
                   <li class:list={['slide', 'print', `print--${t.shape}`, { 'print--todo': t.todo }]} data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, life.tiles.length)}>
+                    <span class="tape print__tape" aria-hidden="true"></span>
                     {t.photo ? (
                       <button class="print__img" type="button" data-tile data-full={full[t.photo]} data-cap={t.cap} data-alt={t.alt} aria-label={life.open(t.cap)}>
                         <Image src={photos[t.photo]} alt={t.alt ?? ''} widths={[360, 720]} sizes="(min-width: 900px) 24vw, 62vw" format="webp" loading="lazy" style={`object-position:${t.pos ?? '50% 50%'}`} draggable="false" />
@@ -317,7 +423,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                       // TODO(lifeMedia): a real photo replaces this placeholder
                       <div class="print__img print__ph"><span>{t.cap}</span></div>
                     )}
-                    {!t.todo && <p class="print__cap">{t.cap}</p>}
+                    {!t.todo && <p class="print__cap"><span class="print__n" aria-hidden="true">06{String.fromCharCode(65 + i)} ▸</span> {t.cap}</p>}
                   </li>
                 ))}
               </ol>
@@ -342,17 +448,28 @@ const ext = { target: '_blank', rel: 'noopener' };
         <Image src={glacier} alt="" widths={[480, 960]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
       </div>
       <div class="nextcamp__inner scroller" data-scroll>
+        <div class="decor" aria-hidden="true">
+          <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+          <span class="vtext nextcamp__vt">BAS★CAMP · Issue 01 · Italy · 23—27.12.2026 · Snowboard + Freeski</span>
+          <span class="barcode nextcamp__bar hide-m"><i></i><span>BAS 2026 1223 27</span></span>
+          <Splat class="nextcamp__splat" a="#E1EFFA" b="#101314" stamp="1.2" />
+        </div>
         <div class="nextcamp__top">
           <span class="logo-box logo-box--lg" aria-hidden="true">BAS<b>★</b>CAMP</span>
           <span class="nextcamp__issue">{nextCamp.issue}</span>
+          <span class="stamp stamp--ice" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span>
         </div>
         <div class="nextcamp__main">
           <p class="kicker kicker--ice">{nextCamp.kicker}</p>
-          <h2 class="nextcamp__place" id="h-next-camp" tabindex="-1"><span class="sr-only">{camp.name} {camp.issue}: </span>{nextCamp.place}</h2>
+          <h2 class="nextcamp__place" id="h-next-camp" tabindex="-1"><span class="sr-only">{camp.name} {camp.issue}: </span>{nextCamp.place}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-.3em;top:-.06em;width:.34em;height:.34em" fill="none" stroke="#E1EFFA" stroke-width="4" stroke-linejoin="round"><path data-draw d={burstD} /></svg><span class="stamp stamp--ice stamp--big nextcamp__stamp" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span></h2>
           <p class="nextcamp__dates"><span>{nextCamp.dates[0]}</span> <span>{nextCamp.dates[1]}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.14em;width:100%;height:.2em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#E1EFFA" stroke-width="4" /></svg></p>
           <ul class="nextcamp__facts" role="list">{nextCamp.facts.map((f) => <li>{f}</li>)}</ul>
           <p class="nextcamp__line">{nextCamp.line}</p>
-          <a class="btn btn--ice btn--lg" href="/camp">{nextCamp.cta} <span aria-hidden="true">→</span></a>
+          <div class="nextcamp__go">
+            <a class="btn btn--ice btn--lg" href="/camp">{nextCamp.cta} <span aria-hidden="true">→</span></a>
+            <span class="nextcamp__note marker" data-ink aria-hidden="true">{nextCamp.note}</span>
+            <svg class="mk nextcamp__arrow" aria-hidden="true" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M74 6 C 60 36, 34 44, 10 40 M22 30 L 9 40 L 22 48" stroke="#E1EFFA" stroke-width="3" /></svg>
+          </div>
         </div>
       </div>
       <Wear tone="L" />
@@ -364,8 +481,16 @@ const ext = { target: '_blank', rel: 'noopener' };
         <Image src={studio} alt="" widths={[480, 853]} sizes="(min-width: 900px) 40vw, 90vw" format="webp" loading="lazy" />
       </div>
       <div class="final__inner scroller" data-scroll>
+        <div class="decor" aria-hidden="true">
+          <span class="crop crop--tl"></span><span class="crop crop--tr"></span>
+          <Splat class="final__splat" stamp="1" />
+          <svg class="mk final__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
+        </div>
+        <span class="stamp stamp--pink final__stamp" data-stamp="0.8" aria-hidden="true">{nextLevel.stamp}</span>
         <h2 class="final__h2" id="h-next-level" tabindex="-1">{nextLevel.h2[0]}<br /><span class="u">{nextLevel.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="right:-.55em;top:-.1em;width:.42em;height:.42em" fill="none" stroke="#FF94E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} /></svg></span></h2>
         <div class="paths">
+          <span class="final__pick marker" data-ink aria-hidden="true">{nextLevel.pick}</span>
+          <svg class="mk final__arrow" aria-hidden="true" viewBox="0 0 40 70" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={downD} stroke="#FF94E3" stroke-width="3" /></svg>
           {nextLevel.paths.map((p) => (
             <a class:list={['path', `path--${p.kind}`]} href={p.kind === 'camp' ? '/camp' : rider.dmUrl} {...(p.kind === 'camp' ? {} : ext)}>
               <span class="path__label">{p.label}</span>

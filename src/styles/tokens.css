@@ -88,7 +88,7 @@ img, video, svg { max-width: none; }
 
 /* marker layer: hidden until drawn on (DrawSVG for strokes, a stepped mask for handwriting).
    Without JS, or under reduced motion (.marks-static), the marks simply show. */
-.js [data-draw], .js [data-ink] { visibility: hidden; }
-.js .marks-static [data-draw], .js .marks-static [data-ink] { visibility: visible; }
+.js [data-draw], .js [data-ink], .js [data-stamp] { visibility: hidden; }
+.js .marks-static [data-draw], .js .marks-static [data-ink], .js .marks-static [data-stamp] { visibility: visible; }
 .mk { position: absolute; overflow: visible; pointer-events: none; filter: url(#jit); }
 .mk-nf { filter: none; }

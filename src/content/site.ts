@@ -124,35 +124,62 @@ export const hero = {
 };
 
 // ---------------------------------------------------------------- 02 the rider
-export type RiderSlide = {
-  kind: 'photo' | 'boards' | 'number';
-  big: string;
-  label: string;
-  sub?: string;
-  photo?: 'air' | 'studio' | 'rail' | 'night' | 'smile' | 'bandana';
-  pos?: string;
-  alt?: string;
-  tone?: 'red' | 'ice' | 'dark';
-};
+// The career-stats page of the first magazine (badges, the three pro boards that drop in and spin), with a
+// photo slider where the single portrait used to be.
+export type RiderPic = { photo: 'air' | 'rail' | 'night' | 'studio' | 'smile' | 'bib'; pos?: string; cap: string; alt: string };
 
 export const riderPage = {
   kicker: 'The rider',
-  h2: ['20 years', 'on snow.'],
-  note: 'swipe →',
-  carousel: 'Career highlights',
-  slides: [
-    { kind: 'photo', photo: 'air', pos: '50% 40%', big: '1620°', label: 'Biggest spin', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
-    { kind: 'number', big: '3×', label: 'National Champion', tone: 'red' },
-    { kind: 'photo', photo: 'rail', pos: '58% 50%', big: 'Europa Cup', label: 'Several podiums', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
-    { kind: 'photo', photo: 'night', pos: '45% 55%', big: '20', label: 'Years riding', alt: 'Ilia smiling under his helmet at a night session' },
-    { kind: 'boards', big: '3', label: 'Snowboard pro models', sub: 'Joint × Baskakov' },
-    { kind: 'photo', photo: 'studio', pos: '50% 30%', big: 'Junior World Championship', label: 'Participant', alt: 'Studio portrait of Ilia in white goggles, his hand raised' },
-  ] as RiderSlide[],
-  details: [
-    { label: 'Stance', value: 'Regular' },
-    { label: 'Favorite trick', value: 'Miller Flip' },
-  ],
-  boardsAlt: 'Three Joint snowboards, Ilia Baskakov pro models, standing side by side',
+  h2: ['Ilia', 'Baskakov'],
+  sub: 'Career stats',
+  meta: '20 years riding · 3 years coaching',
+  note: 'the legend',
+  pics: {
+    label: 'Photos of Ilia',
+    note: 'swipe →',
+    slides: [
+      { photo: 'rail', pos: '58% 50%', cap: 'Rainbow rail', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
+      { photo: 'air', pos: '42% 38%', cap: 'Upside down', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
+      { photo: 'bib', pos: '50% 28%', cap: 'Bib 27', alt: 'Ilia on the snow in a red competition bib, number 27, making a peace sign' },
+      { photo: 'night', pos: '45% 55%', cap: 'Night shift', alt: 'Ilia smiling under his helmet at a night session' },
+      { photo: 'studio', pos: '50% 30%', cap: 'Studio', alt: 'Studio portrait of Ilia in white goggles, his hand raised' },
+      { photo: 'smile', pos: '50% 32%', cap: 'That grin', alt: 'Ilia laughing in a bandana' },
+    ] as RiderPic[],
+  },
+  badges: {
+    champ: { big: '3×', small: ['National', 'Champion'] },
+    europa: { top: 'Europa Cup', marker: 'Podiums', ink: '!!' },
+    junior: { top: 'Junior World', mid: 'Championship', low: 'participant' },
+    spin: { label: 'Biggest spin', value: '1620°' },
+    trick: { label: 'Favorite trick', value: 'Miller Flip' },
+    stance: { label: 'Stance', value: 'Regular' },
+  },
+  boards: [
+    {
+      top: 'board-1-top', base: 'board-1-base',
+      alt: 'Baskakov Pro Model, black and red top sheet',
+      spinLabel: 'Spin the Baskakov Pro Model',
+      big: '[—]', // TODO(boardSeasons): length
+      small: 'Pro Model · [season]', // TODO(boardSeasons)
+      tag: 'First pro model', // TODO(boardSeasons): confirm which board was first
+    },
+    {
+      top: 'board-2-top', base: 'board-2-base',
+      alt: 'Baskakov Pro 2025/26, white and orange top sheet',
+      spinLabel: 'Spin the Baskakov Pro 2025/26',
+      big: '157W',
+      small: 'Pro · 2025/26',
+    },
+    {
+      top: 'board-3-top', base: 'board-3-base',
+      alt: 'Baskakov Pro, black and teal collage top sheet',
+      spinLabel: 'Spin the Baskakov Pro collage board',
+      big: '[—]', // TODO(boardSeasons): length
+      small: 'Pro Collage · [season]', // TODO(boardSeasons)
+    },
+  ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; tag?: string }[],
+  notes: { pro: 'pro ×3', one: '#1', egg: '1620°!', stamp: 'Joint × Baskakov' },
+  hint: 'Joint pro models · tap a board',
 };
 
 // ---------------------------------------------------------------- 03 from rider to coach
@@ -169,6 +196,7 @@ export const coachPage = {
     { word: 'Repeat', line: 'until it holds' },
   ],
   loopNote: 'again',
+  more: '"at least one more!"',
   support: ['Individual feedback', 'Specific exercises', 'Riding analysis', 'Video feedback', 'Progression built on your level'],
   media: { label: 'Coaching', cap: '[Coaching photo or clip]' },
 };
@@ -188,6 +216,8 @@ export type StudentCase = {
 export const progress = {
   kicker: 'Student progress',
   h2: ["Don't take our word for it.", 'Watch the progress.'],
+  stamp: 'Real riders',
+  note: 'proof ↓',
   carousel: 'Student stories',
   labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video', play: (n: string) => `Play rider ${n}'s video`, pause: (n: string) => `Pause rider ${n}'s video` },
   // TODO(studentCases): replace each bracket with the real case; drop `quote` if the rider has none
@@ -207,6 +237,8 @@ export const progress = {
 export const train = {
   kicker: 'Train with Ilia',
   h2: ['How do you', 'want to ride?'],
+  note: 'pick one',
+  or: 'or',
   coaching: {
     label: 'A',
     title: 'Private coaching',
@@ -228,6 +260,7 @@ export const train = {
     where: 'Italy',
     disciplines: 'Snowboard + Freeski',
     price: '€800',
+    sticker: '12 spots',
     cta: 'Explore camp',
     alt: 'A rider in a red jacket pulling on goggles above a glacier',
   },
@@ -239,6 +272,8 @@ export type LifeTile = { photo?: 'glacier' | 'fisheye' | 'bandana' | 'night' | '
 export const life = {
   kicker: 'BAS life',
   h2: ['Come for the riding.', 'Stay for the people.'],
+  stamp: 'No. 06 · Off the clock',
+  crew: 'crew!',
   carousel: 'BAS life photos',
   note: 'good times',
   tiles: [
@@ -258,6 +293,7 @@ export const life = {
 export const nextCamp = {
   kicker: 'Next camp',
   issue: 'Issue 01',
+  stamp: '12 spots',
   place: 'Italy',
   dates: camp.datesPoster,
   facts: ['Snowboard + Freeski', '12 spots', '€800', 'All levels'],
@@ -270,6 +306,8 @@ export const nextCamp = {
 // ---------------------------------------------------------------- 08 final call
 export const nextLevel = {
   h2: ["What's your", 'next level?'],
+  stamp: 'Last page · Issue 01',
+  pick: 'pick one',
   paths: [
     { kind: 'coaching', label: 'Private coaching', sub: 'From €150 / day · on your level', cta: 'Train with Ilia' },
     { kind: 'camp', label: 'BAS CAMP', sub: '23–27 Dec 2026 · Italy · €800', cta: 'Join BAS CAMP' },

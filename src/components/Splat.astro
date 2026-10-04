@@ -1,0 +1,15 @@
+---
+// Paint splatter: a few dots flicked off a marker (decoration; pops on with the stamps when data-stamp is set).
+interface Props { a?: string; b?: string; class?: string; style?: string; stamp?: string; flip?: boolean }
+const { a = '#FF94E3', b = '#BA1422', class: cls = '', style, stamp, flip = false } = Astro.props;
+---
+<svg class:list={['splat', cls]} style={style} viewBox="0 0 240 170" aria-hidden="true" data-stamp={stamp} transform={flip ? 'scale(-1 1)' : undefined}>
+  <circle cx="58" cy="70" r="15" fill={a} />
+  <circle cx="92" cy="44" r="5" fill={a} />
+  <circle cx="104" cy="84" r="8.5" fill={b} />
+  <circle cx="30" cy="112" r="4" fill={a} />
+  <circle cx="146" cy="58" r="3" fill={b} />
+  <circle cx="74" cy="128" r="6" fill={a} />
+  <circle cx="176" cy="96" r="2.5" fill={a} />
+  <circle cx="126" cy="114" r="1.8" fill={b} />
+</svg>

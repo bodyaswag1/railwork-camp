@@ -65,25 +65,29 @@ test.describe('reduced motion (fast turns)', () => {
   test('a sideways swipe on a carousel moves the slides, never the page', async ({ page }) => {
     await page.goto('/#ilia');
     await page.waitForLoadState('networkidle');
+    // the photo slider on the career-stats page
     const strip = page.locator('#ilia [data-car-viewport]');
     const box = (await strip.boundingBox())!;
     const y = box.y + Math.min(box.height / 2, 200);
-    await drag(page, 300, y, 80, y + 18); // mostly sideways, a little downward drift
+    const [l, r] = [box.x + 12, box.x + box.width - 12];
+    await drag(page, r, y, l, y + 18); // mostly sideways, a little downward drift
     await page.waitForTimeout(900);
     expect(await active(page)).toBe('ilia');
     expect(await page.locator('#ilia [data-car-count]').textContent()).toBe('02/' + (await page.locator('#ilia [data-car-count]').textContent())!.split('/')[1]);
     // and back
-    await drag(page, 80, y, 320, y - 14);
+    await drag(page, l, y, r, y - 14);
     await page.waitForTimeout(900);
     expect((await page.locator('#ilia [data-car-count]').textContent())!.startsWith('01/')).toBe(true);
-    // a vertical swipe on the carousel still turns the page (from the bottom of the page)
-    await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    // a vertical swipe on a carousel still turns the page (from the bottom of the page)
+    await page.goto('/#life');
+    await page.waitForLoadState('networkidle');
+    await page.locator('#life [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.waitForTimeout(300);
-    const b2 = (await strip.boundingBox())!;
+    const b2 = (await page.locator('#life [data-car-viewport]').boundingBox())!;
     const yy = Math.min(600, b2.y + b2.height - 20);
     await swipe(page, yy, yy - 90, 12, 200);
     await settle(page);
-    expect(await active(page)).toBe('coaching');
+    expect(await active(page)).toBe('next-camp');
   });
 
   test('back cover → "back to the cover" button', async ({ page }) => {

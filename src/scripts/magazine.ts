@@ -8,6 +8,7 @@ import { drawMarks, hideMarks, showMarks, finishMarks } from './marks';
 import { initCarousel, type Carousel } from './carousel';
 import { initLightbox } from './lightbox';
 import { initCases } from './cases';
+import { initBoards } from './boards';
 import { fadeTransition, cssTransition, type Transition, type Hooks } from './transitions';
 
 const root = document.querySelector<HTMLElement>('[data-mag]')!;
@@ -76,12 +77,15 @@ export const state = {
   quietFor: () => performance.now() - lastInput,
   /** the page's entrance animations are done (its DOM shows the landed look) */
   isSettled: (i: number) => settled.has(i),
-  /** the page's entrance animations are over: its marks have drawn on */
-  isCalm: (i: number) => marked.has(i),
-  /** which landed look a page has right now ('' = the default one): the slide each of its carousels is on */
+  /** the page's busy entrance animations are over: marks drawn, boards landed and not spinning (slow intro flips may still run) */
+  isCalm: (i: number) => marked.has(i) && (i !== BOARDS || boards.landed()),
+  /** which landed look a page has right now ('' = the default one): the slide each of its carousels is on,
+      and a board left showing its base */
   variant: (i: number) => {
     const at = (carousels.get(i) ?? []).map((c) => c.index());
-    return at.some((n) => n > 0) ? at.join('.') : '';
+    const slides = at.some((n) => n > 0) ? at.join('.') : '';
+    const spun = i === BOARDS ? boards.variant() : '';
+    return [slides, spun].filter(Boolean).join('|');
   },
   /** jump a page's entrance animations to their end, so its DOM shows the landed look */
   finishLanding: (i: number) => {
@@ -89,12 +93,14 @@ export const state = {
     // a page left before it ever drew its marks (a swipe before the fonts arrived) still shows them now
     if (!marked.has(i)) showMarks(secs[i]);
     carousels.get(i)?.forEach((c) => c.finish());
+    if (i === BOARDS) { boards.finish(); if (!boards.introRan()) boards.landedPose(); }
     marked.add(i); settled.add(i);
   },
   /** put an off-screen page into a look for a copy; returns how to undo it */
   setLook: (i: number, look: 'pre' | 'landed'): (() => void) | void => {
     if (look === 'pre') return;
     showMarks(secs[i]);
+    if (i === BOARDS) boards.landedPose();
     return () => prepare(i);
   },
   /** called when a page's look changes after landing (marks done, a board spun) */
@@ -113,6 +119,12 @@ secs.forEach((s, i) => {
   }));
   if (list.length) carousels.set(i, list);
 });
+// page 02: the three pro boards drop in, flip, and spin on hover or tap
+const BOARDS = secs.findIndex((s) => s.querySelector('[data-drop]'));
+const boards = initBoards(secs[BOARDS], () => cur === BOARDS && !busy, reduced,
+  () => { settled.add(BOARDS); state.onDirty(BOARDS); },
+  // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
+  () => { settled.delete(BOARDS); lastInput = performance.now(); });
 const lifePage = secs.find((s) => s.querySelector('[data-tile]'));
 const lightbox = lifePage ? initLightbox(lifePage, (open) => { lightboxOpen = open; }) : null;
 const casesPage = secs.find((s) => s.querySelector('[data-case]'));
@@ -138,6 +150,7 @@ export function prepare(i: number) {
   if (sc) sc.scrollTop = 0;
   carousels.get(i)?.forEach((c) => c.reset());
   if (s === casesPage) cases?.pauseAll();
+  if (i === BOARDS) boards.reset();
 }
 
 /** the masthead takes the colours of the page under it ('dark' while the paper is on the black stage) */
@@ -169,7 +182,8 @@ function land(i: number, focus = true) {
   const s = secs[i];
   settled.delete(i); marked.delete(i);
   const tl = drawMarks(s, reduced);
-  tl.eventCallback('onComplete', () => { marked.add(i); settled.add(i); state.onDirty(i); });
+  tl.eventCallback('onComplete', () => { marked.add(i); if (i !== BOARDS) settled.add(i); state.onDirty(i); });
+  if (i === BOARDS) boards.land();
   if (focus) s.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
   state.onLanded(i);
 }
@@ -339,7 +353,8 @@ root.querySelector('[data-skip]')!.addEventListener('click', (e) => {
 });
 
 // ---------------------------------------------------------------- start
-// hidden pages start in their pre-landing state through CSS (marks hidden, carousels on their first slide);
+// hidden pages start in their pre-landing state through CSS (marks hidden, carousels on their first slide,
+// boards reset in initBoards);
 // measuring every marker path now would force layout on pages nobody can see yet
 setActive(cur); setCounter(cur); setHead(secs[cur].dataset.head ?? 'dark'); setAt(cur);
 try { history.replaceState(null, '', `#${ids[cur]}`); } catch { /* file:// */ }

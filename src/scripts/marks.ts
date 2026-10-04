@@ -1,5 +1,6 @@
 // The page marker layer: strokes draw on with DrawSVG, handwritten notes appear through a stepped
-// left→right mask (writing direction), and it all redraws every time a page lands.
+// left→right mask (writing direction), rubber stamps and stickers slam on last, and it all redraws every
+// time a page lands.
 import { gsap } from 'gsap';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 
@@ -9,6 +10,7 @@ const tls = new WeakMap<Element, gsap.core.Timeline>();
 
 const strokes = (page: Element) => Array.from(page.querySelectorAll<SVGGeometryElement>('[data-draw]'));
 const inks = (page: Element) => Array.from(page.querySelectorAll<HTMLElement>('[data-ink]'));
+const stamps = (page: Element) => Array.from(page.querySelectorAll<HTMLElement>('[data-stamp]'));
 
 // visibility and the starting clip are plain style writes: going through GSAP's CSS plugin would read
 // computed styles for every mark on every landing
@@ -18,20 +20,22 @@ const setStyle = (els: Element[], prop: 'visibility' | 'clipPath', v: string) =>
 export function hideMarks(page: Element) {
   tls.get(page)?.kill();
   tls.delete(page);
-  const s = strokes(page), n = inks(page);
+  const s = strokes(page), n = inks(page), st = stamps(page);
   setStyle(s, 'visibility', 'hidden');
   setStyle(n, 'visibility', 'hidden');
   setStyle(n, 'clipPath', 'inset(0 100% 0 0)');
+  setStyle(st, 'visibility', 'hidden');
 }
 
 /** Fully drawn, no motion (reduced motion). */
 export function showMarks(page: Element) {
   tls.get(page)?.kill();
-  const s = strokes(page), n = inks(page);
+  const s = strokes(page), n = inks(page), st = stamps(page);
   s.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
   setStyle(s, 'visibility', 'visible');
   setStyle(n, 'visibility', 'visible');
   setStyle(n, 'clipPath', 'none');
+  st.forEach((el) => { el.style.visibility = 'visible'; el.style.transform = ''; el.style.opacity = ''; });
 }
 
 /** Jump a running draw-on to its end, so the page is in its landed look right now. */
@@ -58,6 +62,12 @@ export function drawMarks(page: Element, reduced: boolean) {
     const at = 0.25 + Math.min(0.45, s.length * 0.035) + i * 0.12;
     tl.call(() => { el.style.visibility = 'visible'; }, [], at);
     tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.48, ease: 'steps(7)', immediateRender: false }, at);
+  });
+  // stamps: dropped from above the paper, a hard landing (data-stamp = when, in seconds after landing)
+  stamps(page).forEach((el, i) => {
+    const at = Number(el.dataset.stamp) || 0.55 + i * 0.14;
+    tl.call(() => { el.style.visibility = 'visible'; }, [], at);
+    tl.fromTo(el, { scale: 1.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.24, ease: 'power4.in', immediateRender: false, clearProps: 'transform,opacity' }, at);
   });
   tls.set(page, tl);
   return tl;
