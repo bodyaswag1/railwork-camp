@@ -12,6 +12,11 @@ import rail from '../assets/photos/ilia-rail.jpg';
 import night from '../assets/photos/ilia-night.jpg';
 import studio from '../assets/photos/ilia-studio.jpg';
 import smile from '../assets/photos/ilia-smile.jpg';
+import boardslide from '../assets/photos/ilia-boardslide.jpg';
+import t9563 from '../assets/clips/trick-9563.jpg';
+import t2644 from '../assets/clips/trick-2644.jpg';
+import t0123 from '../assets/clips/trick-0123.jpg';
+import t6120 from '../assets/clips/trick-6120.jpg';
 import bandana from '../assets/photos/life-bandana.jpg';
 import glacier from '../assets/photos/life-glacier.jpg';
 import fisheye from '../assets/photos/life-fisheye.jpg';
@@ -25,7 +30,8 @@ import {
   rider, camp, brand, pages, pageIndex, nav, ui, hero, riderPage, coachPage, progress, train, nextCamp, nextLevel, seo,
 } from '../content/site';
 
-const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye, bib };
+const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye, bib, boardslide };
+const clipPosters = { 'trick-9563': t9563, 'trick-2644': t2644, 'trick-0123': t0123, 'trick-6120': t6120 };
 const boardImgs: Record<string, ImageMetadata> = {
   'board-1-top': b1t, 'board-1-base': b1b, 'board-2-top': b2t,
   'board-2-base': b2b, 'board-3-top': b3t, 'board-3-base': b3b,
@@ -147,16 +153,15 @@ const ext = { target: '_blank', rel: 'noopener' };
                   {riderPage.pics.slides.map((p, i) => (
                     <figure class:list={['pic', `pic--${p.kind}`]} data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
                       <span class="tape tape--pic" aria-hidden="true"></span>
-                      {p.kind === 'photo' && <Image src={photos[p.photo!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 4 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />}
-                      {/* a clip: a GIF plays as an image; a short muted loop sits on its poster (the paper copies the poster) */}
-                      {p.kind === 'clip' && p.media?.src && /\.gif$/i.test(p.media.src) && <img class="pic__media" src={p.media.src} alt={p.alt} loading="lazy" draggable="false" />}
-                      {p.kind === 'clip' && p.media?.src && !/\.gif$/i.test(p.media.src) && <>{p.media.poster && <img class="pic__media" src={p.media.poster} alt={p.alt} loading="lazy" draggable="false" />}<video class="pic__media" src={p.media.src} poster={p.media.poster} muted loop playsinline autoplay preload="metadata"></video></>}
-                      {p.kind === 'clip' && !p.media?.src && <div class="pic__clip" aria-hidden="true"><span class="pic__rec">REC</span><span class="pic__play"></span><span class="pic__ph">[GIF / clip]</span></div>}
+                      {p.kind === 'photo' && <Image src={photos[p.photo!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 3 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />}
+                      {p.kind === 'gif' && <Image src={clipPosters[p.poster!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 3 ? 'eager' : 'lazy'} draggable="false" />}
+                      {/* the GIF itself: src set by pile.ts when this print comes up; never in the paper's copies */}
+                      {p.kind === 'gif' && <img class="pic__gif" data-gif={p.gif} data-nocopy alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" />}
                       <figcaption class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</figcaption>
                     </figure>
                   ))}
                 </div>
-                <span class="pics__count" data-car-count aria-hidden="true">01/06</span>
+                <span class="pics__count" data-car-count aria-hidden="true">01/{String(riderPage.pics.slides.length).padStart(2, '0')}</span>
                 <span class="pics__note marker" data-ink aria-hidden="true">{riderPage.pics.note}</span>
               </div>
               <div class="stats__title">
@@ -216,7 +221,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                     </div>
                   </div>
                   <div class="board__shadow" aria-hidden="true"></div>
-                  <figcaption><span class="board__big">{b.big}</span><span class="board__small">{b.small}</span><span class="board__spec">{b.spec}</span></figcaption>
+                  <figcaption><span class="board__big">{b.big}</span><span class="board__small">{b.small}</span></figcaption>
                   {i === 0 && <span class="board__one marker" data-ink aria-hidden="true">{riderPage.notes.one}</span>}
                   {i === 0 && <span class="board__egg marker" data-egg data-nocopy aria-hidden="true">{riderPage.notes.egg}</span>}
                 </figure>

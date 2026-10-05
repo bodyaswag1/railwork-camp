@@ -71,11 +71,10 @@ test('a copy of a page shows its photo pile with the print the reader left on to
   await page.waitForTimeout(3000); // marks drawn
   const pile = page.locator('#ilia [data-pile]');
   await pile.focus();
-  await page.keyboard.press('ArrowRight');
-  await page.waitForTimeout(700);
-  await page.keyboard.press('ArrowRight');
-  await page.waitForTimeout(3000); // prints settled, the page copied again once quiet
-  expect(await page.locator('#ilia [data-car-count]').textContent()).toMatch(/^03\//);
+  // three flips: a photo print on top (a GIF print's copy shows its still, the live page the animation)
+  for (let k = 0; k < 3; k++) { await page.keyboard.press('ArrowRight'); await page.waitForTimeout(700); }
+  await page.waitForTimeout(2300); // prints settled, the page copied again once quiet
+  expect(await page.locator('#ilia [data-car-count]').textContent()).toMatch(/^04\//);
   const box = (await page.locator('#ilia .pics__stack').boundingBox())!;
   const x = Math.max(0, box.x), y = Math.max(0, box.y);
   const clip = { x, y, width: Math.min(box.width, 390 - x), height: Math.min(box.height, 844 - y) };
@@ -84,7 +83,7 @@ test('a copy of a page shows its photo pile with the print the reader left on to
   expect(await page.evaluate(() => !!document.querySelector('.paper-canvas.is-on'))).toBe(true);
   const cv = await page.screenshot({ clip });
   const { mean } = await meanDiff(dom, cv);
-  console.log(`photo pile on print 3, canvas vs page: mean diff ${mean.toFixed(2)}`);
+  console.log(`photo pile on print 4, canvas vs page: mean diff ${mean.toFixed(2)}`);
   expect(mean).toBeLessThan(6);
 });
 

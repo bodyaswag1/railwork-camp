@@ -15,9 +15,7 @@ export const TODO = {
   hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   campVideo: 'TODO: a photo or clip of an evening video-analysis session',
-  boardSeasons: 'TODO: board seasons + which board was the first pro model',
-  boardInfo: 'TODO: a line per pro board (shape, flex, what it is made for)',
-  riderClips: "TODO: Ilia's action GIFs / short clips for the rider pile + the trick name on every print",
+  riderClips: 'TODO: the trick name on every print in the rider pile',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   contacts: 'TODO: Telegram handle, WhatsApp number, email',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
@@ -128,8 +126,9 @@ export const hero = {
 // ---------------------------------------------------------------- 02 the rider
 // The career-stats page of the first magazine (badges, the three pro boards that drop in and spin), with a
 // photo slider where the single portrait used to be.
-// a print in the pile: a photo, or a clip (GIF / short muted loop) — `media` empty = a marked placeholder
-export type RiderPic = { kind: 'photo' | 'clip'; photo?: 'air' | 'rail' | 'night' | 'studio' | 'smile' | 'bib'; media?: { src?: string; poster?: string }; pos?: string; cap: string; alt: string };
+// a print in the pile: a photo, or a GIF (public/clips/…) over its still poster (src/assets/clips/…). The GIF only
+// loads once its print comes up; page copies for the paper show the poster.
+export type RiderPic = { kind: 'photo' | 'gif'; photo?: 'air' | 'rail' | 'boardslide'; gif?: string; poster?: 'trick-9563' | 'trick-2644' | 'trick-0123' | 'trick-6120'; pos?: string; cap: string; alt: string };
 
 export const riderPage = {
   kicker: 'The rider',
@@ -140,14 +139,15 @@ export const riderPage = {
   pics: {
     label: 'Photos of Ilia',
     note: '← swipe →',
-    // TODO(riderClips): Ilia's action GIFs / clips (public/clips/…) and the name of the trick on every print
+    // TODO(riderClips): the name of the trick on every print
     slides: [
+      { kind: 'photo', photo: 'boardslide', pos: '50% 40%', cap: '[Trick name]', alt: 'Ilia sliding a red rainbow rail, snow spraying, a mountain behind' },
+      { kind: 'gif', gif: '/clips/trick-9563.gif', poster: 'trick-9563', cap: '[Trick name]', alt: 'Ilia spinning off a big kicker, his Joint board grabbed' },
+      { kind: 'gif', gif: '/clips/trick-2644.gif', poster: 'trick-2644', cap: '[Trick name]', alt: 'Ilia upside down off a kicker in a red suit' },
       { kind: 'photo', photo: 'rail', pos: '58% 50%', cap: '[Trick name]', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
-      { kind: 'clip', cap: '[Trick name]', alt: '' },
+      { kind: 'gif', gif: '/clips/trick-0123.gif', poster: 'trick-0123', cap: '[Trick name]', alt: 'Ilia grabbing his board high off a jump' },
+      { kind: 'gif', gif: '/clips/trick-6120.gif', poster: 'trick-6120', cap: '[Trick name]', alt: 'Ilia flipping off a park kicker' },
       { kind: 'photo', photo: 'air', pos: '42% 38%', cap: '[Trick name]', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
-      { kind: 'clip', cap: '[Trick name]', alt: '' },
-      { kind: 'clip', cap: '[Trick name]', alt: '' },
-      { kind: 'clip', cap: '[Trick name]', alt: '' },
     ] as RiderPic[],
   },
   badges: {
@@ -163,28 +163,25 @@ export const riderPage = {
       top: 'board-1-top', base: 'board-1-base',
       alt: 'Baskakov Pro Model, black and red top sheet',
       spinLabel: 'Spin the Baskakov Pro Model',
-      big: '[—]', // TODO(boardSeasons): length
-      small: 'Pro Model · [season]', // TODO(boardSeasons)
-      spec: '[Shape · flex · made for]', // TODO(boardInfo)
-      tag: 'First pro model', // TODO(boardSeasons): confirm which board was first
+      big: '157',
+      small: 'Pro Model · 2023/24',
+      tag: 'First pro model',
     },
     {
       top: 'board-2-top', base: 'board-2-base',
-      alt: 'Baskakov Pro 2025/26, white and orange top sheet',
-      spinLabel: 'Spin the Baskakov Pro 2025/26',
-      big: '157W',
-      small: 'Pro · 2025/26',
-      spec: '[Shape · flex · made for]', // TODO(boardInfo)
+      alt: 'Baskakov Pro 2024/25, white and orange top sheet',
+      spinLabel: 'Spin the Baskakov Pro 2024/25',
+      big: '161',
+      small: 'Pro · 2024/25',
     },
     {
       top: 'board-3-top', base: 'board-3-base',
       alt: 'Baskakov Pro, black and teal collage top sheet',
       spinLabel: 'Spin the Baskakov Pro collage board',
-      big: '[—]', // TODO(boardSeasons): length
-      small: 'Pro Collage · [season]', // TODO(boardSeasons)
-      spec: '[Shape · flex · made for]', // TODO(boardInfo)
+      big: '159',
+      small: 'Pro Collage · 2025/26',
     },
-  ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; spec: string; tag?: string }[],
+  ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; tag?: string }[],
   notes: { pro: 'pro ×3', one: '#1', egg: '1620°!', stamp: 'Joint × Baskakov' },
   hint: 'Joint pro models · tap a board',
 };

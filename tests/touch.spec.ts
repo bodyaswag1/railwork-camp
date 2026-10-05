@@ -73,17 +73,17 @@ test.describe('reduced motion (fast turns)', () => {
     await drag(page, r, y, l, y + 18); // mostly sideways, a little downward drift
     await page.waitForTimeout(900);
     expect(await active(page)).toBe('ilia');
-    expect(await count.textContent()).toBe('02/06');
+    expect(await count.textContent()).toBe('02/07');
     // the print that was on top is now at the bottom of the pile
     expect(await page.locator('#ilia [data-slide]').first().evaluate((el) => Number(getComputedStyle(el).zIndex))).toBe(1);
     // a swipe the other way brings it back
     await drag(page, l, y, r, y - 14);
     await page.waitForTimeout(900);
-    expect(await count.textContent()).toBe('01/06');
+    expect(await count.textContent()).toBe('01/07');
     // a tap turns to the next print too
     await page.locator('#ilia [data-slide]').first().tap();
     await page.waitForTimeout(800);
-    expect(await count.textContent()).toBe('02/06');
+    expect(await count.textContent()).toBe('02/07');
   });
 
   test('a vertical swipe on a carousel still turns the page', async ({ page }) => {

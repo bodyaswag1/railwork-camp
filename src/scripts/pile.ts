@@ -19,6 +19,16 @@ export function initPile(el: HTMLElement, { reduced, onChange }: Opts): Carousel
   const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-slide]'));
   const count = el.querySelector<HTMLElement>('[data-car-count]');
   const n = cards.length;
+  // GIF prints: the animation is fetched once the print is on top or next up (reduced motion keeps the still)
+  const gifs = cards.map((c) => c.querySelector<HTMLImageElement>('img[data-gif]'));
+  const wake = () => {
+    if (reduced) return;
+    gifs.forEach((g, i) => {
+      if (!g || g.getAttribute('src') || depth(i) > 1) return;
+      g.addEventListener('load', () => g.classList.add('is-loaded'), { once: true });
+      g.src = g.dataset.gif!;
+    });
+  };
   const pad = (v: number) => String(v).padStart(2, '0');
   let top = 0;
 
@@ -37,6 +47,7 @@ export function initPile(el: HTMLElement, { reduced, onChange }: Opts): Carousel
       if (animate && !reduced) gsap.to(c, { ...pose(d), duration: 0.38, ease: 'power2.out', overwrite: true });
       else gsap.set(c, pose(d));
     });
+    wake();
     const text = `${pad(top + 1)}/${pad(n)}`;
     if (count && count.textContent !== text) count.textContent = text;
   }
