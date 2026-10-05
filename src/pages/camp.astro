@@ -12,6 +12,7 @@ import fisheye from '../assets/photos/life-fisheye.jpg';
 import bandana from '../assets/photos/life-bandana.jpg';
 import smile from '../assets/photos/ilia-smile.jpg';
 import night from '../assets/photos/ilia-night.jpg';
+import aleksey from '../assets/photos/aleksey-rail.jpg';
 import { rider, camp, campPage as c, ui } from '../content/site';
 
 const lifePhotos = { glacier, fisheye, bandana, smile, night };
@@ -22,7 +23,7 @@ const jsonLd = [{
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
   location: { '@type': 'Place', name: 'Meublè Rosalpina, Valdidentro', address: { '@type': 'PostalAddress', streetAddress: 'Via San Carlo 16', addressLocality: 'Valdidentro', addressCountry: 'IT' } },
   organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
-  performer: [{ '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] }, { '@type': 'Person', name: 'Aleksey' }],
+  performer: [{ '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] }, { '@type': 'Person', name: 'Aleksey Bogatyrev' }],
   maximumAttendeeCapacity: camp.spots,
   offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
   image: new URL('/og.jpg', site).href, url: new URL('/camp', site).href,
@@ -197,13 +198,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </article>
           <article class="ch ch--aleksey" aria-labelledby="h-aleksey">
             <div class="ch__media">
-              {/* TODO(secondCoach): Aleksey's action photo replaces this placeholder */}
-              <figure class="ch__main ch__ph tilt"><span class="tape" aria-hidden="true"></span><span>{c.coaches.aleksey.photo}</span></figure>
+              <figure class="ch__main tilt"><span class="tape" aria-hidden="true"></span><Image src={aleksey} alt={c.coaches.aleksey.alt} widths={[420, 840]} sizes="(min-width: 900px) 30vw, 92vw" format="webp" loading="lazy" style="object-position:50% 45%" /></figure>
               <span class="sticker ch__disc" data-slam style="--d:.6s" aria-hidden="true">{c.coaches.aleksey.discipline}</span>
             </div>
             <div class="ch__body">
               <p class="ch__kick">{c.coaches.aleksey.role}</p>
-              <h3 class="ch__name" id="h-aleksey">{c.coaches.aleksey.name[0]}</h3>
+              <h3 class="ch__name" id="h-aleksey">{c.coaches.aleksey.name[0]} <span>{c.coaches.aleksey.name[1]}</span></h3>
               <span class="ch__note marker" data-slam style="--d:1s" aria-hidden="true">{c.coaches.aleksey.note}</span>
               <dl class="ch__big">
                 {c.coaches.aleksey.big.map((b) => <div><dt>{b.l}</dt><dd>{b.v}</dd></div>)}

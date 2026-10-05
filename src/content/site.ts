@@ -11,7 +11,6 @@ export const TODO = {
   studentCases: 'TODO: the 3 student videos (vertical) + start, what we worked on, progress, optional quote; BEFORE / AFTER only if it really is',
   coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
   lifeMedia: 'TODO: crew / dinner / spa / St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
-  secondCoach: "TODO: Aleksey's surname (if he wants it shown) and his action photos",
   hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   campVideo: 'TODO: a photo or clip of an evening video-analysis session',
@@ -141,8 +140,8 @@ export const riderPage = {
     note: '← swipe →',
     // TODO(riderClips): the name of the trick on every print
     slides: [
-      { kind: 'photo', photo: 'boardslide', pos: '50% 40%', cap: '[Trick name]', alt: 'Ilia sliding a red rainbow rail, snow spraying, a mountain behind' },
       { kind: 'gif', gif: '/clips/trick-9563.gif', poster: 'trick-9563', cap: '[Trick name]', alt: 'Ilia spinning off a big kicker, his Joint board grabbed' },
+      { kind: 'photo', photo: 'boardslide', pos: '50% 40%', cap: '[Trick name]', alt: 'Ilia sliding a red rainbow rail, snow spraying, a mountain behind' },
       { kind: 'gif', gif: '/clips/trick-2644.gif', poster: 'trick-2644', cap: '[Trick name]', alt: 'Ilia upside down off a kicker in a red suit' },
       { kind: 'photo', photo: 'rail', pos: '58% 50%', cap: '[Trick name]', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
       { kind: 'gif', gif: '/clips/trick-0123.gif', poster: 'trick-0123', cap: '[Trick name]', alt: 'Ilia grabbing his board high off a jump' },
@@ -307,7 +306,7 @@ export const nextLevel = {
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
 export const campPage = {
   title: 'BAS CAMP Issue 01 — Snowboard + Freeski progression camp in Italy, 23–27 Dec 2026',
-  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey. Coaching, video analysis, 4 nights with breakfast. All levels, 15 spots, €800. Valdidentro, 23–27 December 2026.',
+  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey Bogatyrev. Coaching, video analysis, 4 nights with breakfast. All levels, 15 spots, €800. Valdidentro, 23–27 December 2026.',
   nav: [
     { label: 'Coaches', href: '#coaches' },
     { label: 'Level', href: '#level' },
@@ -396,7 +395,7 @@ export const campPage = {
     },
     aleksey: {
       discipline: 'Freeski',
-      name: ['Aleksey', ''],
+      name: ['Aleksey', 'Bogatyrev'],
       role: 'Freeski coach',
       big: [
         { v: '14+', l: 'Years on skis' },
@@ -412,7 +411,7 @@ export const campPage = {
         'Works across skiing, snowboarding and action-sports film production.',
       ],
       tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
-      photo: '[Photo: Aleksey riding]', // TODO(secondCoach): Aleksey's action photos
+      alt: 'Aleksey Bogatyrev on skis, crossing his skis over a rail in a snowy park',
       note: 'behind the camera too',
     },
   },
