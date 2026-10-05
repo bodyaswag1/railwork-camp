@@ -41,7 +41,7 @@ test.describe('reduced motion (fast turns)', () => {
     await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await swipe(page, 600, 60, 30);
     await settle(page);
-    expect(await active(page)).toBe('coaching');
+    expect(await active(page)).toBe('next-camp');
   });
 
   test('a page that scrolls inside: read to the end, keep pushing in the same swipe → next page', async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe('reduced motion (fast turns)', () => {
     await page.waitForTimeout(400);
     await swipe(page, 500, 410);
     await settle(page);
-    expect(await active(page)).toBe('next-camp');
+    expect(await active(page)).toBe('next-level');
   });
 
   test('the photo pile: a sideways swipe sends the top print to the bottom, never turns the page', async ({ page }) => {
@@ -141,7 +141,7 @@ test('phone swipes always use the paper crumple, and start promptly', async ({ p
   await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
   await page.waitForTimeout(400);
   await swipe(page, 500, 400);
-  await page.waitForFunction(() => document.querySelector('#coaching.is-active'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#next-camp.is-active'), null, { timeout: 15000 });
   const second = await page.evaluate(() => {
     const t = performance.getEntriesByName('turn:start').at(-1)!.startTime;
     const m = performance.getEntriesByName('crumple:move-start').at(-1)!.startTime;

@@ -60,7 +60,7 @@ test('a lost WebGL context gives a fade, not a blank sheet, and the paper comes 
   await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
   await page.waitForTimeout(400);
   await page.keyboard.press('ArrowDown');
-  await page.waitForFunction(() => document.querySelector('#coaching.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('#next-camp.is-active') && !document.querySelector('.paper-canvas.is-on'), null, { timeout: 15000 });
   expect(await page.evaluate(() => (window as any).__canvasSeen)).toBe(true);
 });
 
@@ -115,8 +115,8 @@ test('back pressed twice quickly ends with the page and the address bar agreeing
   await page.waitForLoadState('networkidle');
   await page.mouse.move(100, 100);
   await page.waitForTimeout(4000);
-  for (const t of ['ilia', 'coaching']) {
-    if (t === 'coaching') await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  for (const t of ['ilia', 'next-camp']) {
+    if (t === 'next-camp') await page.locator('#ilia [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.keyboard.press('ArrowDown');
     await page.waitForFunction((w) => document.querySelector(`#${w}.is-active`) && !document.querySelector('.paper-canvas.is-on'), t, { timeout: 15000 });
     await page.waitForTimeout(800);

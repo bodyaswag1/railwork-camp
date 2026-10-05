@@ -1,10 +1,9 @@
-// /camp: grain textures, marks that draw on as sections scroll in, the compact phone menu, the sticky ticket,
-// student videos, and the application form. The form either POSTs to PUBLIC_FORM_ENDPOINT or — with no
+// /camp: grain textures, marks that draw on as sections scroll in, the compact phone menu, the sticky ticket
+// and the application form. The form either POSTs to PUBLIC_FORM_ENDPOINT or — with no
 // backend configured — writes the application out for the rider to send Ilia as an Instagram DM; it never
 // pretends to have sent anything. A promo code is only ever collected: it is checked by PUBLIC_PROMO_ENDPOINT
 // when there is one, otherwise by hand when the place is confirmed. No price logic lives in the page.
 import { makeNoise } from './paper';
-import { initCases } from './cases';
 import { camp, campPage } from '../content/site';
 
 const gL = makeNoise([16, 19, 20], 120, 11), gD = makeNoise([225, 239, 250], 90, 23);
@@ -75,10 +74,6 @@ if (ticket && hero && applySec && 'IntersectionObserver' in window) {
   new IntersectionObserver(([e]) => { atForm = e.isIntersecting; render(); }, { rootMargin: '0px 0px -10% 0px' }).observe(applySec);
   render();
 }
-
-// ---------------------------------------------------------------- student videos
-const progress = document.querySelector<HTMLElement>('#progress');
-if (progress) initCases(progress);
 
 // ---------------------------------------------------------------- application
 const t = campPage.apply;

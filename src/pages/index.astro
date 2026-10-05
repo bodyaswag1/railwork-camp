@@ -118,10 +118,6 @@ const ext = { target: '_blank', rel: 'noopener' };
           <p class="cover__kicker">{hero.kicker}</p>
           <h1 class="cover__h1" id="h-cover" tabindex="-1"><span class="cover__first">{hero.h1[0]}</span> <span class="cover__last">{hero.h1[1]}</span></h1>
         </div>
-        <p class="cover__spin">
-          <span class="cover__spin-l">{hero.spin.label}</span>
-          <span class="cover__spin-v">{hero.spin.value}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="inset:-4% -12% -18%;width:124%;height:122%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></span>
-        </p>
         <div class="cover__foot">
           <p class="cover__claim"><span>{hero.claim}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.16em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#BA1422" stroke-width="5" /></svg><svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-.42em;top:-.22em;width:.4em;height:.4em" fill="none" stroke="#FF94E3" stroke-width="5" stroke-linejoin="round"><path data-draw d={burstD} /></svg></span></p>
           <p class="cover__sub">{hero.sub}</p>
@@ -149,9 +145,13 @@ const ext = { target: '_blank', rel: 'noopener' };
                 <div class="pics__stack">
                   <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12px;top:-12px;width:calc(100% + 24px);height:calc(100% + 24px);z-index:20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="3" /></svg>
                   {riderPage.pics.slides.map((p, i) => (
-                    <figure class="pic" data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
+                    <figure class:list={['pic', `pic--${p.kind}`]} data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, riderPage.pics.slides.length)}>
                       <span class="tape tape--pic" aria-hidden="true"></span>
-                      <Image src={photos[p.photo]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 4 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />
+                      {p.kind === 'photo' && <Image src={photos[p.photo!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 4 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />}
+                      {/* a clip: a GIF plays as an image; a short muted loop sits on its poster (the paper copies the poster) */}
+                      {p.kind === 'clip' && p.media?.src && /\.gif$/i.test(p.media.src) && <img class="pic__media" src={p.media.src} alt={p.alt} loading="lazy" draggable="false" />}
+                      {p.kind === 'clip' && p.media?.src && !/\.gif$/i.test(p.media.src) && <>{p.media.poster && <img class="pic__media" src={p.media.poster} alt={p.alt} loading="lazy" draggable="false" />}<video class="pic__media" src={p.media.src} poster={p.media.poster} muted loop playsinline autoplay preload="metadata"></video></>}
+                      {p.kind === 'clip' && !p.media?.src && <div class="pic__clip" aria-hidden="true"><span class="pic__rec">REC</span><span class="pic__play"></span><span class="pic__ph">[GIF / clip]</span></div>}
                       <figcaption class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</figcaption>
                     </figure>
                   ))}
@@ -216,7 +216,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                     </div>
                   </div>
                   <div class="board__shadow" aria-hidden="true"></div>
-                  <figcaption><span class="board__big">{b.big}</span><span class="board__small">{b.small}</span></figcaption>
+                  <figcaption><span class="board__big">{b.big}</span><span class="board__small">{b.small}</span><span class="board__spec">{b.spec}</span></figcaption>
                   {i === 0 && <span class="board__one marker" data-ink aria-hidden="true">{riderPage.notes.one}</span>}
                   {i === 0 && <span class="board__egg marker" data-egg data-nocopy aria-hidden="true">{riderPage.notes.egg}</span>}
                 </figure>
@@ -229,8 +229,41 @@ const ext = { target: '_blank', rel: 'noopener' };
       <Wear tone="L" />
     </section>
 
-    <!-- ======================= 03 FROM RIDER TO COACH ======================= -->
-    <section class="page dark coach" id="coaching" data-page="2" data-tone="D" data-head="dark" aria-labelledby="h-coaching">
+    <!-- ======================= 03 NEXT CAMP ======================= -->
+    <section class="page signal nextcamp" id="next-camp" data-page="2" data-tone="L" data-head="red" aria-labelledby="h-next-camp">
+      <div class="nextcamp__photo" aria-hidden="true">
+        <Image src={glacier} alt="" widths={[480, 960]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
+      </div>
+      <div class="nextcamp__inner scroller" data-scroll>
+        <div class="decor" aria-hidden="true">
+          <span class="crop crop--tl"></span><span class="crop crop--br"></span>
+          <span class="vtext nextcamp__vt">BAS★CAMP · Issue 01 · Italy · 23—27.12.2026 · Snowboard + Freeski</span>
+          <span class="barcode nextcamp__bar hide-m"><i></i><span>BAS 2026 1223 27</span></span>
+          <Splat class="nextcamp__splat" a="#E1EFFA" b="#101314" stamp="1.2" />
+        </div>
+        <div class="nextcamp__top">
+          <span class="logo-box logo-box--lg" aria-hidden="true">BAS<b>★</b>CAMP</span>
+          <span class="nextcamp__issue">{nextCamp.issue}</span>
+          <span class="stamp stamp--ice" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span>
+        </div>
+        <div class="nextcamp__main">
+          <p class="kicker kicker--ice">{nextCamp.kicker}</p>
+          <h2 class="nextcamp__place" id="h-next-camp" tabindex="-1"><span class="sr-only">{camp.name} {camp.issue}: </span>{nextCamp.place}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-.3em;top:-.06em;width:.34em;height:.34em" fill="none" stroke="#E1EFFA" stroke-width="4" stroke-linejoin="round"><path data-draw d={burstD} /></svg><span class="stamp stamp--ice stamp--big nextcamp__stamp" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span></h2>
+          <p class="nextcamp__dates"><span>{nextCamp.dates[0]}</span> <span>{nextCamp.dates[1]}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.14em;width:100%;height:.2em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#E1EFFA" stroke-width="4" /></svg></p>
+          <ul class="nextcamp__facts" role="list">{nextCamp.facts.map((f) => <li>{f}</li>)}</ul>
+          <p class="nextcamp__line">{nextCamp.line}</p>
+          <div class="nextcamp__go">
+            <a class="btn btn--ice btn--lg" href="/camp">{nextCamp.cta} <span aria-hidden="true">→</span></a>
+            <span class="nextcamp__note marker" data-ink aria-hidden="true">{nextCamp.note}</span>
+            <svg class="mk nextcamp__arrow" aria-hidden="true" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M74 6 C 60 36, 34 44, 10 40 M22 30 L 9 40 L 22 48" stroke="#E1EFFA" stroke-width="3" /></svg>
+          </div>
+        </div>
+      </div>
+      <Wear tone="L" />
+    </section>
+
+    <!-- ======================= 04 FROM RIDER TO COACH ======================= -->
+    <section class="page dark coach" id="coaching" data-page="3" data-tone="D" data-head="dark" aria-labelledby="h-coaching">
       <div class="scroller" data-scroll>
         <div class="pg coach__grid">
           <div class="decor" aria-hidden="true">
@@ -240,7 +273,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <Splat class="coach__splat hide-m" a="#BA1422" b="#FF94E3" stamp="1.1" />
           </div>
           <header class="pg__head coach__head">
-            <p class="kicker"><span class="kicker__n">03</span>{coachPage.kicker}</p>
+            <p class="kicker"><span class="kicker__n">04</span>{coachPage.kicker}</p>
             <span class="stamp stamp--ice coach__stamp" data-stamp="0.8" aria-hidden="true">Coach mode: on</span>
             <h2 class="h2 coach__h2" id="h-coaching" tabindex="-1">
               {coachPage.h2.map(([n, rest], i) => <span class="coach__line"><em>{n}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-28%;top:-8%;width:156%;height:112%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg>}</em> {rest}</span>)}
@@ -249,14 +282,11 @@ const ext = { target: '_blank', rel: 'noopener' };
           </header>
           <div class="loop">
             <p class="loop__label">{coachPage.loopLabel}<svg class="mk" aria-hidden="true" viewBox="0 0 20 40" style="right:-28px;top:-8px;width:14px;height:28px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={zigD} stroke="#FF94E3" stroke-width="2.5" /></svg></p>
-            <span class="loop__more marker" data-ink aria-hidden="true">{coachPage.more}</span>
             <ol class="loop__steps" role="list">
               {coachPage.loop.map((s, i) => (
                 <li class="loop__step"><span class="loop__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="loop__w">{s.word}</span><span class="loop__l">{s.line}</span></li>
               ))}
             </ol>
-            <svg class="mk loop__back" aria-hidden="true" viewBox="0 0 100 40" preserveAspectRatio="none" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d="M96 6 C 99 30, 70 38, 50 37 C 28 36, 4 32, 3 10 M-1 17 L 3 9 L 9 16" /></svg>
-            <span class="loop__note marker" data-ink aria-hidden="true">{coachPage.loopNote}</span>
           </div>
           <ul class="tags coach__tags" role="list">{coachPage.support.map((t) => <li>{t}</li>)}</ul>
           <figure class="coach__media tilt">
@@ -269,8 +299,8 @@ const ext = { target: '_blank', rel: 'noopener' };
       <Wear tone="D" />
     </section>
 
-    <!-- ======================= 04 STUDENT PROGRESS ======================= -->
-    <section class="page paper progress" id="progress" data-page="3" data-tone="L" data-head="light" aria-labelledby="h-progress">
+    <!-- ======================= 05 STUDENT PROGRESS ======================= -->
+    <section class="page paper progress" id="progress" data-page="4" data-tone="L" data-head="light" aria-labelledby="h-progress">
       <div class="staple" style="top:28%" aria-hidden="true"></div>
       <div class="staple" style="top:72%" aria-hidden="true"></div>
       <div class="scroller" data-scroll>
@@ -280,7 +310,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <span class="reg progress__reg hide-m"></span>
           </div>
           <header class="pg__head progress__head">
-            <p class="kicker"><span class="kicker__n">04</span>{progress.kicker}</p>
+            <p class="kicker"><span class="kicker__n">05</span>{progress.kicker}</p>
             <span class="stamp progress__stamp" data-stamp="0.7" aria-hidden="true">{progress.stamp}</span>
             <h2 class="h2 progress__h2" id="h-progress" tabindex="-1"><span class="progress__pre">{progress.h2[0]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="left:-1%;top:46%;width:102%;height:.5em" fill="none" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M1 12 C 30 6, 60 15, 99 7" stroke="#BA1422" stroke-width="3" /></svg></span> <span class="progress__main">{progress.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
             <span class="progress__note marker" data-ink aria-hidden="true">{progress.note}</span>
@@ -329,8 +359,8 @@ const ext = { target: '_blank', rel: 'noopener' };
       <Wear tone="L" />
     </section>
 
-    <!-- ======================= 05 WAYS TO TRAIN ======================= -->
-    <section class="page dark train" id="train" data-page="4" data-tone="D" data-head="dark" aria-labelledby="h-train">
+    <!-- ======================= 06 WAYS TO TRAIN ======================= -->
+    <section class="page dark train" id="train" data-page="5" data-tone="D" data-head="dark" aria-labelledby="h-train">
       <div class="scroller" data-scroll>
         <div class="pg train__grid">
           <div class="decor" aria-hidden="true">
@@ -339,7 +369,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <svg class="mk train__x hide-m" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
           </div>
           <header class="pg__head train__head">
-            <p class="kicker"><span class="kicker__n">05</span>{train.kicker}</p>
+            <p class="kicker"><span class="kicker__n">06</span>{train.kicker}</p>
             <h2 class="h2" id="h-train" tabindex="-1">{train.h2[0]} <span class="u">{train.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#FF94E3" stroke-width="4" /></svg></span></h2>
             <span class="train__note marker" data-ink aria-hidden="true">{train.note}</span>
           </header>
@@ -349,7 +379,7 @@ const ext = { target: '_blank', rel: 'noopener' };
               <div class="opt__body">
                 <p class="opt__label"><span>{train.coaching.label}</span></p>
                 <h3 class="opt__title" id="h-opt-a">{train.coaching.title}</h3>
-                <p class="opt__price"><span class="opt__from">{train.coaching.from}</span> <strong>{train.coaching.price}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12%;top:-14%;width:124%;height:128%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></strong> <span class="opt__per">{train.coaching.per}</span></p>
+                <p class="opt__price"><strong>{train.coaching.price}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12%;top:-14%;width:124%;height:128%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></strong> <span class="opt__per">{train.coaching.per}</span> <span class="opt__day">{train.coaching.day}</span></p>
                 <p class="opt__text">{train.coaching.body}</p>
                 <ul class="tags tags--sm" role="list">{train.coaching.areas.map((a) => <li>{a}</li>)}</ul>
                 <div class="opt__cta">
@@ -380,39 +410,6 @@ const ext = { target: '_blank', rel: 'noopener' };
         </div>
       </div>
       <Wear tone="D" />
-    </section>
-
-    <!-- ======================= 06 NEXT CAMP ======================= -->
-    <section class="page signal nextcamp" id="next-camp" data-page="5" data-tone="L" data-head="red" aria-labelledby="h-next-camp">
-      <div class="nextcamp__photo" aria-hidden="true">
-        <Image src={glacier} alt="" widths={[480, 960]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
-      </div>
-      <div class="nextcamp__inner scroller" data-scroll>
-        <div class="decor" aria-hidden="true">
-          <span class="crop crop--tl"></span><span class="crop crop--br"></span>
-          <span class="vtext nextcamp__vt">BAS★CAMP · Issue 01 · Italy · 23—27.12.2026 · Snowboard + Freeski</span>
-          <span class="barcode nextcamp__bar hide-m"><i></i><span>BAS 2026 1223 27</span></span>
-          <Splat class="nextcamp__splat" a="#E1EFFA" b="#101314" stamp="1.2" />
-        </div>
-        <div class="nextcamp__top">
-          <span class="logo-box logo-box--lg" aria-hidden="true">BAS<b>★</b>CAMP</span>
-          <span class="nextcamp__issue">{nextCamp.issue}</span>
-          <span class="stamp stamp--ice" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span>
-        </div>
-        <div class="nextcamp__main">
-          <p class="kicker kicker--ice">{nextCamp.kicker}</p>
-          <h2 class="nextcamp__place" id="h-next-camp" tabindex="-1"><span class="sr-only">{camp.name} {camp.issue}: </span>{nextCamp.place}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" style="right:-.3em;top:-.06em;width:.34em;height:.34em" fill="none" stroke="#E1EFFA" stroke-width="4" stroke-linejoin="round"><path data-draw d={burstD} /></svg><span class="stamp stamp--ice stamp--big nextcamp__stamp" data-stamp="0.85" aria-hidden="true">{nextCamp.stamp}</span></h2>
-          <p class="nextcamp__dates"><span>{nextCamp.dates[0]}</span> <span>{nextCamp.dates[1]}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.14em;width:100%;height:.2em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#E1EFFA" stroke-width="4" /></svg></p>
-          <ul class="nextcamp__facts" role="list">{nextCamp.facts.map((f) => <li>{f}</li>)}</ul>
-          <p class="nextcamp__line">{nextCamp.line}</p>
-          <div class="nextcamp__go">
-            <a class="btn btn--ice btn--lg" href="/camp">{nextCamp.cta} <span aria-hidden="true">→</span></a>
-            <span class="nextcamp__note marker" data-ink aria-hidden="true">{nextCamp.note}</span>
-            <svg class="mk nextcamp__arrow" aria-hidden="true" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M74 6 C 60 36, 34 44, 10 40 M22 30 L 9 40 L 22 48" stroke="#E1EFFA" stroke-width="3" /></svg>
-          </div>
-        </div>
-      </div>
-      <Wear tone="L" />
     </section>
 
     <!-- ======================= 07 YOUR NEXT LEVEL ======================= -->

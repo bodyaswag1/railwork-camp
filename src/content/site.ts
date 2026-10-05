@@ -16,6 +16,8 @@ export const TODO = {
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   campVideo: 'TODO: a photo or clip of an evening video-analysis session',
   boardSeasons: 'TODO: board seasons + which board was the first pro model',
+  boardInfo: 'TODO: a line per pro board (shape, flex, what it is made for)',
+  riderClips: "TODO: Ilia's action GIFs / short clips for the rider pile + the trick name on every print",
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   contacts: 'TODO: Telegram handle, WhatsApp number, email',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
@@ -56,7 +58,7 @@ export const camp = {
   place: 'Valdidentro',
   price: '€800',
   priceValue: 800,
-  spots: 12,
+  spots: 15,
   days: 5,
   ridingDays: 3,
   coaches: 2,
@@ -75,10 +77,10 @@ export const brand = {
 export const pages = [
   { id: 'cover', num: '01', title: 'Ilia Baskakov', stageNote: 'cover!', head: 'dark' },
   { id: 'ilia', num: '02', title: 'The rider', stageNote: '20 years', head: 'light' },
-  { id: 'coaching', num: '03', title: 'The coach', stageNote: 'watch.', head: 'dark' },
-  { id: 'progress', num: '04', title: 'Student progress', stageNote: 'proof', head: 'light' },
-  { id: 'train', num: '05', title: 'Train with Ilia', stageNote: 'your call', head: 'dark' },
-  { id: 'next-camp', num: '06', title: 'Next camp', stageNote: 'italy!', head: 'red' },
+  { id: 'next-camp', num: '03', title: 'Next camp', stageNote: 'italy!', head: 'red' },
+  { id: 'coaching', num: '04', title: 'The coach', stageNote: 'watch.', head: 'dark' },
+  { id: 'progress', num: '05', title: 'Student progress', stageNote: 'proof', head: 'light' },
+  { id: 'train', num: '06', title: 'Train with Ilia', stageNote: 'your call', head: 'dark' },
   { id: 'next-level', num: '07', title: 'Your next level', stageNote: 'go!', head: 'dark' },
 ] as const;
 export const pageIndex = (id: (typeof pages)[number]['id']) => pages.findIndex((p) => p.id === id);
@@ -116,7 +118,6 @@ export const hero = {
   claim: 'Ride better.',
   sub: 'Professional snowboarder & coach.',
   proof: ['3× National Champion', 'Europa Cup podiums', '20 years riding'],
-  spin: { label: 'Biggest spin', value: '1620°' },
   ctaCamp: 'Join BAS CAMP',
   ctaCoaching: 'Private coaching',
   photoAlt: 'Studio portrait of Ilia Baskakov in white goggles, holding up a gloved hand with his ring',
@@ -127,7 +128,8 @@ export const hero = {
 // ---------------------------------------------------------------- 02 the rider
 // The career-stats page of the first magazine (badges, the three pro boards that drop in and spin), with a
 // photo slider where the single portrait used to be.
-export type RiderPic = { photo: 'air' | 'rail' | 'night' | 'studio' | 'smile' | 'bib'; pos?: string; cap: string; alt: string };
+// a print in the pile: a photo, or a clip (GIF / short muted loop) — `media` empty = a marked placeholder
+export type RiderPic = { kind: 'photo' | 'clip'; photo?: 'air' | 'rail' | 'night' | 'studio' | 'smile' | 'bib'; media?: { src?: string; poster?: string }; pos?: string; cap: string; alt: string };
 
 export const riderPage = {
   kicker: 'The rider',
@@ -138,13 +140,14 @@ export const riderPage = {
   pics: {
     label: 'Photos of Ilia',
     note: '← swipe →',
+    // TODO(riderClips): Ilia's action GIFs / clips (public/clips/…) and the name of the trick on every print
     slides: [
-      { photo: 'rail', pos: '58% 50%', cap: 'Rainbow rail', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
-      { photo: 'air', pos: '42% 38%', cap: 'Upside down', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
-      { photo: 'bib', pos: '50% 28%', cap: 'Bib 27', alt: 'Ilia on the snow in a red competition bib, number 27, making a peace sign' },
-      { photo: 'night', pos: '45% 55%', cap: 'Night shift', alt: 'Ilia smiling under his helmet at a night session' },
-      { photo: 'studio', pos: '50% 30%', cap: 'Studio', alt: 'Studio portrait of Ilia in white goggles, his hand raised' },
-      { photo: 'smile', pos: '50% 32%', cap: 'That grin', alt: 'Ilia laughing in a bandana' },
+      { kind: 'photo', photo: 'rail', pos: '58% 50%', cap: '[Trick name]', alt: 'Ilia in a one-hand plant on a rainbow rail, his Joint board overhead' },
+      { kind: 'clip', cap: '[Trick name]', alt: '' },
+      { kind: 'photo', photo: 'air', pos: '42% 38%', cap: '[Trick name]', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
+      { kind: 'clip', cap: '[Trick name]', alt: '' },
+      { kind: 'clip', cap: '[Trick name]', alt: '' },
+      { kind: 'clip', cap: '[Trick name]', alt: '' },
     ] as RiderPic[],
   },
   badges: {
@@ -162,6 +165,7 @@ export const riderPage = {
       spinLabel: 'Spin the Baskakov Pro Model',
       big: '[—]', // TODO(boardSeasons): length
       small: 'Pro Model · [season]', // TODO(boardSeasons)
+      spec: '[Shape · flex · made for]', // TODO(boardInfo)
       tag: 'First pro model', // TODO(boardSeasons): confirm which board was first
     },
     {
@@ -170,6 +174,7 @@ export const riderPage = {
       spinLabel: 'Spin the Baskakov Pro 2025/26',
       big: '157W',
       small: 'Pro · 2025/26',
+      spec: '[Shape · flex · made for]', // TODO(boardInfo)
     },
     {
       top: 'board-3-top', base: 'board-3-base',
@@ -177,8 +182,9 @@ export const riderPage = {
       spinLabel: 'Spin the Baskakov Pro collage board',
       big: '[—]', // TODO(boardSeasons): length
       small: 'Pro Collage · [season]', // TODO(boardSeasons)
+      spec: '[Shape · flex · made for]', // TODO(boardInfo)
     },
-  ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; tag?: string }[],
+  ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; spec: string; tag?: string }[],
   notes: { pro: 'pro ×3', one: '#1', egg: '1620°!', stamp: 'Joint × Baskakov' },
   hint: 'Joint pro models · tap a board',
 };
@@ -197,7 +203,6 @@ export const coachPage = {
     { word: 'Repeat', line: 'until it holds' },
   ],
   loopNote: 'again',
-  more: '"at least one more!"',
   support: ['Individual feedback', 'Specific exercises', 'Riding analysis', 'Video feedback', 'Progression built on your level'],
   media: { label: 'Coaching', cap: '[Coaching photo or clip]' },
 };
@@ -243,11 +248,12 @@ export const train = {
   coaching: {
     label: 'A',
     title: 'Private coaching',
-    from: 'From',
-    price: '€150',
-    per: '/ day',
+    from: '',
+    price: '€100',
+    per: '/ hour',
+    day: '€300 / day · 4 hours',
     body: "Personal coaching built around your goals and your level.",
-    areas: ['Fundamentals', 'Carving', 'Freestyle', 'Park', 'Progression', 'Video feedback'],
+    areas: ['Carving', 'Park', 'Flat freestyle', 'Technique improvement'],
     cta: 'Train with Ilia',
     note: 'Opens a DM to @baskakov74',
     alt: 'Ilia in a one-hand plant on a rail',
@@ -261,7 +267,7 @@ export const train = {
     where: 'Italy',
     disciplines: 'Snowboard + Freeski',
     price: '€800',
-    sticker: '12 spots',
+    sticker: '15 spots',
     cta: 'Explore camp',
     alt: 'A rider in a red jacket pulling on goggles above a glacier',
   },
@@ -271,10 +277,10 @@ export const train = {
 export const nextCamp = {
   kicker: 'Next camp',
   issue: 'Issue 01',
-  stamp: '12 spots',
+  stamp: '15 spots',
   place: 'Italy',
   dates: camp.datesPoster,
-  facts: ['Snowboard + Freeski', '12 spots', '€800', 'All levels'],
+  facts: ['Snowboard + Freeski', '15 spots', '€800', 'All levels'],
   line: camp.line,
   cta: 'Explore BAS CAMP',
   photoAlt: '',
@@ -287,7 +293,7 @@ export const nextLevel = {
   stamp: 'Last page · Issue 01',
   pick: 'pick one',
   paths: [
-    { kind: 'coaching', label: 'Private coaching', sub: 'From €150 / day · on your level', cta: 'Train with Ilia' },
+    { kind: 'coaching', label: 'Private coaching', sub: '€100 / hour · €300 / day (4 h)', cta: 'Train with Ilia' },
     { kind: 'camp', label: 'BAS CAMP', sub: '23–27 Dec 2026 · Italy · €800', cta: 'Join BAS CAMP' },
   ],
   social: 'Follow the riding',
@@ -304,7 +310,7 @@ export const nextLevel = {
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
 export const campPage = {
   title: 'BAS CAMP Issue 01 — Snowboard + Freeski progression camp in Italy, 23–27 Dec 2026',
-  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey. Coaching, video analysis, 4 nights with breakfast. All levels, 12 spots, €800. Valdidentro, 23–27 December 2026.',
+  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey. Coaching, video analysis, 4 nights with breakfast. All levels, 15 spots, €800. Valdidentro, 23–27 December 2026.',
   nav: [
     { label: 'Coaches', href: '#coaches' },
     { label: 'Level', href: '#level' },
@@ -325,7 +331,7 @@ export const campPage = {
     dates: ['23—27', 'Dec', '2026'],
     place: 'Italy',
     disciplines: ['Snowboard', 'Freeski'],
-    spots: '12 spots',
+    spots: '15 spots',
     price: '€800',
     cta: 'Join the camp',
     how: 'How it works ↓',
@@ -429,26 +435,7 @@ export const campPage = {
     groups: { a: 'Snowboard', b: 'Ski', mid: ['Groups', 'by level'] },
     groupLine: 'Split by discipline first, then by level: experienced riders don’t train in the same group as first-day beginners.',
     note: 'all levels. for real.',
-  },
-
-  // 06 student progress
-  progress: {
-    kicker: 'Real student progress',
-    h2: ['Don’t believe the copy.', 'Watch this.'],
-    labels: { start: 'Start', work: 'What we worked on', result: 'Progress', quote: 'Quote', play: (n: string) => `Play rider ${n}'s video`, pause: (n: string) => `Pause rider ${n}'s video` },
-    // TODO(studentCases): the 3 real student videos; label BEFORE / AFTER only if the footage really is
-    cases: [1, 2, 3].map((n) => ({
-      n: String(n).padStart(2, '0'),
-      rider: `[Rider ${n}]`,
-      tag: '[Snowboard / Ski · level]',
-      start: '[Where they started]',
-      work: '[What we worked on]',
-      result: '[What changed]',
-      quote: '[Quote, if they have one]',
-      video: {} as { src?: string; poster?: string },
-    })),
-    notes: ['frame 01', 'press play', 'yes!!'],
-    swipe: 'swipe →',
+    proof: 'See how riders progress with Ilia',
   },
 
   // 07 the five days
@@ -477,8 +464,6 @@ export const campPage = {
       { cap: 'St. Moritz', todo: '[Photo: St. Moritz]' },
       { photo: 'bandana', cap: 'Crew', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
       { cap: 'Christmas', todo: '[Photo: Christmas]' },
-      { photo: 'smile', cap: 'Evenings', alt: 'Ilia laughing in a bandana at night', pos: '50% 35%' },
-      { cap: 'Breakfast', todo: '[Photo: hotel breakfast]' },
     ] as { photo?: 'glacier' | 'fisheye' | 'bandana' | 'smile' | 'night'; cap: string; alt?: string; pos?: string; todo?: string }[],
     swipe: 'swipe →',
   },
@@ -510,19 +495,6 @@ export const campPage = {
     cta: 'Join the camp',
   },
 
-  // 11 numbers
-  numbers: {
-    kicker: 'The numbers',
-    items: [
-      { v: '3', l: 'Coached riding days' },
-      { v: '09—14', l: 'Planned on-mountain training window', s: 'on a typical training day' },
-      { v: '4', l: 'Nights' },
-      { v: '2', l: 'Coaches' },
-      { v: '12', l: 'Riders max' },
-      { v: '5', l: 'Days in the Alps' },
-    ],
-  },
-
   // 12 faq
   faq: {
     kicker: 'Questions',
@@ -532,7 +504,7 @@ export const campPage = {
       { q: 'Can experienced riders join?', a: 'Yes. Groups are divided by discipline and level.' },
       { q: 'Can I come alone?', a: 'Yes.' },
       { q: 'Snowboard or ski?', a: 'Both. There is a snowboard coach and a freeski coach.' },
-      { q: 'How many people?', a: 'Maximum 12 participants.' },
+      { q: 'How many people?', a: 'Maximum 15 participants.' },
       { q: 'Is the hotel included?', a: 'Yes. 4 nights.' },
       { q: 'Is breakfast included?', a: 'Yes.' },
       { q: 'Is the ski pass included?', a: 'No.' },
@@ -551,7 +523,7 @@ export const campPage = {
   apply: {
     issue: 'Issue 01',
     h2: ['See you', 'on the mountain.'],
-    poster: [['Italy', ''], ['23—27 Dec', '2026'], ['12 spots', ''], ['€800', '']],
+    poster: [['Italy', ''], ['23—27 Dec', '2026'], ['15 spots', ''], ['€800', '']],
     kicker: 'Apply',
     lead: 'Not a payment — an application. We’ll contact you to confirm your place, riding group and next steps.',
     name: 'Name',
@@ -604,6 +576,6 @@ export const campPage = {
 
 export const seo = {
   title: 'Ilia Baskakov — Pro snowboarder & coach · BAS',
-  description: 'Ilia Baskakov, professional snowboarder and coach: 3× National Champion, Europa Cup podiums, 20 years riding, 1620° biggest spin. Private coaching from €150 a day and BAS CAMP, 23–27 December 2026 in Italy.',
+  description: 'Ilia Baskakov, professional snowboarder and coach: 3× National Champion, Europa Cup podiums, 20 years riding, 1620° biggest spin. Private coaching (€100 an hour, €300 a day) and BAS CAMP, 23–27 December 2026 in Italy.',
   ogAlt: 'Ilia Baskakov — Ride better.',
 };

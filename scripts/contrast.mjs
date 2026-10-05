@@ -19,7 +19,7 @@ const same = (a, b) => a.every((v, i) => Math.abs(v - b[i]) < 3);
 const browser = await chromium.launch();
 const failures = [];
 let checked = 0;
-const pages = ['cover', 'ilia', 'coaching', 'progress', 'train', 'next-camp', 'next-level'];
+const pages = ['cover', 'ilia', 'next-camp', 'coaching', 'progress', 'train', 'next-level'];
 for (const [path, ids] of [['/', pages], ['/camp', [null]]]) {
   for (const id of ids) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });

@@ -4,7 +4,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import fs from 'node:fs';
 
-const pages = ['cover', 'ilia', 'coaching', 'progress', 'train', 'next-camp', 'next-level'];
+const pages = ['cover', 'ilia', 'next-camp', 'coaching', 'progress', 'train', 'next-level'];
 const sizes = [
   { name: 'phone', width: 390, height: 844, dsf: 3, mobile: true },
   { name: 'desktop', width: 1440, height: 900, dsf: 1, mobile: false },
