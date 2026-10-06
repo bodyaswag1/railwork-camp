@@ -23,7 +23,7 @@ const jsonLd = [{
   description: c.description, startDate: camp.startDate, endDate: camp.endDate,
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
   location: { '@type': 'Place', name: 'Meublè Rosalpina, Valdidentro', address: { '@type': 'PostalAddress', streetAddress: 'Via San Carlo 16', addressLocality: 'Valdidentro', addressCountry: 'IT' } },
-  organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
+  organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl, email: rider.email, telephone: rider.phoneHref.slice(4) },
   performer: [{ '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] }, { '@type': 'Person', name: 'Aleksey Bogatyrev' }],
   maximumAttendeeCapacity: camp.spots,
   offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
@@ -100,6 +100,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <svg class="mk poster__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-pen d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
         <span class="barcode poster__bar"><i></i><span>BAS 2026 1223 27</span></span>
       </div>
+      <a class="poster__scroll" href="#idea" aria-label={c.hero.scroll}><span class="poster__mouse" aria-hidden="true"><i></i></span><span class="poster__scroll-l" aria-hidden="true">{c.hero.scroll}</span></a>
     </header>
 
     <!-- ================= 02 THE IDEA ================= -->
@@ -160,8 +161,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <span class="tl__w">{c.day.video.w}</span>
               <span class="tl__line">{c.day.video.line}</span>
               <span class="tl__note marker" data-slam style="--d:1s" aria-hidden="true">{c.day.notes.video}</span>
-              {/* TODO(campVideo): a real evening video-session photo or clip replaces this frame */}
-              <div class="tl__rec" aria-hidden="true"><span class="tl__rec-top"><i></i>REC</span><span class="tl__rec-cap">{c.day.video.cap}</span></div>
+              <figure class="tl__rec"><img class="tl__rec-gif" src={c.day.video.gif} alt={c.day.video.alt} width="260" height="346" loading="lazy" decoding="async" /><span class="tl__rec-top" aria-hidden="true"><i></i>REC</span></figure>
             </li>
           </ol>
           <svg class="mk tl__line-draw" aria-hidden="true" viewBox="0 0 20 100" preserveAspectRatio="none" fill="none" stroke-linecap="round"><path data-pen d="M10 1 C 4 20, 16 30, 9 50 C 3 70, 15 80, 10 99" stroke="#BA1422" stroke-width="2.5" vector-effect="non-scaling-stroke" /></svg>
@@ -445,7 +445,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <div class="wrap foot__wrap">
       <div class="foot__l">
         <span class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
-        <p class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br />{c.footer.contacts}</p>
+        <p class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br /><a href={rider.phoneHref}>{rider.phone}</a> · <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
       </div>
       <div class="foot__r">
         <p>{c.footer.issue}</p>

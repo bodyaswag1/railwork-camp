@@ -50,7 +50,7 @@ Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TO
   stays a placeholder.
 - **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (crew dinner, spa; `life.tiles`).
 - **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €800 includes, the second
-  coach, contacts.
+  coach.
 
 Content rules from the brief, kept in `site.ts`: the public BAS CAMP price is **€800** (no other price is
 shown); BAS CAMP takes **every level, complete beginners included**, with groups by snowboard / ski,

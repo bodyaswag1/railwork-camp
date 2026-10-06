@@ -75,6 +75,14 @@ if (ticket && hero && applySec && 'IntersectionObserver' in window) {
   render();
 }
 
+// ---------------------------------------------------------------- scroll cue: on the first screen only
+const cue = document.querySelector<HTMLElement>('.poster__scroll');
+if (cue) {
+  const onScroll = () => { if (scrollY > 40) { cue.classList.add('is-gone'); removeEventListener('scroll', onScroll); } };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
 // ---------------------------------------------------------------- application
 const t = campPage.apply;
 const form = document.querySelector<HTMLFormElement>('[data-form]')!;

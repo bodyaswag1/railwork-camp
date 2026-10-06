@@ -13,9 +13,7 @@ export const TODO = {
   lifeMedia: 'TODO: crew / dinner / spa / St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
-  campVideo: 'TODO: a photo or clip of an evening video-analysis session',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
-  contacts: 'TODO: Telegram handle, WhatsApp number, email',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
   promoEndpoint: 'TODO: optional PUBLIC_PROMO_ENDPOINT (POST {code} → {valid, message}); until then codes travel with the application and are checked by hand',
   figma: 'TODO: Figma exports hit the MCP rate limit — swap in bas-camp-logo, mascot-snowboard, bas-camp-splatter and the rest of the marker set',
@@ -36,6 +34,9 @@ export const rider = {
   instagramUrl: 'https://instagram.com/baskakov74',
   /** opens a DM thread with Ilia in the Instagram app (or instagram.com on desktop) */
   dmUrl: 'https://ig.me/m/baskakov74',
+  phone: '+43 676 9828836',
+  phoneHref: 'tel:+436769828836',
+  email: 'baskakov.ilia74@gmail.com',
 };
 
 export const camp = {
@@ -315,7 +316,7 @@ export const campPage = {
   join: 'Join',
   menu: 'Menu',
   close: 'Close ✕',
-  back: '← Ilia Baskakov',
+  back: '← Back to start',
 
   // 01 poster
   hero: {
@@ -329,6 +330,7 @@ export const campPage = {
     price: '€800',
     cta: 'Join the camp',
     how: 'How it works ↓',
+    scroll: 'Scroll',
     notes: { ride: 'ride / learn / repeat', tourist: 'No tourist mode', date: '23—27.12' },
     photoAlt: 'Ilia Baskakov in a one-hand plant on a rainbow rail, mountains behind',
     insetAlt: 'Ilia upside down in the air above a kicker',
@@ -364,7 +366,7 @@ export const campPage = {
     ],
     mountain: { t: '09:00—14:00', w: 'Mountain.', lines: ['Riding', 'Coaching', 'Exercises', 'Feedback', 'Filming'], alt: 'Ilia and a rider going over a clip on a phone on the slope' },
     cool: { t: '15:00—15:30', w: 'Cool-down' },
-    video: { t: '19:00—20:00', w: 'Video.', line: 'Video analysis: the day’s riding on the screen, what changed, what’s next.', cap: '[Photo or clip: evening video session]' },
+    video: { t: '19:00—20:00', w: 'Video.', line: 'Video analysis: the day’s riding on the screen, what changed, what’s next.', gif: '/clips/camp-video.gif', alt: 'Riders with boards in hand at the top of a run, clouds over the peaks' },
     notes: { mountain: 'the main thing', video: 'the other main thing' },
   },
 
@@ -561,9 +563,8 @@ export const campPage = {
   },
   sticky: { dates: '23—27 Dec', price: '€800', cta: 'Join →' },
   footer: {
-    contacts: 'Telegram [handle] · WhatsApp [number] · [email]', // TODO(contacts)
     issue: 'BAS CAMP · Issue 01 · Winter 26/27',
-    back: '← Back to Ilia Baskakov',
+    back: '← Back to start',
     toTop: '↑ Back to top',
   },
 };

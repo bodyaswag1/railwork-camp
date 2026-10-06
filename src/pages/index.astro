@@ -56,7 +56,7 @@ const jsonLd = [
     startDate: camp.startDate, endDate: camp.endDate,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
     location: { '@type': 'Place', name: `${camp.place}, ${camp.country}`, address: { '@type': 'PostalAddress', addressLocality: camp.place, addressCountry: 'IT' } },
-    organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl },
+    organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl, email: rider.email, telephone: rider.phoneHref.slice(4) },
     performer: { '@type': 'Person', name: rider.name },
     maximumAttendeeCapacity: camp.spots,
     offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
@@ -444,6 +444,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           ))}
         </div>
         <p class="final__ig"><span class="final__ig-l">{nextLevel.social}</span> <a href={rider.instagramUrl} {...ext}>@{rider.instagram} <span aria-hidden="true">↗</span></a></p>
+        <p class="final__contact"><a href={rider.phoneHref}>{rider.phone}</a> <span aria-hidden="true">·</span> <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
         <footer class="final__foot">
           <span class="logo-box" aria-hidden="true">{brand.logo}<b>★</b></span>
           <span>{nextLevel.footer.issue}</span>
