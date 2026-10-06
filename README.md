@@ -48,7 +48,7 @@ Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TO
 - **Student progress (`progress.cases`):** the 3 student videos and, per rider, name, where they started,
   what they worked on, the result and an optional quote. Nothing here is invented: until a case is real it
   stays a placeholder.
-- **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (crew dinner, spa; `life.tiles`).
+- **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (St. Moritz, Christmas; `life.tiles`).
 - **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €800 includes, the second
   coach.
 
@@ -61,7 +61,8 @@ experience and level; no invented achievements, results, reviews or quotes; no f
 - **Photos** (`src/assets/photos/`): `ilia-bib-27.jpg` (cover), `ilia-air.jpg`, `ilia-rail.jpg`,
   `ilia-night.jpg`, `ilia-studio.jpg` (rider strip, final page), `ilia-smile.jpg` (BAS life, camp coach card),
   `life-glacier.jpg` (BAS life, camp option), `ilia-jump.jpg` (next-camp poster),
-  `camp-coaching.jpg` (camp training day), `life-fisheye.jpg`, `life-bandana.jpg` (BAS life). Replace a file, keep its name; Astro makes AVIF/WebP srcsets at build time.
+  `camp-coaching.jpg` (camp training day), `life-fisheye.jpg`, `life-bandana.jpg` (BAS life),
+  `life-sauna.jpg`, `life-dinner.jpg`, `life-crew.jpg` (camp life). Replace a file, keep its name; Astro makes AVIF/WebP srcsets at build time.
   The current files are compressed messenger copies (≤1280 px): originals will look sharper.
 - **Rider strip:** `riderPage.slides`. A slide is `photo` (a photo + a big stat), `number` (a giant figure on
   red) or `boards` (the three pro-model bases).

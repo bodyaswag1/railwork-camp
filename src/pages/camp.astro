@@ -14,9 +14,12 @@ import smile from '../assets/photos/ilia-smile.jpg';
 import night from '../assets/photos/ilia-night.jpg';
 import aleksey from '../assets/photos/aleksey-rail.jpg';
 import coaching from '../assets/photos/camp-coaching.jpg';
+import sauna from '../assets/photos/life-sauna.jpg';
+import dinner from '../assets/photos/life-dinner.jpg';
+import crew from '../assets/photos/life-crew.jpg';
 import { rider, camp, campPage as c, ui } from '../content/site';
 
-const lifePhotos = { glacier, fisheye, bandana, smile, night };
+const lifePhotos = { glacier, fisheye, bandana, smile, night, sauna, dinner, crew };
 const site = Astro.site!;
 const jsonLd = [{
   '@context': 'https://schema.org', '@type': 'Event', name: `${camp.name} ${camp.issue} — ${camp.kind}`,

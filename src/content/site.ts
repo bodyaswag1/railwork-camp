@@ -10,7 +10,7 @@
 export const TODO = {
   studentCases: 'TODO: the 3 student videos (vertical) + start, what we worked on, progress, optional quote; BEFORE / AFTER only if it really is',
   coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
-  lifeMedia: 'TODO: crew / dinner / spa / St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
+  lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
@@ -464,12 +464,14 @@ export const campPage = {
     line: 'Coming alone is fine: you ride, have breakfast and watch the footage with the same small crew.',
     tiles: [
       { photo: 'glacier', cap: 'Alps', alt: 'A rider in a red jacket pulling on goggles above a glacier', pos: '50% 40%' },
-      { cap: 'Spa', todo: '[Photo: spa]' },
+      { photo: 'sauna', cap: 'Spa', alt: 'A rider in a felt sauna hat resting in a wooden sauna', pos: '50% 30%' },
       { photo: 'fisheye', cap: 'Snow', alt: 'Fisheye shot of a rider in yellow doing a handplant in the park', pos: '50% 50%' },
+      { photo: 'dinner', cap: 'Dinner', alt: 'The whole crew around a long table of pizza boxes after riding', pos: '50% 62%' },
+      { photo: 'crew', cap: 'Crew', alt: 'Riders lined up on the snow behind the fence, laughing and throwing horns', pos: '50% 62%' },
       { cap: 'St. Moritz', todo: '[Photo: St. Moritz]' },
-      { photo: 'bandana', cap: 'Crew', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
+      { photo: 'bandana', cap: 'Park', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
       { cap: 'Christmas', todo: '[Photo: Christmas]' },
-    ] as { photo?: 'glacier' | 'fisheye' | 'bandana' | 'smile' | 'night'; cap: string; alt?: string; pos?: string; todo?: string }[],
+    ] as { photo?: 'glacier' | 'fisheye' | 'bandana' | 'smile' | 'night' | 'sauna' | 'dinner' | 'crew'; cap: string; alt?: string; pos?: string; todo?: string }[],
     swipe: 'swipe →',
   },
 
