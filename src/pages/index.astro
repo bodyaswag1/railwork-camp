@@ -13,6 +13,7 @@ import night from '../assets/photos/ilia-night.jpg';
 import studio from '../assets/photos/ilia-studio.jpg';
 import smile from '../assets/photos/ilia-smile.jpg';
 import boardslide from '../assets/photos/ilia-boardslide.jpg';
+import jump from '../assets/photos/ilia-jump.jpg';
 import t9563 from '../assets/clips/trick-9563.jpg';
 import t2644 from '../assets/clips/trick-2644.jpg';
 import t0123 from '../assets/clips/trick-0123.jpg';
@@ -157,7 +158,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                       {p.kind === 'gif' && <Image src={clipPosters[p.poster!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 3 ? 'eager' : 'lazy'} draggable="false" />}
                       {/* the GIF itself: src set by pile.ts when this print comes up; never in the paper's copies */}
                       {p.kind === 'gif' && <img class="pic__gif" data-gif={p.gif} data-nocopy alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" />}
-                      <figcaption class="pic__cap" aria-hidden="true">02{String.fromCharCode(65 + i)} ▸ {p.cap}</figcaption>
+                      <figcaption class="pic__cap" aria-hidden="true">{p.cap}</figcaption>
                     </figure>
                   ))}
                 </div>
@@ -237,7 +238,7 @@ const ext = { target: '_blank', rel: 'noopener' };
     <!-- ======================= 03 NEXT CAMP ======================= -->
     <section class="page signal nextcamp" id="next-camp" data-page="2" data-tone="L" data-head="red" aria-labelledby="h-next-camp">
       <div class="nextcamp__photo" aria-hidden="true">
-        <Image src={glacier} alt="" widths={[480, 960]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
+        <Image src={jump} alt="" widths={[480, 640]} sizes="(min-width: 900px) 50vw, 100vw" format="webp" loading="lazy" />
       </div>
       <div class="nextcamp__inner scroller" data-scroll>
         <div class="decor" aria-hidden="true">

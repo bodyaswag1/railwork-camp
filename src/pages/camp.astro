@@ -13,6 +13,7 @@ import bandana from '../assets/photos/life-bandana.jpg';
 import smile from '../assets/photos/ilia-smile.jpg';
 import night from '../assets/photos/ilia-night.jpg';
 import aleksey from '../assets/photos/aleksey-rail.jpg';
+import coaching from '../assets/photos/camp-coaching.jpg';
 import { rider, camp, campPage as c, ui } from '../content/site';
 
 const lifePhotos = { glacier, fisheye, bandana, smile, night };
@@ -151,7 +152,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <span class="tl__w">{c.day.mountain.w}</span>
               <ul class="tl__tags" role="list">{c.day.mountain.lines.map((l) => <li>{l}</li>)}</ul>
               <span class="tl__note marker" data-slam style="--d:.7s" aria-hidden="true">{c.day.notes.mountain}</span>
-              <div class="tl__photo tilt"><Image src={glacier} alt="" widths={[300, 600]} sizes="(min-width: 900px) 18vw, 40vw" format="webp" loading="lazy" /></div>
+              <div class="tl__photo tilt"><Image src={coaching} alt="" widths={[300, 600]} sizes="(min-width: 900px) 18vw, 40vw" format="webp" loading="lazy" /></div>
             </li>
             <li class="tl__s"><time>{c.day.cool.t}</time><span>{c.day.cool.w}</span></li>
             <li class="tl__big tl__big--video">

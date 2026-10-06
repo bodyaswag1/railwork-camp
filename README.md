@@ -60,8 +60,8 @@ experience and level; no invented achievements, results, reviews or quotes; no f
 
 - **Photos** (`src/assets/photos/`): `ilia-bib-27.jpg` (cover), `ilia-air.jpg`, `ilia-rail.jpg`,
   `ilia-night.jpg`, `ilia-studio.jpg` (rider strip, final page), `ilia-smile.jpg` (BAS life, camp coach card),
-  `life-glacier.jpg` (BAS life, camp option, next-camp poster, camp hero), `life-fisheye.jpg`,
-  `life-bandana.jpg` (BAS life). Replace a file, keep its name; Astro makes AVIF/WebP srcsets at build time.
+  `life-glacier.jpg` (BAS life, camp option), `ilia-jump.jpg` (next-camp poster),
+  `camp-coaching.jpg` (camp training day), `life-fisheye.jpg`, `life-bandana.jpg` (BAS life). Replace a file, keep its name; Astro makes AVIF/WebP srcsets at build time.
   The current files are compressed messenger copies (≤1280 px): originals will look sharper.
 - **Rider strip:** `riderPage.slides`. A slide is `photo` (a photo + a big stat), `number` (a giant figure on
   red) or `boards` (the three pro-model bases).
