@@ -65,7 +65,7 @@ experience and level; no invented achievements, results, reviews or quotes; no f
   The current files are compressed messenger copies (≤1280 px): originals will look sharper.
 - **Rider strip:** `riderPage.slides`. A slide is `photo` (a photo + a big stat), `number` (a giant figure on
   red) or `boards` (the three pro-model bases).
-- **Student before/after GIFs:** `GIFS` above `progress` in `site.ts` (riders 01 and 02): the GIF in
+- **Student before/after GIFs:** `GIFS` above `progress` in `site.ts` (riders 01–03): the GIF in
   `public/clips/progress-0n.gif` over its still first frame in `src/assets/clips/progress-0n.jpg`; it loads
   once the progress page comes up.
 - **Student videos:** `progress.cases[n].video = { src, poster }`, vertical clips in `public/clips/` with

@@ -203,10 +203,11 @@ export const coachPage = {
 };
 
 // ---------------------------------------------------------------- 04 student progress
-// before / after clips, side by side, for the first two riders
+// before / after clips, side by side, one per rider
 const GIFS: (StudentCase['gif'])[] = [
   { src: '/clips/progress-01.gif', poster: 'progress-01', alt: 'Before: a rider on a snowy slope. After: the same rider dropping in on a big dry-slope ramp.' },
   { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: a rider flipping into an airbag. After: the same rider riding a kicker ramp on a summer slope.' },
+  { src: '/clips/progress-03.gif', poster: 'progress-03', alt: 'Before: a beginner in a yellow jacket on their first turns. After: the same rider linking turns down the slope.' },
 ];
 export type StudentCase = {
   n: string;
@@ -218,7 +219,7 @@ export type StudentCase = {
   quote?: string;
   video?: { src?: string; poster?: string };
   /** a looping before/after GIF (public/clips/…) over its still first frame (src/assets/clips/…) */
-  gif?: { src: string; poster: 'progress-01' | 'progress-02'; alt: string };
+  gif?: { src: string; poster: 'progress-01' | 'progress-02' | 'progress-03'; alt: string };
 };
 
 export const progress = {
@@ -232,8 +233,8 @@ export const progress = {
   cases: [1, 2, 3].map((n) => ({
     n: String(n).padStart(2, '0'),
     rider: `[Rider ${n} — name]`,
-    tag: '[Snowboard · level]',
-    start: '[Where they started]',
+    tag: n === 3 ? 'Snowboard · beginner' : '[Snowboard · level]',
+    start: n === 3 ? 'Just starting to learn to snowboard' : '[Where they started]',
     work: '[What they worked on]',
     result: '[What they can do now]',
     quote: '[Optional quote from the rider]',
