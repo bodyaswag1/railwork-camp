@@ -203,6 +203,11 @@ export const coachPage = {
 };
 
 // ---------------------------------------------------------------- 04 student progress
+// before / after clips, side by side, for the first two riders
+const GIFS: (StudentCase['gif'])[] = [
+  { src: '/clips/progress-01.gif', poster: 'progress-01', alt: 'Before: a rider on a snowy slope. After: the same rider dropping in on a big dry-slope ramp.' },
+  { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: a rider flipping into an airbag. After: the same rider riding a kicker ramp on a summer slope.' },
+];
 export type StudentCase = {
   n: string;
   rider: string;
@@ -212,6 +217,8 @@ export type StudentCase = {
   result: string;
   quote?: string;
   video?: { src?: string; poster?: string };
+  /** a looping before/after GIF (public/clips/…) over its still first frame (src/assets/clips/…) */
+  gif?: { src: string; poster: 'progress-01' | 'progress-02'; alt: string };
 };
 
 export const progress = {
@@ -231,6 +238,7 @@ export const progress = {
     result: '[What they can do now]',
     quote: '[Optional quote from the rider]',
     video: {},
+    gif: GIFS[n - 1],
   })) as StudentCase[],
 };
 

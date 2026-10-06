@@ -18,6 +18,8 @@ import t9563 from '../assets/clips/trick-9563.jpg';
 import t2644 from '../assets/clips/trick-2644.jpg';
 import t0123 from '../assets/clips/trick-0123.jpg';
 import t6120 from '../assets/clips/trick-6120.jpg';
+import pg01 from '../assets/clips/progress-01.jpg';
+import pg02 from '../assets/clips/progress-02.jpg';
 import bandana from '../assets/photos/life-bandana.jpg';
 import glacier from '../assets/photos/life-glacier.jpg';
 import fisheye from '../assets/photos/life-fisheye.jpg';
@@ -33,6 +35,7 @@ import {
 
 const photos = { air, rail, night, studio, smile, bandana, glacier, fisheye, bib, boardslide };
 const clipPosters = { 'trick-9563': t9563, 'trick-2644': t2644, 'trick-0123': t0123, 'trick-6120': t6120 };
+const progressPosters = { 'progress-01': pg01, 'progress-02': pg02 };
 const boardImgs: Record<string, ImageMetadata> = {
   'board-1-top': b1t, 'board-1-base': b1b, 'board-2-top': b2t,
   'board-2-base': b2b, 'board-3-top': b3t, 'board-3-base': b3b,
@@ -330,7 +333,10 @@ const ext = { target: '_blank', rel: 'noopener' };
                       <span class="tape case__tape" aria-hidden="true"></span>
                       {/* TODO(studentCases): set video.src (vertical clip) and video.poster in site.ts */}
                       {c.video?.poster && <img class="case__poster" src={c.video.poster} alt="" loading="lazy" />}
-                      {!c.video?.src && !c.video?.poster && (
+                      {c.gif && <Image class="case__poster" src={progressPosters[c.gif.poster]} alt={c.gif.alt} widths={[400, 800]} sizes="(min-width: 900px) 24vw, 80vw" format="webp" loading="lazy" draggable="false" />}
+                      {/* the GIF itself: src set by cases.ts once this page comes up; never in the paper's copies */}
+                      {c.gif && <img class="case__gif" data-gif={c.gif.src} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
+                      {!c.gif && !c.video?.src && !c.video?.poster && (
                         <div class="ph ph--light" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{progress.labels.video} {c.n}</span></span><span class="ph__play"></span><span class="ph__cap">[Vertical video]</span></div>
                       )}
                       {c.video?.src && <video muted loop playsinline preload="none" poster={c.video.poster} src={c.video.src}></video>}

@@ -125,7 +125,7 @@ const boards = initBoards(secs[BOARDS], () => cur === BOARDS && !busy, reduced,
   // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
   () => { settled.delete(BOARDS); lastInput = performance.now(); });
 const casesPage = secs.find((s) => s.querySelector('[data-case]'));
-const cases = casesPage ? initCases(casesPage) : null;
+const cases = casesPage ? initCases(casesPage, reduced) : null;
 
 let transition: Transition = reduced ? fadeTransition : cssTransition;
 export const setTransition = (t: Transition) => { if (!reduced) transition = t; };
@@ -160,6 +160,7 @@ function setActive(i: number) {
     s.classList.toggle('is-active', on);
     s.inert = !on;
     if (on) s.removeAttribute('aria-hidden'); else s.setAttribute('aria-hidden', 'true');
+    if (on && s === casesPage) cases?.wake();
   });
 }
 

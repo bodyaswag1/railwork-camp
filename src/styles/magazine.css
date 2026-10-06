@@ -366,7 +366,10 @@ main { position: absolute; inset: 0; }
 .car--cases .slide { width: min(80vw, 340px); }
 .case { display: flex; flex-direction: column; gap: 12px; }
 .case__media { position: relative; margin: 0; aspect-ratio: 1 / 1; overflow: hidden; background: var(--night-run); }
-.case__media video, .case__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.case__media video, .case__poster, .case__gif { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.case__gif { opacity: 0; transition: opacity .25s ease; }
+.case__gif.is-loaded { opacity: 1; }
+.page:not(.is-active) .case__gif { opacity: 0; transition: none; }
 .case__play { position: absolute; inset: 0; border: 0; background: transparent; cursor: pointer; }
 .case__play span { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(16,19,20,.6); border: 1.5px solid var(--airbag-ice); }
 .case__play span::after { content: ''; position: absolute; left: 25px; top: 20px; border-left: 20px solid var(--airbag-ice); border-top: 12px solid transparent; border-bottom: 12px solid transparent; }
