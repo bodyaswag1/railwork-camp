@@ -7,7 +7,6 @@ import { agePaper } from './paper';
 import { drawMarks, hideMarks, showMarks, finishMarks } from './marks';
 import { initCarousel, type Carousel } from './carousel';
 import { initPile } from './pile';
-import { initCases } from './cases';
 import { initBoards } from './boards';
 import { fadeTransition, cssTransition, type Transition, type Hooks } from './transitions';
 
@@ -124,8 +123,9 @@ const boards = initBoards(secs[BOARDS], () => cur === BOARDS && !busy, reduced,
   () => { settled.add(BOARDS); state.onDirty(BOARDS); },
   // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
   () => { settled.delete(BOARDS); lastInput = performance.now(); });
-const casesPage = secs.find((s) => s.querySelector('[data-case]'));
-const cases = casesPage ? initCases(casesPage, reduced) : null;
+// a page's held-back media (pile GIFs) is fetched as it comes up, and the next page's once the browser is idle
+const wake = (i: number) => carousels.get(i)?.forEach((c) => c.wake?.());
+const idle = (fn: () => void) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 1200));
 
 let transition: Transition = reduced ? fadeTransition : cssTransition;
 export const setTransition = (t: Transition) => { if (!reduced) transition = t; };
@@ -146,7 +146,6 @@ export function prepare(i: number) {
   const sc = scroller(i);
   if (sc) sc.scrollTop = 0;
   carousels.get(i)?.forEach((c) => c.reset());
-  if (s === casesPage) cases?.pauseAll();
   if (i === BOARDS) boards.reset();
 }
 
@@ -160,7 +159,6 @@ function setActive(i: number) {
     s.classList.toggle('is-active', on);
     s.inert = !on;
     if (on) s.removeAttribute('aria-hidden'); else s.setAttribute('aria-hidden', 'true');
-    if (on && s === casesPage) cases?.wake();
   });
 }
 
@@ -176,6 +174,8 @@ const setCounter = (i: number) => {
 
 let landedOnce = false;
 function land(i: number, focus = true) {
+  wake(i);
+  idle(() => wake(i + 1));
   landedOnce = true;
   const s = secs[i];
   settled.delete(i); marked.delete(i);
@@ -198,8 +198,8 @@ export async function go(n: number, push = true, explicit = false) {
   landedOnce = true;
   performance.mark('turn:start');
   const from = cur, dir: 1 | -1 = n > from ? 1 : -1;
-  cases?.pauseAll();
   prepare(n);
+  wake(n);
   // the arriving page renders underneath from now on, so it's ready to take over the moment the paper lands
   secs[n].classList.add('is-next');
   const hooks: Hooks = {

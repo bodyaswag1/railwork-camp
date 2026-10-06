@@ -13,6 +13,8 @@ export type Carousel = {
   finish(): void;
   /** back to the first slide, no animation */
   reset(): void;
+  /** the page is coming up: fetch what was held back (a pile's GIFs) */
+  wake?(): void;
 };
 
 type Opts = { reduced: boolean; onChange?: (i: number) => void };

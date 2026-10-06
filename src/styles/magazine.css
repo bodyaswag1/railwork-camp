@@ -238,15 +238,16 @@ main { position: absolute; inset: 0; }
   display: flex; flex-wrap: wrap; align-content: center; justify-content: center; align-items: center;
   gap: clamp(18px, 3svh, 32px) 5vw;
 }
-.stats__left { flex: 1 1 460px; max-width: 660px; display: flex; flex-direction: column; gap: clamp(18px, 3.4svh, 38px); position: relative; z-index: 1; }
-.stats__head { --pw: clamp(150px, 16.5vw, 250px); position: relative; display: flex; gap: clamp(18px, 2.2vw, 32px); align-items: flex-start; }
+.stats__left { flex: 1 1 460px; max-width: 700px; display: flex; flex-direction: column; gap: clamp(18px, 3.4svh, 38px); position: relative; z-index: 1; }
+.stats__head { --pw: clamp(170px, 19vw, 280px); position: relative; display: flex; gap: clamp(18px, 2.2vw, 32px); align-items: flex-start; }
 
 /* the photo slider sits where the portrait was: a pink print, taped on and scribbled round */
 /* a pile of prints (scripts/pile.ts): the top one is on show, the rest lie under it, turned a little */
 .pics { position: relative; flex: none; width: var(--pw); padding: 0 12px 0 2px; touch-action: pan-y pinch-zoom; cursor: grab; user-select: none; -webkit-user-select: none; outline-offset: 10px; }
 .pics.is-dragging { cursor: grabbing; }
-.pics__stack { position: relative; display: grid; }
-.pic { grid-area: 1 / 1; position: relative; margin: 0; padding: 8px 8px 0; background: var(--goggle-tint); box-shadow: var(--shadow-hard); }
+.pics__stack { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
+/* min-width 0: a print never grows to its image's natural width (it would spill over the title) */
+.pic { grid-area: 1 / 1; min-width: 0; display: flex; flex-direction: column; position: relative; margin: 0; padding: 8px 8px 0; background: var(--goggle-tint); box-shadow: var(--shadow-hard); }
 .pic:nth-child(3n+2) { background: var(--airbag-ice); }
 .pic:nth-child(3n) { background: #F6E7B8; }
 .pic img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; filter: contrast(1.12) saturate(1.1); background: var(--night-run); pointer-events: none; -webkit-user-drag: none; }
@@ -255,15 +256,18 @@ main { position: absolute; inset: 0; }
 .pic img.pic__gif.is-loaded { opacity: 1; }
 /* while the page is off screen or turning, its paper copy shows the poster: the GIF fades in after landing */
 .page:not(.is-active) .pic img.pic__gif { opacity: 0; transition: none; }
-.pic__cap { display: block; padding: 7px 0 8px; color: var(--night-run); font-family: var(--font-display); font-weight: 800; font-stretch: 112%; font-size: 10px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* every print is as tall as the one with the longest caption: a short caption sits in the middle of its strip */
+.pic__cap { flex: 1; display: flex; align-items: center; padding: 9px 2px 11px; color: var(--night-run); font-family: var(--font-display); font-weight: 900; font-stretch: 100%; font-size: clamp(12px, .95vw, 15px); line-height: 1.15; letter-spacing: .05em; text-transform: uppercase; text-wrap: balance; }
+/* only the print on top has its caption: the ones under it would peek out below */
+.pic[aria-hidden="true"] .pic__cap { visibility: hidden; }
 .tape--pic { left: 30%; top: -9px; width: 40%; rotate: -3deg; }
 .pic:nth-child(even) .tape--pic { rotate: 4deg; left: 26%; }
-.pics__count { display: block; margin-top: 18px; font-family: var(--font-display); font-weight: 800; font-size: 12px; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: var(--lift-tower); }
+.pics__count { display: block; margin-top: 28px; font-family: var(--font-display); font-weight: 800; font-size: 12px; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: var(--lift-tower); }
 .pics__note { position: absolute; right: -18px; top: -26px; z-index: 4; transform: rotate(8deg); color: var(--park-signal); font-size: clamp(18px, 1.6vw, 24px); white-space: nowrap; pointer-events: none; }
 
 .stats__title { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding-top: 2px; }
 .stats__legend { position: absolute; right: calc(4% + 66px); top: -40px; transform: rotate(-8deg); font-size: clamp(16px, 1.5vw, 22px); color: var(--park-signal); white-space: nowrap; }
-.stats__h2 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: clamp(28px, 4vw, 62px); line-height: .88; color: var(--park-signal); text-transform: uppercase; }
+.stats__h2 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: clamp(28px, 3.5vw, 56px); line-height: .88; color: var(--park-signal); text-transform: uppercase; }
 .rule5 { height: 5px; width: 70%; background: var(--night-run); }
 .stats__sub { font-family: var(--font-display); font-weight: 800; font-stretch: 125%; font-size: clamp(14px, 1.8vw, 26px); line-height: 1; text-transform: uppercase; }
 .stats__meta { margin: 0; font-weight: 600; font-size: clamp(11px, 1vw, 14px); letter-spacing: .08em; text-transform: uppercase; color: var(--lift-tower); line-height: 1.5; }
@@ -362,33 +366,30 @@ main { position: absolute; inset: 0; }
 #progress { --fx1: 58% 22%; --fx2: 88% 80%; }
 .progress__pre { display: block; font-size: .36em; line-height: 1.05; margin-bottom: .16em; letter-spacing: .01em; }
 .progress__main { display: block; color: var(--park-signal); }
-.car--cases { --gap: 18px; }
-.car--cases .slide { width: min(80vw, 340px); }
-.case { display: flex; flex-direction: column; gap: 12px; }
-.case__media { position: relative; margin: 0; aspect-ratio: 1 / 1; overflow: hidden; background: var(--night-run); }
-.case__media video, .case__poster, .case__gif { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.case__gif { opacity: 0; transition: opacity .25s ease; }
-.case__gif.is-loaded { opacity: 1; }
-.page:not(.is-active) .case__gif { opacity: 0; transition: none; }
-.case__play { position: absolute; inset: 0; border: 0; background: transparent; cursor: pointer; }
-.case__play span { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(16,19,20,.6); border: 1.5px solid var(--airbag-ice); }
-.case__play span::after { content: ''; position: absolute; left: 25px; top: 20px; border-left: 20px solid var(--airbag-ice); border-top: 12px solid transparent; border-bottom: 12px solid transparent; }
-.case.is-playing .case__play span { opacity: 0; }
-.case__body { display: flex; flex-direction: column; gap: 4px; }
-.case__n { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--park-signal); }
-.case__rider { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; font-size: clamp(24px, 6.4vw, 32px); line-height: .95; text-transform: uppercase; }
-.case__tag { margin: 0; font-size: 12px; color: var(--lift-tower); }
-.case__steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1.5px solid var(--night-run); }
-.case__steps li { display: flex; flex-direction: column; gap: 3px; padding: 8px 8px 0 0; position: relative; }
-.case__steps li + li { padding-left: 8px; border-left: 1px dashed var(--slush-concrete); }
-.case__k { font-weight: 700; font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--lift-tower); }
-.case__v { font-size: 13px; line-height: 1.3; }
+.cases { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.pics--cases { --pw: min(66vw, 300px, 34svh); padding-top: 4px; }
+/* the swipe note sits under this pile, across from the count (above it would run into the headline) */
+.pics--cases .pics__note { top: auto; bottom: -6px; right: 4px; transform: rotate(-4deg); }
+.pics--cases .pic img, .pics--cases .ph { aspect-ratio: 1 / 1; }
+.pics--cases .ph { width: 100%; }
+.cases__text { width: 100%; max-width: 460px; }
+.case { display: flex; flex-direction: column; gap: 6px; }
+.case[hidden] { display: none; }
+.case__n { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--park-signal); }
+.case__rider { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; font-size: clamp(28px, 7.4vw, 44px); line-height: .95; text-transform: uppercase; }
+.case__tag { margin: 0; font-size: 14px; color: var(--lift-tower); }
+.case__steps { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1.5px solid var(--night-run); }
+.case__steps li { display: flex; flex-direction: column; gap: 4px; padding: 10px 10px 0 0; position: relative; }
+.case__steps li + li { padding-left: 10px; border-left: 1px dashed var(--slush-concrete); }
+.case__k { font-weight: 700; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--lift-tower); }
+.case__v { font-size: 15px; line-height: 1.35; }
 .case__res .case__k { color: var(--park-signal); }
-.case__quote { margin: 8px 0 0; font-size: 14px; line-height: 1.45; font-style: italic; }
+.case__quote { margin: 12px 0 0; font-size: 16px; line-height: 1.45; font-style: italic; }
 @media (min-width: 900px) {
   .progress__grid { justify-content: center; }
-  .car--cases .slide { width: clamp(240px, 24vw, 380px); }
-  .case__media { aspect-ratio: auto; height: min(38svh, 27vw); }
+  .cases { flex-direction: row; align-items: center; gap: clamp(40px, 6vw, 96px); }
+  .pics--cases { --pw: clamp(260px, min(29vw, 46svh), 440px); }
+  .case__rider { font-size: clamp(32px, 3.2vw, 52px); }
   .progress__h2 { font-size: min(7vw, 12svh); }
 }
 
@@ -559,12 +560,7 @@ main { position: absolute; inset: 0; }
 .progress__main { position: relative; display: inline-block; }
 .progress__note { position: absolute; right: 2%; bottom: -10px; rotate: -6deg; color: var(--park-signal); font-size: clamp(22px, 2.2vw, 32px); white-space: nowrap; }
 .progress__reg { right: 5%; top: calc(var(--top) - 20px); }
-.car--cases .car__track, .car--life .car__track { padding-top: 12px; }
-.case__media { overflow: visible; }
-.case:nth-child(odd) .case__media { rotate: -1.2deg; }
-.case:nth-child(even) .case__media { rotate: 1deg; }
-.case__media .ph { overflow: hidden; }
-.case__tape { left: 50%; top: -9px; translate: -50% 0; rotate: -3deg; width: 38%; }
+.car--life .car__track { padding-top: 12px; }
 @media (max-width: 899px) { .progress__note { bottom: auto; top: 46%; right: 0; } }
 
 /* 05 train */

@@ -2,6 +2,8 @@
 // and it goes to the bottom of the pile; swipe right and the bottom one comes back on top. ← → work too.
 // Cards are placed with transforms only, so a copy of the page for the paper shows the pile as it lies, and
 // "which print is on top" is a plain number the copies can be keyed on (same interface as a carousel).
+// Text that belongs to each print (elements with data-pile-text="<pile id>", one per print, in order) is
+// shown for the print on top only.
 import { gsap } from 'gsap';
 import type { Carousel } from './carousel';
 
@@ -19,10 +21,13 @@ export function initPile(el: HTMLElement, { reduced, onChange }: Opts): Carousel
   const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-slide]'));
   const count = el.querySelector<HTMLElement>('[data-car-count]');
   const n = cards.length;
-  // GIF prints: the animation is fetched once the print is on top or next up (reduced motion keeps the still)
+  const texts = el.id ? Array.from(document.querySelectorAll<HTMLElement>(`[data-pile-text="${el.id}"]`)) : [];
+  // GIF prints: once the pile is woken (its page is coming up), the animation is fetched for the print on top
+  // and the next one (reduced motion keeps the still)
   const gifs = cards.map((c) => c.querySelector<HTMLImageElement>('img[data-gif]'));
+  let awake = false;
   const wake = () => {
-    if (reduced) return;
+    if (reduced || !awake) return;
     gifs.forEach((g, i) => {
       if (!g || g.getAttribute('src') || depth(i) > 1) return;
       g.addEventListener('load', () => g.classList.add('is-loaded'), { once: true });
@@ -47,6 +52,7 @@ export function initPile(el: HTMLElement, { reduced, onChange }: Opts): Carousel
       if (animate && !reduced) gsap.to(c, { ...pose(d), duration: 0.38, ease: 'power2.out', overwrite: true });
       else gsap.set(c, pose(d));
     });
+    texts.forEach((t, i) => { const hide = i !== top; if (t.hidden !== hide) t.hidden = hide; });
     wake();
     const text = `${pad(top + 1)}/${pad(n)}`;
     if (count && count.textContent !== text) count.textContent = text;
@@ -138,5 +144,6 @@ export function initPile(el: HTMLElement, { reduced, onChange }: Opts): Carousel
     goTo,
     finish: () => { gsap.getTweensOf(cards).forEach((t) => t.progress(1)); layout(false); },
     reset: () => { gsap.killTweensOf(cards); top = 0; layout(false); },
+    wake: () => { awake = true; wake(); },
   };
 }

@@ -161,7 +161,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                       {p.kind === 'photo' && <Image src={photos[p.photo!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 3 ? 'eager' : 'lazy'} style={`object-position:${p.pos ?? '50% 50%'}`} draggable="false" />}
                       {p.kind === 'gif' && <Image src={clipPosters[p.poster!]} alt={p.alt} widths={[300, 600]} sizes="(min-width: 900px) 20vw, 44vw" format="webp" loading={i < 3 ? 'eager' : 'lazy'} draggable="false" />}
                       {/* the GIF itself: src set by pile.ts when this print comes up; never in the paper's copies */}
-                      {p.kind === 'gif' && <img class="pic__gif" data-gif={p.gif} data-nocopy alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" />}
+                      {p.kind === 'gif' && <img class="pic__gif" data-gif={p.gif} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
                       <figcaption class="pic__cap" aria-hidden="true">{p.cap}</figcaption>
                     </figure>
                   ))}
@@ -325,46 +325,39 @@ const ext = { target: '_blank', rel: 'noopener' };
             <h2 class="h2 progress__h2" id="h-progress" tabindex="-1"><span class="progress__pre">{progress.h2[0]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="left:-1%;top:46%;width:102%;height:.5em" fill="none" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M1 12 C 30 6, 60 15, 99 7" stroke="#BA1422" stroke-width="3" /></svg></span> <span class="progress__main">{progress.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
             <span class="progress__note marker" data-ink aria-hidden="true">{progress.note}</span>
           </header>
-          <div class="car car--cases" data-carousel role="region" aria-roledescription="carousel" aria-label={progress.carousel}>
-            <div class="car__viewport" data-car-viewport>
-              <ol class="car__track" data-car-track role="list">
+          <div class="cases">
+            <div class="pics pics--cases" id="cases-pile" data-carousel data-pile role="region" aria-roledescription="carousel" aria-label={progress.carousel} tabindex="0">
+              <div class="pics__stack">
+                <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12px;top:-12px;width:calc(100% + 24px);height:calc(100% + 24px);z-index:20" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#BA1422" stroke-width="3" /></svg>
                 {progress.cases.map((c, i) => (
-                  <li class="slide case" data-slide data-case aria-roledescription="slide" aria-label={ui.slide(i + 1, progress.cases.length)}>
-                    <figure class="case__media">
-                      <span class="tape case__tape" aria-hidden="true"></span>
-                      {/* TODO(studentCases): set video.src (vertical clip) and video.poster in site.ts */}
-                      {c.video?.poster && <img class="case__poster" src={c.video.poster} alt="" loading="lazy" />}
-                      {c.gif && <Image class="case__poster" src={progressPosters[c.gif.poster]} alt={c.gif.alt} widths={[400, 800]} sizes="(min-width: 900px) 24vw, 80vw" format="webp" loading="lazy" draggable="false" />}
-                      {/* the GIF itself: src set by cases.ts once this page comes up; never in the paper's copies */}
-                      {c.gif && <img class="case__gif" data-gif={c.gif.src} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
-                      {!c.gif && !c.video?.src && !c.video?.poster && (
-                        <div class="ph ph--light" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{progress.labels.video} {c.n}</span></span><span class="ph__play"></span><span class="ph__cap">[Vertical video]</span></div>
-                      )}
-                      {c.video?.src && <video muted loop playsinline preload="none" poster={c.video.poster} src={c.video.src}></video>}
-                      {c.video?.src && <button class="case__play" type="button" data-case-play aria-pressed="false" aria-label={progress.labels.play(c.n)} data-play={progress.labels.play(c.n)} data-pause={progress.labels.pause(c.n)}><span aria-hidden="true"></span></button>}
-                    </figure>
-                    <div class="case__body">
-                      <p class="case__n">Rider {c.n}</p>
-                      <h3 class="case__rider">{c.rider}</h3>
-                      <p class="case__tag">{c.tag}</p>
-                      <ol class="case__steps" role="list">
-                        <li><span class="case__k">{progress.labels.start}</span><span class="case__v">{c.start}</span></li>
-                        <li><span class="case__k">{progress.labels.work}</span><span class="case__v">{c.work}</span></li>
-                        <li class="case__res"><span class="case__k">{progress.labels.result}</span><span class="case__v">{c.result}</span></li>
-                      </ol>
-                      {c.quote && <blockquote class="case__quote">“{c.quote}”</blockquote>}
-                    </div>
-                  </li>
+                  <figure class="pic pic--gif" data-slide aria-roledescription="slide" aria-label={ui.slide(i + 1, progress.cases.length)}>
+                    <span class="tape tape--pic" aria-hidden="true"></span>
+                    {c.gif
+                      ? <Image src={progressPosters[c.gif.poster]} alt={c.gif.alt} widths={[400, 800]} sizes="(min-width: 900px) 30vw, 80vw" format="webp" loading={i < 2 ? 'eager' : 'lazy'} draggable="false" />
+                      : <div class="ph ph--light" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{progress.labels.video} {c.n}</span></span><span class="ph__play"></span><span class="ph__cap">[Vertical video]</span></div>}
+                    {/* the GIF itself: src set by pile.ts once this page comes up; never in the paper's copies */}
+                    {c.gif && <img class="pic__gif" data-gif={c.gif.src} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
+                    <figcaption class="pic__cap" aria-hidden="true">Rider {c.n} ▸ {c.tag}</figcaption>
+                  </figure>
                 ))}
-              </ol>
-            </div>
-            <div class="car__bar">
-              <span></span>
-              <div class="car__ctrl">
-                <button class="car__btn" type="button" data-car-prev aria-label={ui.prev}>←</button>
-                <span class="car__count" data-car-count aria-hidden="true">01/03</span>
-                <button class="car__btn" type="button" data-car-next aria-label={ui.next}>→</button>
               </div>
+              <span class="pics__count" data-car-count aria-hidden="true">01/{String(progress.cases.length).padStart(2, '0')}</span>
+              <span class="pics__note marker" data-ink aria-hidden="true">{riderPage.pics.note}</span>
+            </div>
+            <div class="cases__text" aria-live="polite">
+              {progress.cases.map((c, i) => (
+                <article class="case" data-pile-text="cases-pile" hidden={i !== 0}>
+                  <p class="case__n">Rider {c.n}</p>
+                  <h3 class="case__rider">{c.rider}</h3>
+                  <p class="case__tag">{c.tag}</p>
+                  <ol class="case__steps" role="list">
+                    <li><span class="case__k">{progress.labels.start}</span><span class="case__v">{c.start}</span></li>
+                    <li><span class="case__k">{progress.labels.work}</span><span class="case__v">{c.work}</span></li>
+                    <li class="case__res"><span class="case__k">{progress.labels.result}</span><span class="case__v">{c.result}</span></li>
+                  </ol>
+                  {c.quote && <blockquote class="case__quote">“{c.quote}”</blockquote>}
+                </article>
+              ))}
             </div>
           </div>
         </div>

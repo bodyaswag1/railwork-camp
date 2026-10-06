@@ -17,9 +17,13 @@ import coaching from '../assets/photos/camp-coaching.jpg';
 import sauna from '../assets/photos/life-sauna.jpg';
 import dinner from '../assets/photos/life-dinner.jpg';
 import crew from '../assets/photos/life-crew.jpg';
+import hotelOutside from '../assets/photos/hotel-outside.jpg';
+import hotelRoom from '../assets/photos/hotel-room.jpg';
+import hotelBreakfast from '../assets/photos/hotel-breakfast.jpg';
 import { rider, camp, campPage as c, ui } from '../content/site';
 
 const lifePhotos = { glacier, fisheye, bandana, smile, night, sauna, dinner, crew };
+const hotelPhotos = { outside: hotelOutside, room: hotelRoom, breakfast: hotelBreakfast };
 const site = Astro.site!;
 const jsonLd = [{
   '@context': 'https://schema.org', '@type': 'Event', name: `${camp.name} ${camp.issue} — ${camp.kind}`,
@@ -318,8 +322,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <a class="hotel__map" href={c.hotel.mapUrl} {...ext}>{c.hotel.map}</a>
         </div>
         <div class="hotel__pics">
-          {/* TODO(hotelPhotos): real hotel photos replace these frames */}
-          {c.hotel.photos.map((p, i) => <figure class:list={['hotel__ph', 'tilt', `hotel__ph--${i + 1}`]}><span class="tape" aria-hidden="true"></span><span>{p}</span></figure>)}
+          {c.hotel.photos.map((p, i) => (
+            <figure class:list={['hotel__pic', `hotel__pic--${i + 1}`]}>
+              <span class="tape" aria-hidden="true"></span>
+              <Image src={hotelPhotos[p.photo]} alt={p.alt} widths={[360, 720]} sizes="(min-width: 900px) 30vw, 70vw" format="webp" loading="lazy" />
+              <figcaption class="hotel__cap marker">{p.cap}</figcaption>
+            </figure>
+          ))}
           <span class="hotel__note marker" data-slam style="--d:.6s" aria-hidden="true">{c.hotel.note}</span>
         </div>
       </div>

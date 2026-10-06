@@ -86,12 +86,29 @@ test.describe('reduced motion (fast turns)', () => {
     expect(await count.textContent()).toBe('02/07');
   });
 
+  test('the student pile: a swipe brings the next rider’s postcard and story', async ({ page }) => {
+    await page.goto('/#progress');
+    await page.waitForLoadState('networkidle');
+    const pile = page.locator('#cases-pile');
+    const story = () => page.locator('[data-pile-text="cases-pile"]:not([hidden]) .case__n').textContent();
+    expect(await story()).toBe('Rider 01');
+    const box = (await pile.locator('.pics__stack').boundingBox())!;
+    const y = box.y + Math.min(box.height / 2, 200);
+    await drag(page, box.x + box.width - 20, y, box.x + 20, y + 10);
+    await page.waitForTimeout(900);
+    expect(await active(page)).toBe('progress');
+    expect(await pile.locator('[data-car-count]').textContent()).toBe('02/03');
+    expect(await story()).toBe('Rider 02');
+    // reduced motion keeps the still: the GIF is never fetched
+    expect(await pile.locator('img.pic__gif[src]').count()).toBe(0);
+  });
+
   test('a vertical swipe on a carousel still turns the page', async ({ page }) => {
     await page.goto('/#progress');
     await page.waitForLoadState('networkidle');
     await page.locator('#progress [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.waitForTimeout(300);
-    const b2 = (await page.locator('#progress [data-car-viewport]').boundingBox())!;
+    const b2 = (await page.locator('#cases-pile .pics__stack').boundingBox())!;
     const yy = Math.max(120, Math.min(600, b2.y + b2.height - 20));
     await swipe(page, yy, yy - 90, 12, 200);
     await settle(page);

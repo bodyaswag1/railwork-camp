@@ -10,7 +10,7 @@ progress), how to train with him, what BAS life is, and what to do next.
 | 01 | Cover (`cover`) | Name, "Ride better.", 3× National Champion · Europa Cup podiums · 20 years riding, 1620°, the two CTAs |
 | 02 | The rider (`ilia`) | "20 years on snow." — a swipeable strip of proof points (1620°, 3×, Europa Cup, 20, 3 pro models, Junior World) + stance and favourite trick |
 | 03 | The coach (`coaching`) | 20 years riding / 3 years coaching, the coaching loop (watch → understand → adjust → repeat) |
-| 04 | Student progress (`progress`) | Three student stories: vertical video, starting point, what they worked on, result, quote |
+| 04 | Student progress (`progress`) | Three student stories: a pile of before/after postcards (swipe for the next rider) with starting point, what they worked on, result, quote beside it |
 | 05 | Train with Ilia (`train`) | Private coaching (from €150/day, opens an Instagram DM) or BAS CAMP (→ `/camp`) |
 | 06 | BAS life (`life`) | "Come for the riding. Stay for the people." — a photo strip, photos open full screen |
 | 07 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, Snowboard + Freeski, 12 spots, €800 |
@@ -45,7 +45,7 @@ and long cache headers for hashed assets and fonts.
 Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TODO` there and shown in
 `[brackets]` on the page so they're easy to spot. Still to fill in (the `TODO` object at the top lists them):
 
-- **Student progress (`progress.cases`):** the 3 student videos and, per rider, name, where they started,
+- **Student progress (`progress.cases`):** per rider, name, where they started,
   what they worked on, the result and an optional quote. Nothing here is invented: until a case is real it
   stays a placeholder.
 - **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (St. Moritz, Christmas; `life.tiles`).
@@ -68,10 +68,8 @@ experience and level; no invented achievements, results, reviews or quotes; no f
   red) or `boards` (the three pro-model bases).
 - **Student before/after GIFs:** `GIFS` above `progress` in `site.ts` (riders 01–03): the GIF in
   `public/clips/progress-0n.gif` over its still first frame in `src/assets/clips/progress-0n.jpg`; it loads
-  once the progress page comes up.
-- **Student videos:** `progress.cases[n].video = { src, poster }`, vertical clips in `public/clips/` with
-  `/clips/…` paths. A case with a video gets a play button (muted, looping, plays inline, stops when the reader
-  turns the page); without one it shows a placeholder frame.
+  as the progress page comes up (the pile shows the story of the print on top). A case without a GIF shows a
+  placeholder print.
 - **BAS life:** `life.tiles` (`photo` + caption, or `todo: true` for a placeholder). Photos open in a viewer.
 - **Boards:** `src/assets/boards/board-{1,2,3}-{top,base}.png`, transparent cut-outs, about 205×1112.
 

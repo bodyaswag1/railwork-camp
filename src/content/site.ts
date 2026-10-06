@@ -11,7 +11,6 @@ export const TODO = {
   studentCases: 'TODO: the 3 student videos (vertical) + start, what we worked on, progress, optional quote; BEFORE / AFTER only if it really is',
   coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
   lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
-  hotelPhotos: 'TODO: real photos of Meublè Rosalpina (outside, a room)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
@@ -217,7 +216,6 @@ export type StudentCase = {
   work: string;
   result: string;
   quote?: string;
-  video?: { src?: string; poster?: string };
   /** a looping before/after GIF (public/clips/…) over its still first frame (src/assets/clips/…) */
   gif?: { src: string; poster: 'progress-01' | 'progress-02' | 'progress-03'; alt: string };
 };
@@ -228,7 +226,7 @@ export const progress = {
   stamp: 'Real riders',
   note: 'proof ↓',
   carousel: 'Student stories',
-  labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video', play: (n: string) => `Play rider ${n}'s video`, pause: (n: string) => `Pause rider ${n}'s video` },
+  labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video' },
   // TODO(studentCases): replace each bracket with the real case; drop `quote` if the rider has none
   cases: [1, 2, 3].map((n) => ({
     n: String(n).padStart(2, '0'),
@@ -238,7 +236,6 @@ export const progress = {
     work: '[What they worked on]',
     result: '[What they can do now]',
     quote: '[Optional quote from the rider]',
-    video: {},
     gif: GIFS[n - 1],
   })) as StudentCase[],
 };
@@ -485,7 +482,11 @@ export const campPage = {
     address: ['Via San Carlo 16', 'Valdidentro, Italy'],
     map: 'Open in Maps ↗',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=Meubl%C3%A8+Rosalpina%2C+Via+San+Carlo+16%2C+Valdidentro%2C+Italy',
-    photos: ['[Photo: hotel outside]', '[Photo: room]'], // TODO(hotelPhotos)
+    photos: [
+      { photo: 'outside', cap: 'Rosalpina', alt: 'Meublè Rosalpina in the snow: a three-storey chalet with wooden balconies under a pine slope' },
+      { photo: 'room', cap: 'Your room', alt: 'A bright hotel room with a wooden double bed and a white curtain' },
+      { photo: 'breakfast', cap: 'Breakfast', alt: 'A breakfast table with croissants and coffee cups by a window full of geraniums and pine forest' },
+    ] as { photo: 'outside' | 'room' | 'breakfast'; cap: string; alt: string }[],
     note: 'home for 4 nights',
   },
 
