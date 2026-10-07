@@ -398,16 +398,34 @@ main { position: absolute; inset: 0; }
 .case__v { font-size: 15px; line-height: 1.35; }
 .case__res .case__k { color: var(--park-signal); }
 .case__quote { margin: 12px 0 0; font-size: 16px; line-height: 1.45; font-style: italic; }
+/* the change in one line: from (struck through) → to (big, red), with a marker note */
+.gain { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .3em; margin: 10px 0 2px; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; text-transform: uppercase; line-height: .9; }
+.gain__from { font-size: clamp(22px, 2vw, 30px); color: var(--lift-tower); text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: var(--park-signal); }
+.gain__arrow { font-size: clamp(22px, 2vw, 30px); color: var(--park-signal); }
+.gain__to { font-size: clamp(40px, 4vw, 64px); color: var(--park-signal); }
+.gain__note { flex-basis: 100%; margin-top: 4px; font-size: clamp(17px, 1.5vw, 22px); text-transform: none; color: var(--night-run); rotate: -2deg; transform-origin: left; }
 .pic__story { display: none; }
 @media (max-width: 899px) {
   /* one big postcard, centred, with the rider's story printed under the GIF */
   .cases { align-items: center; gap: 0; }
   .cases__text { display: none; }
-  .pics--cases { --pw: min(88vw, 360px, 100svh - 375px); align-self: center; padding: 4px 6px 0; }
+  .pics--cases { --pw: min(88vw, 360px); align-self: center; padding: 4px 6px 0; }
   .pics--cases .pic__cap { display: none; }
+  /* a slightly shorter GIF window (the before/after labels are at the top, so the crop comes off the bottom),
+     shorter still on short screens; nothing on a card may spill past its edge */
+  .pics--cases .pic { overflow: hidden; }
+  .pics--cases .pic img { aspect-ratio: 6 / 5; object-position: 50% 0; }
+  .pic__story .gain__from, .pic__story .gain__to { white-space: nowrap; }
   .pic__story { display: flex; flex-direction: column; gap: 3px; padding: 10px 4px 12px; color: var(--night-run); }
   .ps__n { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--park-signal); }
   .ps__rider { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; font-size: 30px; line-height: .95; text-transform: uppercase; }
+  /* the name and the change share one row */
+  .ps__head { display: flex; flex-direction: column; gap: 2px; }
+  .pic__story .gain { margin: 0; flex-wrap: wrap; }
+  .pic__story .gain__from, .pic__story .gain__arrow { font-size: 20px; }
+  .pic__story .gain__to { font-size: 32px; white-space: nowrap; }
+  .pic__story .gain__note { flex-basis: auto; margin: 0 0 0 4px; font-size: 15px; line-height: 1.05; align-self: center; rotate: -3deg; }
+  .ps__steps { margin-top: 6px; }
   .ps__steps { margin: 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1.5px solid var(--night-run); }
   .ps__steps div { display: flex; flex-direction: column; gap: 3px; padding: 7px 6px 0 0; }
   .ps__steps div + div { padding-left: 7px; border-left: 1px dashed rgba(16,19,20,.35); }
@@ -419,6 +437,7 @@ main { position: absolute; inset: 0; }
 }
 /* short phones: the headline goes on one line and the struck-through lead-in steps aside, so the card stays big */
 @media (max-width: 899px) and (max-height: 780px) {
+  .pics--cases .pic img { aspect-ratio: 3 / 2; }
   .progress__h2 .progress__pre, .progress__note { display: none; }
   .progress__h2 { font-size: min(9.4vw, 44px); white-space: nowrap; }
 }

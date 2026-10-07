@@ -8,7 +8,7 @@
 //  - no invented achievements, results, reviews or quotes: student cases stay placeholders until they're real
 
 export const TODO = {
-  studentCases: 'TODO: the 3 student videos (vertical) + start, what we worked on, progress, optional quote; BEFORE / AFTER only if it really is',
+  studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
   coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
   lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
@@ -204,16 +204,12 @@ export const coachPage = {
 };
 
 // ---------------------------------------------------------------- 04 student progress
-// before / after clips, side by side, one per rider
-const GIFS: (StudentCase['gif'])[] = [
-  { src: '/clips/progress-01.gif', poster: 'progress-01', alt: 'Before: a rider on a snowy slope. After: the same rider dropping in on a big dry-slope ramp.' },
-  { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: a rider flipping into an airbag. After: the same rider riding a kicker ramp on a summer slope.' },
-  { src: '/clips/progress-03.gif', poster: 'progress-03', alt: 'Before: a beginner in a yellow jacket on their first turns. After: the same rider linking turns down the slope.' },
-];
 export type StudentCase = {
   n: string;
   rider: string;
   tag: string;
+  /** the change in one line, big on the card: where they were → where they are */
+  gain: { from: string; to: string; note: string };
   start: string;
   work: string;
   result: string;
@@ -221,7 +217,6 @@ export type StudentCase = {
   /** a looping before/after GIF (public/clips/…) over its still first frame (src/assets/clips/…) */
   gif?: { src: string; poster: 'progress-01' | 'progress-02' | 'progress-03'; alt: string };
 };
-
 export const progress = {
   kicker: 'Student progress',
   h2: ["Don't take our word for it.", 'Watch the progress.'],
@@ -229,17 +224,33 @@ export const progress = {
   note: 'proof ↓',
   carousel: 'Student stories',
   labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video' },
-  // TODO(studentCases): replace each bracket with the real case; drop `quote` if the rider has none
-  cases: [1, 2, 3].map((n) => ({
-    n: String(n).padStart(2, '0'),
-    rider: `[Rider ${n} — name]`,
-    tag: n === 3 ? 'Snowboard · beginner' : '[Snowboard · level]',
-    start: n === 3 ? 'Just starting to learn to snowboard' : '[Where they started]',
-    work: '[What they worked on]',
-    result: '[What they can do now]',
-    quote: '[Optional quote from the rider]',
-    gif: GIFS[n - 1],
-  })) as StudentCase[],
+  // from Ilia (Oct 2026): names, levels, starting point and result; "worked on" is the coaching focus in short
+  cases: [
+    {
+      n: '01', rider: 'Max', tag: 'Snowboard · beginner',
+      gain: { from: '1 m', to: '14 m', note: '14× the jump' },
+      start: 'A 1 m jump: a bump in the snow',
+      work: 'Speed, pop and landings, one kicker size at a time',
+      result: 'A 14 m jump on the big kicker',
+      gif: { src: '/clips/progress-01.gif', poster: 'progress-01', alt: 'Before: Max on a snowy slope, jumping a small bump. After: Max on a 14 metre kicker.' },
+    },
+    {
+      n: '02', rider: 'Timur', tag: 'Snowboard · intermediate',
+      gain: { from: 'Airbag', to: 'Kicker', note: 'dream trick, for real' },
+      start: 'BS rodeo: his dream trick, airbag only',
+      work: 'Taking the flip from the airbag to a real kicker',
+      result: 'His dream trick, the BS rodeo, off a kicker',
+      gif: { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: Timur flipping into an airbag. After: Timur doing a backside rodeo off a kicker.' },
+    },
+    {
+      n: '03', rider: 'Katya', tag: 'Snowboard · beginner',
+      gain: { from: 'Day one', to: 'Linked turns', note: 'technique that holds' },
+      start: 'Just starting to learn to snowboard',
+      work: 'Technique: stance, edging, turning',
+      result: 'Linked, controlled turns down the slope',
+      gif: { src: '/clips/progress-03.gif', poster: 'progress-03', alt: 'Before: Katya, in a yellow jacket, on her first turns. After: Katya linking turns down the slope.' },
+    },
+  ] as StudentCase[],
 };
 
 // ---------------------------------------------------------------- 05 ways to train

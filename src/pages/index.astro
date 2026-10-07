@@ -343,11 +343,14 @@ const ext = { target: '_blank', rel: 'noopener' };
                       : <div class="ph ph--light" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{progress.labels.video} {c.n}</span></span><span class="ph__play"></span><span class="ph__cap">[Vertical video]</span></div>}
                     {/* the GIF itself: src set by pile.ts once this page comes up; never in the paper's copies */}
                     {c.gif && <img class="pic__gif" data-gif={c.gif.src} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
-                    <figcaption class="pic__cap" aria-hidden="true">Rider {c.n} ▸ {c.tag}</figcaption>
+                    <figcaption class="pic__cap" aria-hidden="true">{c.rider} ▸ {c.gain.from} → {c.gain.to}</figcaption>
                     {/* phones: the story is printed on the postcard itself (the column beside the pile is hidden) */}
                     <div class="pic__story">
                       <p class="ps__n">Rider {c.n} · {c.tag}</p>
-                      <p class="ps__rider">{c.rider}</p>
+                      <div class="ps__head">
+                        <p class="ps__rider">{c.rider}</p>
+                        <p class="gain"><span class="gain__from">{c.gain.from}</span><span class="gain__arrow" aria-hidden="true">→</span><span class="gain__sr sr-only"> to </span><span class="gain__to">{c.gain.to}</span><span class="gain__note marker">{c.gain.note}</span></p>
+                      </div>
                       <dl class="ps__steps">
                         <div><dt>{progress.labels.start}</dt><dd>{c.start}</dd></div>
                         <div><dt>{progress.labels.work}</dt><dd>{c.work}</dd></div>
@@ -367,6 +370,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                   <p class="case__n">Rider {c.n}</p>
                   <h3 class="case__rider">{c.rider}</h3>
                   <p class="case__tag">{c.tag}</p>
+                  <p class="gain"><span class="gain__from">{c.gain.from}</span><span class="gain__arrow" aria-hidden="true">→</span><span class="gain__sr sr-only"> to </span><span class="gain__to">{c.gain.to}</span><span class="gain__note marker">{c.gain.note}</span></p>
                   <ol class="case__steps" role="list">
                     <li><span class="case__k">{progress.labels.start}</span><span class="case__v">{c.start}</span></li>
                     <li><span class="case__k">{progress.labels.work}</span><span class="case__v">{c.work}</span></li>
