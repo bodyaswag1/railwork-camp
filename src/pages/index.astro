@@ -177,6 +177,12 @@ const ext = { target: '_blank', rel: 'noopener' };
                 <div class="rule5" aria-hidden="true"></div>
                 <div class="stats__sub" aria-hidden="true">{riderPage.sub}</div>
                 <p class="stats__meta">{riderPage.meta}</p>
+                <p class="xg">
+                  <span class="xg__place">{riderPage.xgames.place}<small>{riderPage.xgames.ord}</small></span>
+                  <span class="xg__event"><b>{riderPage.xgames.event}</b>{riderPage.xgames.where}</span>
+                  <span class="xg__ink marker" data-ink aria-hidden="true">{riderPage.xgames.ink}</span>
+                  <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-6px;top:-6px;width:calc(100% + 12px);height:calc(100% + 12px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#101314" stroke-width="2.5" /></svg>
+                </p>
               </div>
             </div>
             <ul class="badges" role="list">
@@ -338,6 +344,17 @@ const ext = { target: '_blank', rel: 'noopener' };
                     {/* the GIF itself: src set by pile.ts once this page comes up; never in the paper's copies */}
                     {c.gif && <img class="pic__gif" data-gif={c.gif.src} data-nocopy alt="" aria-hidden="true" decoding="async" draggable="false" />}
                     <figcaption class="pic__cap" aria-hidden="true">Rider {c.n} ▸ {c.tag}</figcaption>
+                    {/* phones: the story is printed on the postcard itself (the column beside the pile is hidden) */}
+                    <div class="pic__story">
+                      <p class="ps__n">Rider {c.n} · {c.tag}</p>
+                      <p class="ps__rider">{c.rider}</p>
+                      <dl class="ps__steps">
+                        <div><dt>{progress.labels.start}</dt><dd>{c.start}</dd></div>
+                        <div><dt>{progress.labels.work}</dt><dd>{c.work}</dd></div>
+                        <div class="ps__res"><dt>{progress.labels.result}</dt><dd>{c.result}</dd></div>
+                      </dl>
+                      {c.quote && <p class="ps__quote">“{c.quote}”</p>}
+                    </div>
                   </figure>
                 ))}
               </div>

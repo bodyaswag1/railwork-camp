@@ -134,6 +134,8 @@ export const riderPage = {
   sub: 'Career stats',
   meta: '20 years riding · 3 years coaching',
   note: 'the legend',
+  // the headline result, under the name
+  xgames: { place: '2nd', ord: 'place', event: 'X Games', where: 'China', ink: 'silver!' },
   pics: {
     label: 'Photos of Ilia',
     note: '← swipe →',
@@ -390,6 +392,7 @@ export const campPage = {
       facts: [
         { v: '20', l: 'Years riding' },
         { v: '3', l: 'Years coaching' },
+        { v: 'X Games China', l: '2nd place' },
         { v: 'Europa Cup', l: 'Podiums' },
         { v: 'Junior World', l: 'Championship · participant' },
         { v: '3', l: 'Snowboard pro models' },
@@ -583,6 +586,6 @@ export const campPage = {
 
 export const seo = {
   title: 'Ilia Baskakov — Pro snowboarder & coach · BAS',
-  description: 'Ilia Baskakov, professional snowboarder and coach: 3× National Champion, Europa Cup podiums, 20 years riding, 1620° biggest spin. Private coaching (€100 an hour, €300 a day) and BAS CAMP, 23–27 December 2026 in Italy.',
+  description: 'Ilia Baskakov, professional snowboarder and coach: 2nd at X Games China, 3× National Champion, Europa Cup podiums, 20 years riding, 1620° biggest spin. Private coaching (€100 an hour, €300 a day) and BAS CAMP, 23–27 December 2026 in Italy.',
   ogAlt: 'Ilia Baskakov — Ride better.',
 };
