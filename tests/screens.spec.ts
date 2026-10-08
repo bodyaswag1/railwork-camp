@@ -4,7 +4,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import fs from 'node:fs';
 
-const pages = ['cover', 'ilia', 'next-camp', 'coaching', 'progress', 'train', 'next-level'];
+const pages = ['cover', 'ilia', 'next-camp', 'coaching', 'progress', 'train'];
 const sizes = [
   { name: 'phone', width: 390, height: 844, dsf: 3, mobile: true },
   { name: 'desktop', width: 1440, height: 900, dsf: 1, mobile: false },
@@ -43,8 +43,9 @@ for (const s of sizes) {
           const o = await overflow(page);
           expect(o.docScroll, 'page scrolls sideways').toBeLessThanOrEqual(0);
           expect(o.wide, 'content outside the viewport').toEqual([]);
-          // the career-stats page (badges + the three pro boards) scrolls inside on a phone, like the first magazine
-          if (!(id === 'ilia' && s.name === 'phone')) expect(o.inner, `${id} must fit one screen`).toBeLessThanOrEqual(2);
+          // on a phone the career stats (badges + boards), the coach (the session GIF) and the last page (contacts
+          // under the two options) scroll inside, like the first magazine
+          if (!(['ilia', 'coaching', 'train'].includes(id) && s.name === 'phone')) expect(o.inner, `${id} must fit one screen`).toBeLessThanOrEqual(2);
         });
       }
     });

@@ -124,7 +124,14 @@ const boards = initBoards(secs[BOARDS], () => cur === BOARDS && !busy, reduced,
   // a spin changes the page: it isn't settled until it stops, and a copy running now gives way
   () => { settled.delete(BOARDS); lastInput = performance.now(); });
 // a page's held-back media (pile GIFs) is fetched as it comes up, and the next page's once the browser is idle
-const wake = (i: number) => carousels.get(i)?.forEach((c) => c.wake?.());
+const wake = (i: number) => {
+  carousels.get(i)?.forEach((c) => c.wake?.());
+  if (reduced || !secs[i]) return;
+  secs[i].querySelectorAll<HTMLImageElement>('img[data-page-gif]:not([src])').forEach((g) => {
+    g.addEventListener('load', () => g.classList.add('is-loaded'), { once: true });
+    g.src = g.dataset.pageGif!;
+  });
+};
 const idle = (fn: () => void) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 1200));
 
 let transition: Transition = reduced ? fadeTransition : cssTransition;

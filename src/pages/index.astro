@@ -21,6 +21,9 @@ import t6120 from '../assets/clips/trick-6120.jpg';
 import pg01 from '../assets/clips/progress-01.jpg';
 import pg02 from '../assets/clips/progress-02.jpg';
 import pg03 from '../assets/clips/progress-03.jpg';
+import sessionStill from '../assets/clips/camp-video.jpg';
+import coachingPic from '../assets/photos/camp-coaching.jpg';
+import crew from '../assets/photos/life-crew.jpg';
 import bandana from '../assets/photos/life-bandana.jpg';
 import glacier from '../assets/photos/life-glacier.jpg';
 import fisheye from '../assets/photos/life-fisheye.jpg';
@@ -71,13 +74,11 @@ const jsonLd = [
 // hand-drawn marks (drawn on as each page lands)
 const dblD = 'M1 10 C 25 3, 55 15, 99 5 M6 14 C 40 9, 70 13, 94 10';
 const circleD = 'M52 6 C 90 4, 99 32, 97 56 C 95 90, 22 98, 7 70 C -3 42, 20 8, 60 10';
-const starD = 'M30 2 L 35 22 L 56 14 L 40 30 L 58 44 L 36 40 L 30 58 L 24 40 L 2 46 L 20 30 L 4 14 L 25 22 Z';
 const boxD = 'M2 5 L 98 2 L 97 97 L 3 95 Z M5 1 L 99 7 L 95 99 L 1 93 L 4 3';
 const burstD = 'M50 4 L 57 32 L 84 14 L 68 41 L 97 48 L 69 58 L 87 86 L 57 70 L 50 97 L 43 70 L 13 86 L 31 58 L 3 48 L 32 41 L 16 14 L 43 32 Z';
 const xD = 'M4 6 L 24 30 M24 4 L 6 32 M34 10 L 54 34 M52 8 L 36 36';
 const zigD = 'M2 2 L 18 10 L 2 18 L 18 26 L 2 34';
 const curveD = 'M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24';
-const downD = 'M20 2 C 8 20, 32 36, 18 62 M7 50 L 18 64 L 30 51';
 const ext = { target: '_blank', rel: 'noopener' };
 ---
 <Base title={seo.title} description={seo.description} path="/" jsonLd={jsonLd}>
@@ -304,11 +305,12 @@ const ext = { target: '_blank', rel: 'noopener' };
               ))}
             </ol>
           </div>
-          <ul class="tags coach__tags" role="list">{coachPage.support.map((t) => <li>{t}</li>)}</ul>
           <figure class="coach__media tilt">
             <span class="tape coach__tape1" aria-hidden="true"></span><span class="tape coach__tape2" aria-hidden="true"></span>
-            <!-- TODO(coachingMedia): a coaching photo or clip replaces this placeholder -->
-            <div class="ph ph--dark" aria-hidden="true"><span class="ph__top"><span class="ph__rec">REC</span><span>{coachPage.media.label}</span></span><span class="ph__play"></span><span class="ph__cap">{coachPage.media.cap}</span></div>
+            <Image src={sessionStill} alt={coachPage.media.alt} widths={[300, 464]} sizes="(min-width: 900px) 30vw, 80vw" format="webp" loading="lazy" />
+            {/* the session GIF over its still: fetched when this page comes up (magazine.ts), never in the paper's copies */}
+            <img class="coach__gif" data-page-gif={coachPage.media.gif} data-nocopy alt="" aria-hidden="true" decoding="async" />
+            <span class="coach__rec" aria-hidden="true"><i></i>REC</span>
           </figure>
         </div>
       </div>
@@ -402,7 +404,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           </header>
           <div class="options">
             <article class="opt tilt" aria-labelledby="h-opt-a">
-              <div class="opt__media"><Image src={rail} alt={train.coaching.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 35%" /></div>
+              <div class="opt__media"><Image src={coachingPic} alt={train.coaching.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 42%" /></div>
               <div class="opt__body">
                 <p class="opt__label"><span>{train.coaching.label}</span></p>
                 <h3 class="opt__title" id="h-opt-a">{train.coaching.title}</h3>
@@ -418,7 +420,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <article class="opt opt--camp tilt" aria-labelledby="h-opt-b">
               <span class="sticker sticker--red opt__sticker" data-stamp="0.9" aria-hidden="true">{train.camp.sticker}</span>
               <span class="train__or marker" data-ink aria-hidden="true">{train.or}</span>
-              <div class="opt__media"><Image src={glacier} alt={train.camp.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 40%" /></div>
+              <div class="opt__media"><Image src={crew} alt={train.camp.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 52%" /></div>
               <div class="opt__body">
                 <p class="opt__label"><span>{train.camp.label}</span></p>
                 <h3 class="opt__title" id="h-opt-b">{train.camp.title}</h3>
@@ -434,47 +436,18 @@ const ext = { target: '_blank', rel: 'noopener' };
               </div>
             </article>
           </div>
+          <footer class="train__foot final__foot">
+            <span class="logo-box" aria-hidden="true">{brand.logo}<b>★</b></span>
+            <p class="final__ig"><span class="final__ig-l">{nextLevel.social}</span> <a href={rider.instagramUrl} {...ext}>@{rider.instagram} <span aria-hidden="true">↗</span></a></p>
+            <p class="final__contact"><a href={rider.phoneHref}>{rider.phone}</a> <span aria-hidden="true">·</span> <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
+            <span class="train__copy">{nextLevel.footer.copyright}</span>
+            <a class="btn-line totop" href="#cover" data-go="0">{nextLevel.footer.toTop}</a>
+          </footer>
         </div>
       </div>
       <Wear tone="D" />
     </section>
 
-    <!-- ======================= 07 YOUR NEXT LEVEL ======================= -->
-    <section class="page dark final" id="next-level" data-page="6" data-tone="D" data-head="dark" aria-labelledby="h-next-level">
-      <div class="final__photo" aria-hidden="true">
-        <Image src={bib} alt="" widths={[480, 854]} sizes="(min-width: 900px) 40vw, 90vw" format="webp" loading="lazy" />
-      </div>
-      <div class="final__inner scroller" data-scroll>
-        <div class="decor" aria-hidden="true">
-          <span class="crop crop--tl"></span><span class="crop crop--tr"></span>
-          <Splat class="final__splat" stamp="1" />
-          <svg class="mk final__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-draw d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
-        </div>
-        <span class="stamp stamp--pink final__stamp" data-stamp="0.8" aria-hidden="true">{nextLevel.stamp}</span>
-        <h2 class="final__h2" id="h-next-level" tabindex="-1">{nextLevel.h2[0]}<br /><span class="u">{nextLevel.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 60 60" style="right:-.55em;top:-.1em;width:.42em;height:.42em" fill="none" stroke="#FF94E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={starD} /></svg></span></h2>
-        <div class="paths">
-          <span class="final__pick marker" data-ink aria-hidden="true">{nextLevel.pick}</span>
-          <svg class="mk final__arrow" aria-hidden="true" viewBox="0 0 40 70" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={downD} stroke="#FF94E3" stroke-width="3" /></svg>
-          {nextLevel.paths.map((p) => (
-            <a class:list={['path', `path--${p.kind}`]} href={p.kind === 'camp' ? '/camp' : rider.dmUrl} {...(p.kind === 'camp' ? {} : ext)}>
-              <span class="path__label">{p.label}</span>
-              <span class="path__sub">{p.sub}</span>
-              <span class="path__cta">{p.cta} <span aria-hidden="true">{p.kind === 'camp' ? '→' : '↗'}</span></span>
-              {p.kind !== 'camp' && <span class="sr-only"> {ui.newTab}</span>}
-            </a>
-          ))}
-        </div>
-        <p class="final__ig"><span class="final__ig-l">{nextLevel.social}</span> <a href={rider.instagramUrl} {...ext}>@{rider.instagram} <span aria-hidden="true">↗</span></a></p>
-        <p class="final__contact"><a href={rider.phoneHref}>{rider.phone}</a> <span aria-hidden="true">·</span> <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
-        <footer class="final__foot">
-          <span class="logo-box" aria-hidden="true">{brand.logo}<b>★</b></span>
-          <span>{nextLevel.footer.issue}</span>
-          <span>{nextLevel.footer.copyright}</span>
-          <a class="btn-line totop" href="#cover" data-go="0">{nextLevel.footer.toTop}</a>
-        </footer>
-      </div>
-      <Wear tone="D" />
-    </section>
   </main>
 
   <Stage />

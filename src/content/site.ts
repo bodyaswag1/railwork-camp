@@ -9,7 +9,6 @@
 
 export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
-  coachingMedia: 'TODO: a coaching photo or clip for "From rider to coach"',
   lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
@@ -77,7 +76,6 @@ export const pages = [
   { id: 'coaching', num: '04', title: 'The coach', stageNote: 'watch.', head: 'dark' },
   { id: 'progress', num: '05', title: 'Student progress', stageNote: 'proof', head: 'light' },
   { id: 'train', num: '06', title: 'Train with Ilia', stageNote: 'your call', head: 'dark' },
-  { id: 'next-level', num: '07', title: 'Your next level', stageNote: 'go!', head: 'dark' },
 ] as const;
 export const pageIndex = (id: (typeof pages)[number]['id']) => pages.findIndex((p) => p.id === id);
 
@@ -199,8 +197,7 @@ export const coachPage = {
     { word: 'Repeat', line: 'until it holds' },
   ],
   loopNote: 'again',
-  support: ['Individual feedback', 'Specific exercises', 'Riding analysis', 'Video feedback', 'Progression built on your level'],
-  media: { label: 'Coaching', cap: '[Coaching photo or clip]' },
+  media: { gif: '/clips/coach-session.gif', alt: 'A coaching session on the slope: riders with their boards at the top of a run' },
 };
 
 // ---------------------------------------------------------------- 04 student progress
@@ -225,9 +222,18 @@ export const progress = {
   carousel: 'Student stories',
   labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video' },
   // from Ilia (Oct 2026): names, levels, starting point and result; "worked on" is the coaching focus in short
+  // easiest first, so the park doesn't scare anyone off: Katya, then Max, then Timur
   cases: [
     {
-      n: '01', rider: 'Max', tag: 'Snowboard · beginner',
+      n: '01', rider: 'Katya', tag: 'Snowboard · beginner',
+      gain: { from: 'Day one', to: 'Linked turns', note: 'in one session' },
+      start: 'Just starting to learn to snowboard',
+      work: 'Technique: stance, edging, turning',
+      result: 'New technique after one session: linked turns',
+      gif: { src: '/clips/progress-03.gif', poster: 'progress-03', alt: 'Before: Katya, in a yellow jacket, on her first turns. After: Katya linking turns down the slope.' },
+    },
+    {
+      n: '02', rider: 'Max', tag: 'Snowboard · beginner',
       gain: { from: '1 m', to: '14 m', note: '14× the jump' },
       start: 'A 1 m jump: a bump in the snow',
       work: 'Speed, pop and landings, one kicker size at a time',
@@ -235,20 +241,12 @@ export const progress = {
       gif: { src: '/clips/progress-01.gif', poster: 'progress-01', alt: 'Before: Max on a snowy slope, jumping a small bump. After: Max on a 14 metre kicker.' },
     },
     {
-      n: '02', rider: 'Timur', tag: 'Snowboard · intermediate',
-      gain: { from: 'Airbag', to: 'Kicker', note: 'dream trick, for real' },
-      start: 'BS rodeo: his dream trick, airbag only',
-      work: 'Taking the flip from the airbag to a real kicker',
-      result: 'His dream trick, the BS rodeo, off a kicker',
-      gif: { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: Timur flipping into an airbag. After: Timur doing a backside rodeo off a kicker.' },
-    },
-    {
-      n: '03', rider: 'Katya', tag: 'Snowboard · beginner',
-      gain: { from: 'Day one', to: 'Linked turns', note: 'technique that holds' },
-      start: 'Just starting to learn to snowboard',
-      work: 'Technique: stance, edging, turning',
-      result: 'Linked, controlled turns down the slope',
-      gif: { src: '/clips/progress-03.gif', poster: 'progress-03', alt: 'Before: Katya, in a yellow jacket, on her first turns. After: Katya linking turns down the slope.' },
+      n: '03', rider: 'Timur', tag: 'Snowboard · intermediate',
+      gain: { from: 'Never tried', to: 'Landed it', note: 'in one day' },
+      start: 'Never tried the BS rodeo, always dreamed of it',
+      work: 'Building the flip step by step, into the airbag',
+      result: 'Landed it into the airbag in one day. Next: snow',
+      gif: { src: '/clips/progress-02.gif', poster: 'progress-02', alt: 'Before: Timur at the airbag. After: Timur riding the kicker into the airbag for his backside rodeo.' },
     },
   ] as StudentCase[],
 };
@@ -270,7 +268,7 @@ export const train = {
     areas: ['Carving', 'Park', 'Flat freestyle', 'Technique improvement'],
     cta: 'Train with Ilia',
     note: 'Opens a DM to @baskakov74',
-    alt: 'Ilia in a one-hand plant on a rail',
+    alt: 'Ilia going over a rider’s clip with her on the slope',
   },
   camp: {
     label: 'B',
@@ -283,7 +281,7 @@ export const train = {
     price: '€800',
     sticker: '15 spots',
     cta: 'Explore camp',
-    alt: 'A rider in a red jacket pulling on goggles above a glacier',
+    alt: 'The BAS crew lined up on the snow, laughing',
   },
 };
 
@@ -302,19 +300,13 @@ export const nextCamp = {
 };
 
 // ---------------------------------------------------------------- 08 final call
+// the contacts and the way back to the start, at the foot of the last page (Train with Ilia)
 export const nextLevel = {
-  h2: ["What's your", 'next level?'],
-  stamp: 'Last page · Issue 01',
-  pick: 'pick one',
-  paths: [
-    { kind: 'coaching', label: 'Private coaching', sub: '€100 / hour · €300 / day (4 h)', cta: 'Train with Ilia' },
-    { kind: 'camp', label: 'BAS CAMP', sub: '23–27 Dec 2026 · Italy · €800', cta: 'Join BAS CAMP' },
-  ],
   social: 'Follow the riding',
   footer: {
     issue: 'Issue 01 · Winter 26/27',
     copyright: '© 2026 Ilia Baskakov · BAS',
-    toTop: '↑ Back to the cover',
+    toTop: '↑ Back to start',
   },
 };
 
@@ -365,9 +357,6 @@ export const campPage = {
       { n: 'Day 02', t: 'Work on it.', lines: ['Exercise.', 'Ride.', 'Feedback.', 'Film.', 'Repeat.'] },
       { n: 'Day 03', t: 'Lock it in.', lines: ['Adjust.', 'Repeat.', 'Understand what to work on next.'] },
     ],
-    loopLabel: 'The loop',
-    loop: ['Ride', 'Feedback', 'Video', 'Adjust', 'Ride again'],
-    loopNote: 'again. and again.',
     support: ['A normal lesson ends after a few hours.', 'At BAS, your next session starts where the previous one stopped.'],
     notes: ['eyes up', 'earlier!', 'better.'],
   },

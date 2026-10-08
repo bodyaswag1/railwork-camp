@@ -1,20 +1,16 @@
 # Ilia Baskakov · BAS
 
 The home page is an evergreen magazine for Ilia Baskakov, professional snowboarder and coach, and the BAS
-ecosystem: eight full-screen pages, one gesture = one page, with a WebGL paper-crumple transition between them.
-They answer, in order: who Ilia is, why he's an elite rider, whether he can teach, the proof (student
-progress), how to train with him, what BAS life is, and what to do next.
+ecosystem: six full-screen pages, one gesture = one page, with a WebGL paper-crumple transition between them.
 
 | # | Page (`id`) | What it does |
 | --- | --- | --- |
-| 01 | Cover (`cover`) | Name, "Ride better.", 3× National Champion · Europa Cup podiums · 20 years riding, 1620°, the two CTAs |
-| 02 | The rider (`ilia`) | "20 years on snow." — a swipeable strip of proof points (1620°, 3×, Europa Cup, 20, 3 pro models, Junior World) + stance and favourite trick |
-| 03 | The coach (`coaching`) | 20 years riding / 3 years coaching, the coaching loop (watch → understand → adjust → repeat) |
-| 04 | Student progress (`progress`) | Three student stories: a pile of before/after postcards (swipe for the next rider) with starting point, what they worked on, result, quote beside it |
-| 05 | Train with Ilia (`train`) | Private coaching (from €150/day, opens an Instagram DM) or BAS CAMP (→ `/camp`) |
-| 06 | BAS life (`life`) | "Come for the riding. Stay for the people." — a photo strip, photos open full screen |
-| 07 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, Snowboard + Freeski, 12 spots, €800 |
-| 08 | Your next level (`next-level`) | The two paths again, Instagram, footer |
+| 01 | Cover (`cover`) | Name, "Ride better.", the headline results, the two CTAs |
+| 02 | The rider (`ilia`) | Career stats: a swipeable pile of trick prints, 2nd at X Games China, badges, the three pro boards |
+| 03 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, €800 (→ `/camp`) |
+| 04 | The coach (`coaching`) | 20 years riding / 3 years coaching, how a session works, a training-session GIF |
+| 05 | Student progress (`progress`) | A pile of before/after postcards (Katya → Max → Timur), each with its story |
+| 06 | Train with Ilia (`train`) | Private coaching (opens an Instagram DM) or BAS CAMP (→ `/camp`); contacts and "back to start" at the foot |
 
 The masthead keeps the brand, the page counter, the nav (Ilia · Coaching · Camp · Instagram) and the
 **Join BAS CAMP** CTA on every page. `/camp` is the dedicated camp page: everything about BAS CAMP Italy 2026

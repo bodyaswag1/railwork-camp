@@ -45,21 +45,21 @@ test.describe('reduced motion (fast turns)', () => {
   });
 
   test('a page that scrolls inside: read to the end, keep pushing in the same swipe → next page', async ({ page }) => {
-    await page.goto('/#train');
+    await page.goto('/#ilia');
     await page.waitForLoadState('networkidle');
-    const scroller = page.locator('#train [data-scroll]');
+    const scroller = page.locator('#ilia [data-scroll]');
     const before = await scroller.evaluate((el) => el.scrollHeight - el.clientHeight);
     expect(before).toBeGreaterThan(100); // it does scroll on a short phone
     // short swipe mid-page: just scrolls
     await swipe(page, 500, 380);
     await settle(page);
-    expect(await active(page)).toBe('train');
+    expect(await active(page)).toBe('ilia');
     // scroll to the bottom, then one more swipe turns the page
     await scroller.evaluate((el) => { el.scrollTop = el.scrollHeight; });
     await page.waitForTimeout(400);
     await swipe(page, 500, 410);
     await settle(page);
-    expect(await active(page)).toBe('next-level');
+    expect(await active(page)).toBe('next-camp');
   });
 
   test('the photo pile: a sideways swipe sends the top print to the bottom, never turns the page', async ({ page }) => {
@@ -115,10 +115,12 @@ test.describe('reduced motion (fast turns)', () => {
     expect(await active(page)).toBe('train');
   });
 
-  test('back cover → "back to the cover" button', async ({ page }) => {
-    await page.goto('/#next-level');
+  test('last page → "back to start" button', async ({ page }) => {
+    await page.goto('/#train');
     await page.waitForLoadState('networkidle');
-    const btn = page.getByRole('link', { name: '↑ Back to the cover', exact: true });
+    await page.locator('#train [data-scroll]').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    await page.waitForTimeout(300);
+    const btn = page.getByRole('link', { name: '↑ Back to start', exact: true });
     await btn.scrollIntoViewIfNeeded();
     await expect(btn).toBeVisible();
     const box = (await btn.boundingBox())!;

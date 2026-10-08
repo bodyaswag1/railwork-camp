@@ -86,7 +86,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <span class="stamp stamp--pink" data-slam style="--d:.5s" aria-hidden="true">{c.hero.issue}</span>
           <span class="poster__season">{c.hero.season}</span>
         </div>
-        <h1 class="poster__h1"><span>{c.hero.h1[0]}</span> <span class="pk">{c.hero.h1[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.12em;width:100%;height:.18em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#FF94E3" stroke-width="3" /></svg></span></h1>
+        <h1 class="poster__h1"><span>{c.hero.h1[0]}</span> <span class="pk">{c.hero.h1[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.12em;width:100%;height:.18em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#BA1422" stroke-width="3" /></svg></span></h1>
         <p class="poster__date"><span class="poster__dd">{c.hero.dates[0]}</span><span class="poster__my"><span>{c.hero.dates[1]}</span><span>{c.hero.dates[2]}</span></span></p>
         <ul class="poster__facts" role="list">
           <li>{c.hero.place}</li>
@@ -128,14 +128,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
               </li>
             ))}
           </ol>
-        </div>
-        <div class="loop">
-          <p class="loop__label">{c.idea.loopLabel}</p>
-          <ol class="loop__list" role="list">
-            {c.idea.loop.map((w, i) => <li><span>{w}</span>{i < c.idea.loop.length - 1 && <b aria-hidden="true">→</b>}</li>)}
-          </ol>
-          <svg class="mk loop__back" aria-hidden="true" viewBox="0 0 100 40" preserveAspectRatio="none" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d="M96 4 C 99 30, 70 38, 50 37 C 28 36, 4 32, 3 8 M-1 15 L 3 7 L 9 14" stroke="#FF94E3" stroke-width="3" vector-effect="non-scaling-stroke" /></svg>
-          <span class="loop__note marker" data-slam style="--d:1s" aria-hidden="true">{c.idea.loopNote}</span>
         </div>
         <p class="idea__support"><span>{c.idea.support[0]}</span> <strong>{c.idea.support[1]}</strong></p>
       </div>

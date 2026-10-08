@@ -103,7 +103,7 @@ summary::-webkit-details-marker { display: none; }
 .poster__season { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--slush-concrete); }
 .poster__h1 { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; font-size: clamp(44px, 12.4vw, 150px); line-height: .86; text-transform: uppercase; text-shadow: 0 2px 18px rgba(16,19,20,.5); }
 .poster__h1 > span { display: block; }
-.poster__h1 .pk { position: relative; display: inline-block; color: var(--goggle-tint); }
+.poster__h1 .pk { position: relative; display: inline-block; color: #E1242E; -webkit-text-stroke: 1.5px var(--airbag-ice); paint-order: stroke fill; text-shadow: 0 2px 14px rgba(16,19,20,.45); }
 .poster__date { margin: 4px 0 0; display: flex; align-items: flex-end; gap: .12em; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; text-transform: uppercase; line-height: .78; }
 .poster__dd { font-size: clamp(88px, 27vw, 260px); letter-spacing: -.02em; }
 .poster__my { display: flex; flex-direction: column; padding-bottom: .1em; font-size: clamp(28px, 8vw, 72px); font-stretch: 75%; line-height: .9; }
@@ -113,7 +113,7 @@ summary::-webkit-details-marker { display: none; }
 .poster__facts .poster__price { background: var(--airbag-ice); color: var(--night-run); font-weight: 900; font-stretch: 75%; font-size: clamp(26px, 2.6vw, 38px); letter-spacing: 0; padding: 2px 12px; }
 .poster__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .poster__tourist { right: var(--side); top: 18svh; rotate: 7deg; }
-.poster__ride { right: calc(var(--side) + 4px); top: calc(18svh + 46px); rotate: -6deg; color: var(--goggle-tint); font-size: clamp(22px, 2.4vw, 34px); text-shadow: 0 1px 10px rgba(16,19,20,.6); }
+.poster__ride { right: calc(var(--side) + 4px); top: calc(18svh + 46px); rotate: -6deg; color: var(--park-signal); font-size: clamp(22px, 2.4vw, 34px); text-shadow: 0 0 6px var(--airbag-ice), 0 0 2px var(--airbag-ice); }
 .poster__vt { right: 4px; bottom: 26%; color: var(--slush-concrete); }
 .poster__splat { width: 190px; height: 134px; right: 2%; bottom: 33%; }
 .poster__x { width: 50px; height: 34px; right: calc(var(--side) + 10px); bottom: 18%; }
@@ -157,14 +157,6 @@ summary::-webkit-details-marker { display: none; }
 .iday__t { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; font-size: clamp(44px, 5vw, 72px); line-height: .86; text-transform: uppercase; }
 .iday__l { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 16px; font-weight: 600; line-height: 1.4; }
 .iday__arrow { left: 46%; bottom: -46px; width: 64px; height: 28px; rotate: 90deg; }
-.loop { position: relative; margin-top: clamp(56px, 8vw, 104px); padding: clamp(22px, 3vw, 40px) clamp(18px, 3vw, 44px) 76px; background: var(--night-run); color: var(--airbag-ice); rotate: -1deg; box-shadow: 8px 8px 0 var(--park-signal); }
-.loop__label { margin: 0 0 10px; font-weight: 700; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--goggle-tint); }
-.loop__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .14em; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; font-size: clamp(46px, 8vw, 124px); line-height: .92; text-transform: uppercase; }
-.loop__list li { display: inline-flex; align-items: baseline; gap: .14em; white-space: nowrap; }
-.loop__list li:last-child span { color: var(--goggle-tint); }
-.loop__list b { font-stretch: 100%; font-size: .5em; color: var(--goggle-tint); }
-.loop__back { left: 6%; right: 6%; width: 88%; bottom: 14px; height: 44px; }
-.loop__note { position: absolute; right: 28px; bottom: 10px; rotate: -4deg; color: var(--goggle-tint); font-size: clamp(20px, 2vw, 28px); background: var(--night-run); padding: 0 6px; }
 .idea__support { margin: clamp(36px, 5vw, 56px) 0 0; max-width: 30ch; font-family: var(--font-display); font-weight: 800; font-stretch: 100%; font-size: clamp(22px, 2.6vw, 38px); line-height: 1.1; text-transform: uppercase; text-wrap: balance; }
 .idea__support span { display: block; color: var(--lift-tower); }
 .idea__support strong { display: block; margin-top: .2em; color: var(--night-run); font-weight: 900; }
