@@ -5,4 +5,4 @@ interface Props { p: PlacePhoto; dark?: boolean }
 const { p, dark = false } = Astro.props;
 const cr = credits[p];
 ---
-<small class:list={['credit', { 'credit--dark': dark }]}>Photo: <a href={cr.source} target="_blank" rel="noopener">{cr.author}</a>, {cr.licenseUrl ? <a href={cr.licenseUrl} target="_blank" rel="noopener license">{cr.license}</a> : cr.license}</small>
+{cr && <small class:list={['credit', { 'credit--dark': dark }]}>Photo: <a href={cr.source} target="_blank" rel="noopener">{cr.author}</a>, {cr.licenseUrl ? <a href={cr.licenseUrl} target="_blank" rel="noopener license">{cr.license}</a> : cr.license}</small>}

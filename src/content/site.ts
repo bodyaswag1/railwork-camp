@@ -315,13 +315,11 @@ export const nextLevel = {
 // the trip third. Public price €800 only; a promo code is collected with the application and checked later
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
 export type PlacePhoto = 'ice-karting' | 'st-moritz' | 'livigno-village' | 'livigno-pistes' | 'livigno-halfpipe';
-/** photos of places we don't own: Wikimedia Commons, used under their licences (cropped) */
-export const credits: Record<PlacePhoto, { author: string; license: string; licenseUrl?: string; source: string }> = {
+/** photos of places from Wikimedia Commons, used under their licences (cropped); photos supplied by BAS have no entry */
+export const credits: Partial<Record<PlacePhoto, { author: string; license: string; licenseUrl?: string; source: string }>> = {
   'livigno-pistes': { author: 'Ting read', license: 'Public domain', source: 'https://commons.wikimedia.org/wiki/File:Livigno_Winter_2013.JPG' },
   'livigno-village': { author: 'qwesy qwesy', license: 'CC BY 3.0', licenseUrl: 'https://creativecommons.org/licenses/by/3.0', source: 'https://commons.wikimedia.org/wiki/File:Livigno_-_panoramio_(25)_retouched.jpg' },
   'livigno-halfpipe': { author: 'Vincenzo.togni', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Die_Halfpipe_des_Livigno_Snow_Park_an_den_olympischen_Spielen_2026.jpg' },
-  'ice-karting': { author: 'Commercieskidôme', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:IceKart.jpg' },
-  'st-moritz': { author: 'Franzfoto', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:St._Moritz-Dorf_-_Zugefrorener_See,.jpg' },
 };
 
 export const campPage = {
@@ -505,9 +503,9 @@ export const campPage = {
     line: 'Off the board we go together. Here’s where:',
     stamp: 'We’re going',
     acts: [
-      { photo: 'ice-karting', cap: 'Ice karting', when: 'After riding', alt: 'A driver in a helmet racing a kart on an ice track', src: 'place' },
+      { photo: 'ice-karting', cap: 'Ice karting', when: 'After riding', alt: 'Two drivers in orange helmets racing red karts side by side on a snow track', src: 'place' },
       { photo: 'sauna', cap: 'Spa', when: '24 Dec, evening', note: 'Entry not included', alt: 'A rider in a felt sauna hat resting in a wooden sauna', src: 'own' },
-      { photo: 'st-moritz', cap: 'St. Moritz', when: '25 Dec, day trip', alt: 'St. Moritz above its frozen lake under snow, hotels on the hillside', src: 'place' },
+      { photo: 'st-moritz', cap: 'St. Moritz', when: '25 Dec, day trip', alt: 'St. Moritz at dusk above its frozen lake, hotels lit up under a snowy pine slope', src: 'place' },
     ] as { photo: PlacePhoto | 'sauna'; cap: string; when: string; note?: string; alt: string; src: 'place' | 'own' }[],
   },
 
