@@ -1,0 +1,152 @@
+[
+ {
+  "frame": 0,
+  "t_ms": 0,
+  "p": 0.5,
+  "gif": {
+   "areaFrac": 0.0228,
+   "diam": 0.227,
+   "bbox": [
+    0.23,
+    0.23
+   ],
+   "solidity": 0.93,
+   "meanLuma": 197
+  },
+  "ours": {
+   "areaFrac": 0.0341,
+   "diam": 0.278,
+   "bbox": [
+    0.28,
+    0.34
+   ],
+   "solidity": 0.79,
+   "meanLuma": 141
+  }
+ },
+ {
+  "frame": 5,
+  "t_ms": 330,
+  "p": 0.612,
+  "gif": {
+   "areaFrac": 0.0446,
+   "diam": 0.318,
+   "bbox": [
+    0.36,
+    0.34
+   ],
+   "solidity": 0.86,
+   "meanLuma": 197
+  },
+  "ours": {
+   "areaFrac": 0.1025,
+   "diam": 0.482,
+   "bbox": [
+    0.51,
+    0.52
+   ],
+   "solidity": 0.91,
+   "meanLuma": 159
+  }
+ },
+ {
+  "frame": 10,
+  "t_ms": 670,
+  "p": 0.728,
+  "gif": {
+   "areaFrac": 0.0664,
+   "diam": 0.388,
+   "bbox": [
+    0.45,
+    0.42
+   ],
+   "solidity": 0.83,
+   "meanLuma": 188
+  },
+  "ours": {
+   "areaFrac": 0.1557,
+   "diam": 0.594,
+   "bbox": [
+    0.6,
+    0.68
+   ],
+   "solidity": 0.86,
+   "meanLuma": 164
+  }
+ },
+ {
+  "frame": 14,
+  "t_ms": 930,
+  "p": 0.816,
+  "gif": {
+   "areaFrac": 0.0917,
+   "diam": 0.456,
+   "bbox": [
+    0.62,
+    0.51
+   ],
+   "solidity": 0.84,
+   "meanLuma": 181
+  },
+  "ours": {
+   "areaFrac": 0.1895,
+   "diam": 0.655,
+   "bbox": [
+    0.73,
+    0.84
+   ],
+   "solidity": 0.78,
+   "meanLuma": 162
+  }
+ },
+ {
+  "frame": 18,
+  "t_ms": 1200,
+  "p": 0.908,
+  "gif": {
+   "areaFrac": 0.1561,
+   "diam": 0.595,
+   "bbox": [
+    0.73,
+    0.64
+   ],
+   "solidity": 0.85,
+   "meanLuma": 181
+  },
+  "ours": {
+   "areaFrac": 0.303,
+   "diam": 0.828,
+   "bbox": [
+    1.06,
+    0.79
+   ],
+   "solidity": 0.94,
+   "meanLuma": 121
+  }
+ },
+ {
+  "frame": 22,
+  "t_ms": 1470,
+  "p": 1,
+  "gif": {
+   "areaFrac": 0.3351,
+   "diam": 0.871,
+   "bbox": [
+    1.03,
+    0.72
+   ],
+   "solidity": 0.91,
+   "meanLuma": 196
+  },
+  "ours": {
+   "areaFrac": 0.9854,
+   "diam": 1.493,
+   "bbox": [
+    1.78,
+    1
+   ],
+   "solidity": 0.99,
+   "meanLuma": 195
+  }
+ }
+]

@@ -1,4 +1,11 @@
-.vercel
 node_modules/
-.DS_Store
-Thumbs.db
+dist/
+.astro/
+.vercel/
+.env
+test-results/
+playwright-report/
+shots/
+
+.vercel
+.env*

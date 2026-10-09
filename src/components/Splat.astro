@@ -1,0 +1,10 @@
+---
+// Paint splatter: a few dots flicked off a marker (decoration; pops on with the stamps when data-stamp is set).
+// Two paths (one per colour) rather than a circle per dot: every element costs time in the page copies.
+interface Props { a?: string; b?: string; class?: string; style?: string; stamp?: string }
+const { a = '#FF94E3', b = '#BA1422', class: cls = '', style, stamp } = Astro.props;
+const dot = ([x, y, r]: number[]) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
+const dotsA = [[58, 70, 15], [92, 44, 5], [30, 112, 4], [74, 128, 6], [176, 96, 2.5]].map(dot).join('');
+const dotsB = [[104, 84, 8.5], [146, 58, 3], [126, 114, 1.8]].map(dot).join('');
+---
+<svg class:list={['splat', cls]} style={style} viewBox="0 0 240 170" aria-hidden="true" data-stamp={stamp}><path fill={a} d={dotsA} /><path fill={b} d={dotsB} /></svg>

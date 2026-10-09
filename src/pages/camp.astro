@@ -1,0 +1,509 @@
+---
+import Base from '../layouts/Base.astro';
+import Splat from '../components/Splat.astro';
+import Credit from '../components/Credit.astro';
+import { Image, Picture } from 'astro:assets';
+import '../styles/punk.css';
+import '../styles/camp.css';
+import rail from '../assets/photos/ilia-rail.jpg';
+import bib from '../assets/photos/ilia-bib-27.jpg';
+import glacier from '../assets/photos/life-glacier.jpg';
+import fisheye from '../assets/photos/life-fisheye.jpg';
+import bandana from '../assets/photos/life-bandana.jpg';
+import smile from '../assets/photos/ilia-smile.jpg';
+import night from '../assets/photos/ilia-night.jpg';
+import aleksey from '../assets/photos/aleksey-rail.jpg';
+import coaching from '../assets/photos/camp-coaching.jpg';
+import sauna from '../assets/photos/life-sauna.jpg';
+import dinner from '../assets/photos/life-dinner.jpg';
+import crew from '../assets/photos/life-crew.jpg';
+import air from '../assets/photos/ilia-air.jpg';
+import karting from '../assets/places/ice-karting.jpg';
+import moritz from '../assets/places/st-moritz.jpg';
+import village from '../assets/places/livigno-village.jpg';
+import pistes from '../assets/places/livigno-pistes.jpg';
+import halfpipe from '../assets/places/livigno-halfpipe.jpg';
+import { rider, camp, campPage as c, ui, type PlacePhoto } from '../content/site';
+
+const lifePhotos = { glacier, fisheye, bandana, smile, night, sauna, dinner, crew };
+const places: Record<PlacePhoto, ImageMetadata> = { 'ice-karting': karting, 'st-moritz': moritz, 'livigno-village': village, 'livigno-pistes': pistes, 'livigno-halfpipe': halfpipe };
+const site = Astro.site!;
+const jsonLd = [{
+  '@context': 'https://schema.org', '@type': 'Event', name: `${camp.name} ${camp.issue} — ${camp.kind}`,
+  description: c.description, startDate: camp.startDate, endDate: camp.endDate,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: 'Livigno and Valdidentro, Italian Alps', address: { '@type': 'PostalAddress', streetAddress: 'Via San Carlo 16', addressLocality: 'Valdidentro', addressCountry: 'IT' } },
+  organizer: { '@type': 'Person', name: rider.name, url: rider.instagramUrl, email: rider.email, telephone: rider.phoneHref.slice(4) },
+  performer: [{ '@type': 'Person', name: rider.name, sameAs: [rider.instagramUrl] }, { '@type': 'Person', name: 'Aleksey Bogatyrev' }],
+  maximumAttendeeCapacity: camp.spots,
+  offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
+  image: new URL('/og.jpg', site).href, url: new URL('/camp', site).href,
+}];
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+const promoEndpoint = import.meta.env.PUBLIC_PROMO_ENDPOINT ?? '';
+const ext = { target: '_blank', rel: 'noopener' };
+
+// hand-drawn marks: so each one draws on with a plain CSS dash animation
+const circleD = 'M52 6 C 90 4, 99 32, 97 56 C 95 90, 22 98, 7 70 C -3 42, 20 8, 60 10';
+const dblD = 'M1 10 C 25 3, 55 15, 99 5 M6 14 C 40 9, 70 13, 94 10';
+const burstD = 'M50 4 L 57 32 L 84 14 L 68 41 L 97 48 L 69 58 L 87 86 L 57 70 L 50 97 L 43 70 L 13 86 L 31 58 L 3 48 L 32 41 L 16 14 L 43 32 Z';
+const xD = 'M4 6 L 24 30 M24 4 L 6 32 M34 10 L 54 34 M52 8 L 36 36';
+const curveD = 'M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24';
+const downD = 'M20 2 C 8 20, 32 36, 18 62 M7 50 L 18 64 L 30 51';
+const arrowR = 'M2 22 C 24 8, 52 30, 76 14 M64 6 L 77 14 L 66 24';
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<Base title={c.title} description={c.description} path="/camp" jsonLd={jsonLd} bodyClass="camp-body">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0">
+  <defs>
+    <filter id="jit" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="5" result="j" /><feDisplacementMap in="SourceGraphic" in2="j" scale="3.5" /></filter>
+  </defs>
+</svg>
+<div class="camp" id="top" tabindex="-1">
+  <a class="skip" href="#main">{ui.skip}</a>
+
+  <header class="topbar">
+    <a class="topbar__brand" href="/"><span class="logo-box" aria-hidden="true">BAS<b>★</b>CAMP</span><span class="sr-only">{c.back}</span></a>
+    <span class="topbar__issue" aria-hidden="true">{c.hero.issue}</span>
+    <nav class="topbar__nav" aria-label="Camp">
+      {c.nav.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <a class="btn btn--red btn--sm topbar__cta" href="#apply">{c.join}</a>
+    <button class="btn-line topbar__menu" type="button" aria-expanded="false" aria-controls="camp-menu" data-menu-toggle>{c.menu}</button>
+    <nav class="cmenu" id="camp-menu" aria-label="Camp" hidden data-menu>
+      {c.nav.map((l, i) => <a href={l.href}><span>{pad(i + 1)}</span>{l.label}</a>)}
+      <a href="/">{c.back}</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ================= 01 POSTER ================= -->
+    <header class="poster" data-reveal data-hero>
+      <div class="poster__media" aria-hidden="true">
+        <Picture src={rail} alt="" formats={['avif', 'webp']} widths={[480, 960, 1280]} sizes="(min-width: 900px) 58vw, 100vw" loading="eager" fetchpriority="high" />
+        <span class="halftone"></span>
+      </div>
+      <div class="poster__inner">
+        <div class="poster__top">
+          <span class="poster__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
+          <span class="stamp stamp--pink" data-slam style="--d:.5s" aria-hidden="true">{c.hero.issue}</span>
+          <span class="poster__season">{c.hero.season}</span>
+        </div>
+        <h1 class="poster__h1"><span>{c.hero.h1[0]}</span> <span class="pk">{c.hero.h1[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.12em;width:100%;height:.18em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#BA1422" stroke-width="3" /></svg></span></h1>
+        <p class="poster__sub">{c.hero.sub}</p>
+        <p class="poster__date"><span class="poster__dd">{c.hero.dates[0]}</span><span class="poster__my"><span>{c.hero.dates[1]}</span><span>{c.hero.dates[2]}</span></span></p>
+        <ul class="poster__facts" role="list">
+          <li>{c.hero.place}</li>
+          <li>{c.hero.spots}</li>
+          <li class="poster__price">{c.hero.price}</li>
+        </ul>
+        <p class="poster__levels"><span>{c.hero.levelsLabel}</span> {c.hero.levels.join(' · ')}</p>
+        <div class="poster__cta">
+          <a class="btn btn--red btn--lg" href="#apply">{c.hero.cta} <span aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost btn--lg" href="#idea">{c.hero.how}</a>
+        </div>
+      </div>
+      <div class="decor" aria-hidden="true">
+        <span class="sticker sticker--ice poster__tourist" data-slam style="--d:.8s">{c.hero.notes.tourist}</span>
+        <span class="scrawl marker poster__ride" data-slam style="--d:1s">{c.hero.notes.ride}</span>
+        <span class="vtext poster__vt">{c.hero.notes.date} · BAS★CAMP · {c.hero.issue} · Livigno · {c.hero.notes.date}</span>
+        <Splat class="poster__splat" />
+        <svg class="mk poster__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-pen d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
+        <span class="barcode poster__bar"><i></i><span>BAS 2026 1223 27</span></span>
+      </div>
+      <a class="poster__scroll" href="#ride" aria-label={c.hero.scroll}><span class="poster__mouse" aria-hidden="true"><i></i></span><span class="poster__scroll-l" aria-hidden="true">{c.hero.scroll}</span></a>
+    </header>
+
+    <!-- ================= 02 WHERE WE RIDE ================= -->
+    <section class="sec ice ride" id="ride" aria-labelledby="h-ride" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap ride__wrap">
+        <div class="ride__info">
+          <p class="kicker"><span class="kicker__n">02</span>{c.ride.kicker}</p>
+          <h2 class="h2" id="h-ride">{c.ride.h2[0]}<br /><span class="red-t">{c.ride.h2[1]}</span></h2>
+          <p class="ride__line">{c.ride.line}</p>
+          <dl class="ride__facts">
+            {c.ride.facts.map((f, i) => (
+              <div class="rf">
+                <dt class="rf__l"><span class="sr-only">{f.v} </span>{f.l}</dt>
+                <dd class="rf__v"><span aria-hidden="true">{f.v}</span>{i === 2 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12%;top:-14%;width:124%;height:128%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg>}</dd>
+                <dd class="rf__s">{f.s}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <div class="ride__pics">
+          {c.ride.photos.map((ph, i) => (
+            <figure class:list={['rp', `rp--${i + 1}`]}>
+              {i > 0 && <span class="tape" aria-hidden="true"></span>}
+              <Image src={places[ph.photo]} alt={ph.alt} widths={i === 0 ? [480, 960, 1400] : [360, 720]} sizes={i === 0 ? '(min-width: 900px) 46vw, 92vw' : '(min-width: 900px) 22vw, 46vw'} format="webp" loading="lazy" />
+              <figcaption><span class="rp__cap marker">{ph.cap}</span><Credit p={ph.photo} /></figcaption>
+            </figure>
+          ))}
+          <span class="ride__note marker" data-slam style="--d:.7s" aria-hidden="true">{c.ride.note}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 03 PROGRESS WITH A PLAN ================= -->
+    <section class="sec lt idea" id="idea" aria-labelledby="h-idea" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">03</span>{c.idea.kicker}</p>
+        <h2 class="idea__h2" id="h-idea"><span>{c.idea.h2[0]}</span> <span>{c.idea.h2[1]}</span></h2>
+        <ol class="idea__days" role="list">
+          {c.idea.steps.map((d, i) => (
+            <li class="iday">
+              <span class="iday__n">{d.n}</span>
+              <h3 class="iday__t">{d.t}</h3>
+              <p class="iday__p">{d.s}</p>
+              <span class="iday__note marker" data-slam style={`--d:${0.6 + i * 0.2}s`} aria-hidden="true">{c.idea.notes[i]}</span>
+              {i < 2 && <svg class="mk iday__arrow" aria-hidden="true" viewBox="0 0 80 30" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={arrowR} stroke="#BA1422" stroke-width="3" style={`--d:${0.3 + i * 0.25}s`} /></svg>}
+            </li>
+          ))}
+        </ol>
+        <a class="btn btn--dark idea__cta" href="#day">{c.idea.cta} <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- ================= 04 COACHES ================= -->
+    <section class="sec lt coaches" id="coaches" aria-labelledby="h-coaches" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">04</span>{c.coaches.kicker}</p>
+        <h2 class="h2 coaches__h2" id="h-coaches">{c.coaches.h2[0]}<br /><span class="red-t">{c.coaches.h2[1]}</span></h2>
+        <div class="spread">
+          <article class="ch ch--ilia" aria-labelledby="h-ilia">
+            <div class="ch__media">
+              <figure class="ch__main tilt"><Image src={air} alt={c.coaches.ilia.alt} widths={[420, 840]} sizes="(min-width: 900px) 34vw, 92vw" format="webp" loading="lazy" style="object-position:45% 40%" /></figure>
+              <figure class="ch__second tilt"><span class="tape" aria-hidden="true"></span><Image src={bib} alt={c.coaches.ilia.alt2} widths={[220, 440]} sizes="(min-width: 900px) 14vw, 38vw" format="webp" loading="lazy" style="object-position:50% 25%" /></figure>
+              <span class="sticker sticker--red ch__disc" data-slam style="--d:.4s" aria-hidden="true">{c.coaches.ilia.discipline}</span>
+            </div>
+            <div class="ch__body">
+              <p class="ch__kick">{c.coaches.ilia.discipline}</p>
+              <h3 class="ch__name" id="h-ilia">{c.coaches.ilia.name[0]} <span>{c.coaches.ilia.name[1]}</span></h3>
+              <span class="ch__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.coaches.ilia.note}</span>
+              <a class="ch__ig" href={`https://instagram.com/${c.coaches.ilia.ig}`} {...ext}><span class="ch__ig-i" aria-hidden="true">IG</span>@{c.coaches.ilia.ig} <span aria-hidden="true">↗</span><span class="sr-only"> {ui.newTab}</span></a>
+              <dl class="ch__big">
+                {c.coaches.ilia.big.map((b, i) => <div><dt>{b.l}</dt><dd>{b.v}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-8%;top:-10%;width:116%;height:120%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg>}</dd></div>)}
+              </dl>
+              <dl class="ch__facts">
+                {c.coaches.ilia.facts.map((f) => <div><dt>{f.l}</dt><dd>{f.v}</dd></div>)}
+              </dl>
+              <dl class="ch__details">
+                {c.coaches.ilia.details.map((d) => <div><dt>{d.l}</dt><dd>{d.v}</dd></div>)}
+              </dl>
+            </div>
+          </article>
+          <article class="ch ch--aleksey" aria-labelledby="h-aleksey">
+            <div class="ch__media">
+              <figure class="ch__main tilt"><span class="tape" aria-hidden="true"></span><Image src={aleksey} alt={c.coaches.aleksey.alt} widths={[420, 840]} sizes="(min-width: 900px) 30vw, 92vw" format="webp" loading="lazy" style="object-position:50% 45%" /></figure>
+              <span class="sticker ch__disc" data-slam style="--d:.6s" aria-hidden="true">{c.coaches.aleksey.discipline}</span>
+            </div>
+            <div class="ch__body">
+              <p class="ch__kick">{c.coaches.aleksey.role}</p>
+              <h3 class="ch__name" id="h-aleksey">{c.coaches.aleksey.name[0]} <span>{c.coaches.aleksey.name[1]}</span></h3>
+              <span class="ch__note marker" data-slam style="--d:1s" aria-hidden="true">{c.coaches.aleksey.note}</span>
+              {c.coaches.aleksey.ig
+                ? <a class="ch__ig" href={`https://instagram.com/${c.coaches.aleksey.ig}`} {...ext}><span class="ch__ig-i" aria-hidden="true">IG</span>@{c.coaches.aleksey.ig} <span aria-hidden="true">↗</span><span class="sr-only"> {ui.newTab}</span></a>
+                : <span class="ch__ig ch__ig--todo"><span class="ch__ig-i" aria-hidden="true">IG</span>[@instagram]</span>}
+              <dl class="ch__big">
+                {c.coaches.aleksey.big.map((b) => <div><dt>{b.l}</dt><dd>{b.v}</dd></div>)}
+              </dl>
+              <dl class="ch__facts ch__facts--2">
+                {c.coaches.aleksey.facts.map((f) => <div><dt>{f.l}</dt><dd>{f.v}</dd></div>)}
+              </dl>
+              <div class="ch__bio">{c.coaches.aleksey.bio.map((p) => <p>{p}</p>)}</div>
+              <dl class="ch__details">
+                <div><dt>{c.coaches.aleksey.tricks.l}</dt><dd>{c.coaches.aleksey.tricks.v.map((t) => <span>{t}</span>)}</dd></div>
+              </dl>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 05 LEVEL ================= -->
+    <section class="sec ice level" id="level" aria-labelledby="h-level" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">05</span>{c.level.kicker}</p>
+        <h2 class="h2" id="h-level">{c.level.h2[0]}<br /><span class="red-t">{c.level.h2[1]}</span></h2>
+        <p class="level__sub">{c.level.sub}<span class="level__note marker" data-slam style="--d:.7s" aria-hidden="true">{c.level.note}</span></p>
+        <ol class="ladder" role="list">
+          {c.level.steps.map((s, i) => (
+            <li class="rung" style={`--i:${i}`}>
+              <span class="rung__n" aria-hidden="true">{pad(i)}</span>
+              <h3 class="rung__k">{s.k}</h3>
+              <p class="rung__t"><strong>{s.t}</strong> {s.s}</p>
+            </li>
+          ))}
+        </ol>
+        <p class="level__caveat">{c.level.caveat}</p>
+        <div class="groups">
+          <span class="groups__a">{c.level.groups.a}</span>
+          <span class="groups__b">{c.level.groups.b}</span>
+          <span class="groups__mid">{c.level.groups.mid[0]} {c.level.groups.mid[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-14%;top:-30%;width:128%;height:160%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg></span>
+          <svg class="mk groups__arrows" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d="M4 18 C 30 18, 50 30, 70 46 M60 44 L 71 47 L 66 36" stroke="#101314" stroke-width="2.5" vector-effect="non-scaling-stroke" /><path data-pen d="M4 82 C 30 82, 50 70, 70 54 M60 56 L 71 53 L 66 64" stroke="#101314" stroke-width="2.5" vector-effect="non-scaling-stroke" style="--d:.3s" /></svg>
+        </div>
+        <p class="level__groups">{c.level.groupLine}</p>
+        <a class="level__proof" href="/#progress">{c.level.proof} <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- ================= 06 CAMP LIFE ================= -->
+    <section class="sec dk life" id="life" aria-labelledby="h-life" data-reveal>
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">06</span>{c.life.kicker}</p>
+        <h2 class="h2" id="h-life">{c.life.h2[0]}<br /><span class="pk-t">{c.life.h2[1]}</span></h2>
+        <p class="life__line">{c.life.line}</p>
+        <ul class="acts" role="list" data-strip>
+          {c.life.acts.map((a, i) => (
+            <li class="act">
+              <figure class="act__fig">
+                <span class="tape" aria-hidden="true"></span>
+                <Image src={a.src === 'own' ? lifePhotos[a.photo as 'sauna'] : places[a.photo as PlacePhoto]} alt={a.alt} widths={[360, 720]} sizes="(min-width: 900px) 30vw, 72vw" format="webp" loading="lazy" />
+                <span class="stamp act__stamp" data-slam style={`--d:${0.5 + i * 0.2}s`} aria-hidden="true">{c.life.stamp}</span>
+                <figcaption>
+                  <span class="act__cap">{a.cap}</span>
+                  <span class="act__when">{a.when}</span>
+                  {a.note && <span class="act__note">{a.note}</span>}
+                  {a.src === 'place' && <Credit p={a.photo as PlacePhoto} dark />}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+        <p class="swipe-hint marker" aria-hidden="true">swipe →</p>
+      </div>
+    </section>
+
+    <!-- ================= 07 THE CREW ================= -->
+    <section class="sec pk crew" id="crew" aria-labelledby="h-crew" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">07</span>{c.crew.kicker}</p>
+        <h2 class="h2" id="h-crew">{c.crew.h2[0]}<br /><span class="red-t">{c.crew.h2[1]}</span></h2>
+        <div class="crew__lines">{c.crew.lines.map((l) => <p>{l}</p>)}</div>
+        <ul class="collage" role="list" data-strip>
+          {c.crew.tiles.map((t, i) => (
+            <li class:list={['cl', `cl--${i + 1}`]}>
+              <figure class="cl__fig">
+                {i % 2 === 0 && <span class="tape" aria-hidden="true"></span>}
+                <Image src={lifePhotos[t.photo]} alt={t.alt} widths={[300, 600]} sizes="(min-width: 900px) 19vw, 62vw" format="webp" loading="lazy" style={`object-position:${t.pos ?? '50% 50%'}`} />
+                <figcaption class="cl__cap marker">{t.cap}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+        <p class="swipe-hint marker" aria-hidden="true">{c.crew.swipe}</p>
+        <span class="crew__note marker" data-slam style="--d:.6s" aria-hidden="true">{c.crew.note}</span>
+      </div>
+    </section>
+
+    <!-- ================= 08 CAMP ORGANISATION ================= -->
+    <section class="sec dk day" id="day" aria-labelledby="h-day" data-reveal>
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap day__wrap">
+        <div class="day__head">
+          <p class="kicker"><span class="kicker__n">08</span>{c.day.kicker}</p>
+          <h2 class="h2" id="h-day">{c.day.h2[0]}<br /><span class="pk-t">{c.day.h2[1]}</span></h2>
+          <div class="day__lines">{c.day.lines.map((l) => <p>{l}</p>)}</div>
+          <a class="btn btn--ghost day__cta" href="#schedule">{c.day.cta} <span aria-hidden="true">→</span></a>
+          <Splat class="day__splat" a="#BA1422" b="#FF94E3" />
+        </div>
+        <div class="notebook">
+          <span class="tape notebook__tape" aria-hidden="true"></span>
+          <p class="notebook__h">{c.day.title}</p>
+          <p class="notebook__sub">{c.day.caveat}</p>
+          <ol class="tl" role="list">
+            {c.day.small.map((x) => <li class="tl__s"><time>{x.t}</time><span>{x.w}</span></li>)}
+            <li class="tl__big tl__big--mountain">
+              <time>{c.day.mountain.t}</time>
+              <span class="tl__w">{c.day.mountain.w}</span>
+              <ul class="tl__tags" role="list">{c.day.mountain.lines.map((l) => <li>{l}</li>)}</ul>
+              <span class="tl__note marker" data-slam style="--d:.7s" aria-hidden="true">{c.day.notes.mountain}</span>
+              <div class="tl__photo tilt"><Image src={coaching} alt="" widths={[300, 600]} sizes="(min-width: 900px) 18vw, 40vw" format="webp" loading="lazy" /></div>
+            </li>
+            {c.day.after.map((x) => <li class:list={['tl__s', { 'tl__s--hot': x.hot }]}><time>{x.t}</time><span>{x.w}{x.hot && <b class="tl__kart marker" aria-hidden="true">{c.day.notes.kart}</b>}</span></li>)}
+            <li class="tl__big tl__big--video">
+              <time>{c.day.video.t}</time>
+              <span class="tl__w">{c.day.video.w}</span>
+              <span class="tl__line">{c.day.video.line}</span>
+              <span class="tl__note marker" data-slam style="--d:1s" aria-hidden="true">{c.day.notes.video}</span>
+              <figure class="tl__rec"><img class="tl__rec-gif" src={c.day.video.gif} alt={c.day.video.alt} width="260" height="346" loading="lazy" decoding="async" /><span class="tl__rec-top" aria-hidden="true"><i></i>REC</span></figure>
+            </li>
+          </ol>
+          <svg class="mk tl__line-draw" aria-hidden="true" viewBox="0 0 20 100" preserveAspectRatio="none" fill="none" stroke-linecap="round"><path data-pen d="M10 1 C 4 20, 16 30, 9 50 C 3 70, 15 80, 10 99" stroke="#BA1422" stroke-width="2.5" vector-effect="non-scaling-stroke" /></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 09 THE FIVE DAYS ================= -->
+    <section class="sec lt sched" id="schedule" aria-labelledby="h-schedule" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">09</span>{c.schedule.kicker}</p>
+        <h2 class="h2" id="h-schedule">{c.schedule.h2[0]}<br /><span class="red-t">{c.schedule.h2[1]}</span></h2>
+        <ol class="five" role="list">
+          {c.schedule.days.map((d, i) => (
+            <li class:list={['dz', `dz--${d.tone}`]}>
+              <p class="dz__date"><span class="dz__d">{d.d}</span><span class="dz__m">{d.m}</span></p>
+              <div class="dz__body">
+                <h3 class="dz__t">{d.t.map((t) => <span>{t}</span>)}</h3>
+                <p class="dz__p">{d.body}</p>
+                {d.small && <p class="dz__small">{d.small}</p>}
+                {d.stamp && <p class="stamp dz__stamp" data-slam style="--d:.5s">{d.stamp}</p>}
+              </div>
+              {i === 2 && <span class="dz__xmas marker" data-slam style="--d:.8s" aria-hidden="true">{c.schedule.notes.xmas}</span>}
+              {i < 4 && <svg class="mk dz__arrow" aria-hidden="true" viewBox="0 0 40 70" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={downD} stroke="#BA1422" stroke-width="3" /></svg>}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= 10 PRICE ================= -->
+    <section class="sec rd price" id="price" aria-labelledby="h-price" data-reveal>
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker kicker--ice"><span class="kicker__n">10</span>{c.price.kicker}</p>
+        <p class="price__big"><span>{c.price.value}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-5%;top:-4%;width:110%;height:108%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#E1EFFA" stroke-width="3" vector-effect="non-scaling-stroke" /></svg><span class="price__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.price.note}</span></p>
+        <h2 class="price__h2" id="h-price">{c.price.h2}</h2>
+        <div class="inout">
+          <div class="inout__in">
+            <p class="inout__k">{c.price.inLabel}</p>
+            <ul role="list">{c.price.included.map((t) => <li><b aria-hidden="true">✓</b>{t}</li>)}</ul>
+          </div>
+          <div class="inout__out">
+            <p class="inout__k">{c.price.outLabel}</p>
+            <ul role="list">{c.price.excluded.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
+          </div>
+        </div>
+        <a class="btn btn--ice btn--lg price__cta" href="#apply">{c.price.cta} <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- ================= 11 FINAL POSTER + APPLY ================= -->
+    <section class="sec dk final" id="apply" aria-labelledby="h-apply" data-reveal data-apply>
+      <div class="grain" data-grain="D" aria-hidden="true"></div>
+      <div class="wrap final__wrap">
+        <div class="final__poster">
+          <div class="poster__top">
+            <span class="poster__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
+            <span class="stamp stamp--pink" data-slam style="--d:.3s" aria-hidden="true">{c.apply.issue}</span>
+          </div>
+          <h2 class="final__h2" id="h-apply">{c.apply.h2[0]}<br /><span class="pk-t">{c.apply.h2[1]}</span></h2>
+          <ul class="final__facts" role="list">
+            {c.apply.poster.map(([a, b]) => <li><span>{a}</span>{b && <small>{b}</small>}</li>)}
+          </ul>
+          <Splat class="final__splat" />
+          <svg class="mk final__arrow" aria-hidden="true" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={curveD} stroke="#FF94E3" stroke-width="3" /></svg>
+        </div>
+        <div class="coupon-form">
+          <span class="coupon-form__sc" aria-hidden="true">✂</span>
+          <p class="coupon-form__k">{c.apply.kicker} · {camp.name} {camp.issue}</p>
+          <p class="coupon-form__lead">{c.apply.lead}</p>
+          <div class="sent" role="status" hidden data-sent tabindex="-1">
+            <div class="sent__stamp">{c.apply.sent.stamp}</div>
+            <p class="sent__line" data-sent-line></p>
+            <p>{c.apply.sent.reply}</p>
+            <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
+          </div>
+          <div class="handoff" role="status" hidden data-handoff tabindex="-1">
+            <div class="sent__stamp">{c.apply.handoff.stamp}</div>
+            <p class="sent__line">{c.apply.handoff.line}</p>
+            <p class="handoff__body">{c.apply.handoff.body}</p>
+            <label class="fl" for="f-handoff">{c.apply.handoff.label}
+              <textarea class="in handoff__msg" id="f-handoff" rows="8" readonly data-handoff-msg></textarea>
+            </label>
+            <div class="handoff__cta">
+              <button class="submit" type="button" data-handoff-copy>{c.apply.handoff.copy} ↗</button>
+              <a class="linkbtn" href={rider.dmUrl} {...ext} data-handoff-open>{c.apply.handoff.open}</a>
+              <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
+            </div>
+          </div>
+          <form novalidate data-form data-endpoint={endpoint} data-promo-endpoint={promoEndpoint} data-dm={rider.dmUrl}>
+            <label class="fl" for="f-name">{c.apply.name}
+              <input class="in" id="f-name" name="name" autocomplete="name" required aria-describedby="e-name" />
+              <span class="err" id="e-name" aria-live="polite"></span>
+            </label>
+            <label class="fl" for="f-contact">{c.apply.contact} <small>{c.apply.contactHint}</small>
+              <input class="in" id="f-contact" name="contact" autocomplete="off" placeholder={c.apply.contactPh} required aria-describedby="e-contact" />
+              <span class="err" id="e-contact" aria-live="polite"></span>
+            </label>
+            <fieldset>
+              <legend>{c.apply.discipline}</legend>
+              <div class="methods">
+                {c.apply.disciplines.map((m, i) => <label><input type="radio" name="discipline" value={m} checked={i === 0} /><span>{m}</span></label>)}
+              </div>
+            </fieldset>
+            <fieldset aria-describedby="e-level">
+              <legend>{c.apply.level}</legend>
+              <div class="methods methods--4">
+                {c.apply.levels.map(([v, t]) => <label><input type="radio" name="level" value={v} data-level /><span>{t}</span></label>)}
+              </div>
+              <span class="err" id="e-level" aria-live="polite"></span>
+            </fieldset>
+            <label class="fl" for="f-msg">{c.apply.message} <small>{c.apply.optional}</small>
+              <textarea class="in" id="f-msg" name="msg" rows="3" placeholder={c.apply.messagePh}></textarea>
+            </label>
+            <details class="promo" data-promo>
+              <summary>{c.apply.promo.toggle}</summary>
+              <div class="promo__row">
+                <label class="sr-only" for="f-promo">{c.apply.promo.label}</label>
+                <input class="in" id="f-promo" name="promo" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="e-promo" />
+                <button class="promo__btn" type="button" data-promo-apply>{c.apply.promo.apply}</button>
+              </div>
+              <span class="promo__msg" id="e-promo" aria-live="polite" data-promo-msg></span>
+            </details>
+            <span class="err" data-net aria-live="polite"></span>
+            <button class="submit" type="submit">{c.apply.submit} <span aria-hidden="true">→</span></button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- ================= 12 FAQ ================= -->
+    <section class="sec lt faq" id="faq" aria-labelledby="h-faq" data-reveal>
+      <div class="grain" data-grain="L" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="kicker"><span class="kicker__n">12</span>{c.faq.kicker}</p>
+        <h2 class="h2" id="h-faq">{c.faq.h2}</h2>
+        <div class="faq__list">
+          {c.faq.items.map((q) => (
+            <details class:list={{ 'faq--todo': q.todo }}>
+              <summary><span>{q.q}</span><span aria-hidden="true">+</span></summary>
+              <p>{q.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="sec dk foot">
+    <div class="wrap foot__wrap">
+      <div class="foot__l">
+        <span class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
+        <p class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br /><a href={rider.phoneHref}>{rider.phone}</a> · <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
+      </div>
+      <div class="foot__r">
+        <p>{c.footer.issue}</p>
+        <a href="/">{c.footer.back}</a>
+        <a class="totop" href="#top">{c.footer.toTop}</a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="ticket" href="#apply" data-sticky aria-label={`${c.apply.submit}: ${c.sticky.dates}, ${c.sticky.price}`}>
+    <span class="ticket__d">{c.sticky.dates}</span>
+    <span class="ticket__p">{c.sticky.price}</span>
+    <span class="ticket__go">{c.sticky.cta}</span>
+  </a>
+</div>
+<script>
+  import '../scripts/camp';
+</script>
+</Base>

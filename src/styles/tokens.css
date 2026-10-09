@@ -1,0 +1,94 @@
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/archivo/wdth-italic.css';
+@import '@fontsource-variable/onest/wght.css';
+
+/* Most Wazted (Koczman Bálint). Licence: free for personal and commercial use, not for resale
+   (public/fonts/MostWazted-license.txt). No glyphs for ° → ↓ ★: those fall back to Archivo. */
+@font-face {
+  font-family: 'Most Wazted';
+  src: url('/fonts/MostWazted.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Figma colour names */
+  --night-run: #101314;
+  --lift-tower: #474C48;
+  --slush-concrete: #ABAAA6;
+  --airbag-ice: #E1EFFA;
+  --park-signal: #BA1422;
+  --goggle-tint: #FF94E3;
+
+  /* paper ageing layers over Airbag Ice */
+  --paper-yellow: rgba(214, 194, 146, .24);
+  --paper-vignette: rgba(168, 128, 62, .34);
+  --paper-rust: rgba(128, 62, 22, .5);
+  --tape: rgba(214, 194, 146, .6);
+  --camp-paper: #DEE4E1;
+
+  --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --font-body: 'Onest Variable', 'Onest', system-ui, sans-serif;
+  --font-graffiti: 'Most Wazted', 'Archivo Variable', cursive;
+
+  --rule: 1.5px solid var(--night-run);
+  --shadow-hard: 5px 5px 0 var(--night-run);
+  --shadow-tile: 0 1px 0 var(--slush-concrete), 2px 8px 18px rgba(16, 19, 20, .22);
+
+  --top: clamp(64px, 10svh, 96px);
+  --side: 4vw;
+  --staple: 6vw;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+a { color: inherit; }
+::selection { background: var(--goggle-tint); color: var(--night-run); }
+:focus-visible { outline: 2px dashed var(--goggle-tint); outline-offset: 3px; }
+img, video, svg { max-width: none; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip {
+  position: fixed; left: 12px; top: -60px; z-index: 90;
+  background: var(--airbag-ice); color: var(--night-run);
+  padding: 8px 12px; font-weight: 700; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* shared label style: Onest 700, 10–12px, .14–.16em, uppercase */
+.label {
+  font-family: var(--font-body); font-weight: 700; font-size: clamp(10px, .9vw, 12px);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--lift-tower);
+}
+
+.marker { font-family: var(--font-graffiti); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+/* buttons: one solid shape, three colourways, thumb-sized */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45em;
+  min-height: 48px; padding: 0 20px; border: 1.5px solid transparent; border-radius: 0;
+  font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 14px; letter-spacing: .06em;
+  line-height: 1; text-transform: uppercase; text-decoration: none; white-space: nowrap; cursor: pointer;
+  transition: transform .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn:active { transform: scale(.97); }
+.btn--red { background: var(--park-signal); color: var(--airbag-ice); }
+.btn--red:hover { background: #A0101C; color: var(--airbag-ice) !important; }
+.btn--ice { background: var(--airbag-ice); color: var(--night-run); }
+.btn--ice:hover { background: #fff; color: var(--park-signal) !important; }
+.btn--ghost { background: transparent; color: inherit; border-color: currentColor; }
+.btn--ghost:hover { background: var(--airbag-ice); color: var(--night-run) !important; border-color: var(--airbag-ice); }
+.btn--sm { min-height: 36px; padding: 0 12px; font-size: 12px; }
+.btn--lg { min-height: 58px; padding: 0 26px; font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+
+/* marker layer: hidden until drawn on (DrawSVG for strokes, a stepped mask for handwriting).
+   Without JS, or under reduced motion (.marks-static), the marks simply show. */
+.js [data-draw], .js [data-ink], .js [data-stamp] { visibility: hidden; }
+.js .marks-static [data-draw], .js .marks-static [data-ink], .js .marks-static [data-stamp] { visibility: visible; }
+.mk { position: absolute; overflow: visible; pointer-events: none; filter: url(#jit); }
+.mk-nf { filter: none; }

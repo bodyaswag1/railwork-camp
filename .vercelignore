@@ -1,0 +1,13 @@
+# references and local tooling never ship (anchored to the root: an unanchored "scripts/" would also drop src/scripts)
+/design/
+/assets-src/
+/prompts/
+/shots/
+/test-results/
+/playwright-report/
+/tests/
+/scripts/
+/node_modules/
+/dist/
+/.astro/
+/.env*
