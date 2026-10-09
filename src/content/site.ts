@@ -11,7 +11,6 @@ export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
   lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
-  alekseyInstagram: "TODO: Aleksey Bogatyrev's Instagram handle for the coach spread on /camp",
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
   promoEndpoint: 'TODO: optional PUBLIC_PROMO_ENDPOINT (POST {code} → {valid, message}); until then codes travel with the application and are checked by hand',
@@ -463,7 +462,7 @@ export const campPage = {
       tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
       alt: 'Aleksey Bogatyrev on skis, crossing his skis over a rail in a snowy park',
       note: 'behind the camera too',
-      ig: '', // TODO(alekseyInstagram): his handle, without the @
+      ig: 'aleksey_bogatyrev',
     },
   },
 
