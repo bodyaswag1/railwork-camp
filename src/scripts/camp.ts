@@ -78,8 +78,12 @@ if (ticket && hero && applySec && 'IntersectionObserver' in window) {
 // ---------------------------------------------------------------- scroll cue: on the first screen only
 const cue = document.querySelector<HTMLElement>('.poster__scroll');
 if (cue) {
-  const onScroll = () => { if (scrollY > 40) { cue.classList.add('is-gone'); removeEventListener('scroll', onScroll); } };
+  // gone for good once the reader moves: on a scroll, a jump to an anchor, or the poster leaving the screen
+  const gone = () => { cue.classList.add('is-gone'); cue.inert = true; removeEventListener('scroll', onScroll); };
+  const onScroll = () => { if (scrollY > 40) gone(); };
   addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('hashchange', gone);
+  if (hero && 'IntersectionObserver' in window) new IntersectionObserver(([e]) => { if (e.intersectionRatio < 0.9) gone(); }, { threshold: [0.9] }).observe(hero);
   onScroll();
 }
 

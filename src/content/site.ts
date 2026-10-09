@@ -11,6 +11,7 @@ export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
   lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
+  alekseyInstagram: "TODO: Aleksey Bogatyrev's Instagram handle for the coach spread on /camp",
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
   promoEndpoint: 'TODO: optional PUBLIC_PROMO_ENDPOINT (POST {code} → {valid, message}); until then codes travel with the application and are checked by hand',
@@ -314,13 +315,24 @@ export const nextLevel = {
 // A multi-day progression camp first (ride → feedback → video → adjust → ride again), the coaches second,
 // the trip third. Public price €800 only; a promo code is collected with the application and checked later
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
+export type PlacePhoto = 'ice-karting' | 'st-moritz' | 'livigno-village' | 'livigno-pistes' | 'livigno-halfpipe';
+/** photos of places we don't own: Wikimedia Commons, used under their licences (cropped) */
+export const credits: Record<PlacePhoto, { author: string; license: string; licenseUrl?: string; source: string }> = {
+  'livigno-pistes': { author: 'Ting read', license: 'Public domain', source: 'https://commons.wikimedia.org/wiki/File:Livigno_Winter_2013.JPG' },
+  'livigno-village': { author: 'qwesy qwesy', license: 'CC BY 3.0', licenseUrl: 'https://creativecommons.org/licenses/by/3.0', source: 'https://commons.wikimedia.org/wiki/File:Livigno_-_panoramio_(25)_retouched.jpg' },
+  'livigno-halfpipe': { author: 'Vincenzo.togni', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Die_Halfpipe_des_Livigno_Snow_Park_an_den_olympischen_Spielen_2026.jpg' },
+  'ice-karting': { author: 'Commercieskidôme', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:IceKart.jpg' },
+  'st-moritz': { author: 'Franzfoto', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:St._Moritz-Dorf_-_Zugefrorener_See,.jpg' },
+};
+
 export const campPage = {
-  title: 'BAS CAMP Issue 01 — Snowboard + Freeski progression camp in Italy, 23–27 Dec 2026',
-  description: '5 days in the Italian Alps, 3 days to ride better: a snowboard + freeski progression camp with Ilia Baskakov and Aleksey Bogatyrev. Coaching, video analysis, 4 nights with breakfast. All levels, 15 spots, €800. Valdidentro, 23–27 December 2026.',
+  title: 'BAS CAMP Issue 01 — Snowboard + Ski training camp in Livigno, Italy, 23–27 Dec 2026',
+  description: 'Snowboard + ski training camp in Livigno, Italian Alps, with Ilia Baskakov and Aleksey Bogatyrev: coaching, filming and video analysis, a personal programme after camp, ice karting, 4 nights with breakfast. Beginner to advanced, 15 spots, €800. 23–27 December 2026.',
   nav: [
+    { label: 'Livigno', href: '#ride' },
     { label: 'Coaches', href: '#coaches' },
     { label: 'Level', href: '#level' },
-    { label: 'Schedule', href: '#schedule' },
+    { label: 'Schedule', href: '#day' },
     { label: 'Price', href: '#price' },
     { label: 'FAQ', href: '#faq' },
   ],
@@ -333,39 +345,61 @@ export const campPage = {
   hero: {
     issue: 'Issue 01',
     season: 'Winter 26/27',
-    h1: ['5 days in the Alps.', '3 days to ride better.'],
+    kicker: 'BAS CAMP',
+    h1: ['Snowboard + Ski', 'training camp.'],
+    sub: 'Boost your riding. Enjoy your holiday.',
     dates: ['23—27', 'Dec', '2026'],
     place: 'Italy',
-    disciplines: ['Snowboard', 'Freeski'],
     spots: '15 spots',
     price: '€800',
+    levelsLabel: 'Levels',
+    levels: ['Beginner', 'Intermediate', 'Advanced'],
     cta: 'Join the camp',
     how: 'How it works ↓',
     scroll: 'Scroll',
-    notes: { ride: 'ride / learn / repeat', tourist: 'No tourist mode', date: '23—27.12' },
+    notes: { ride: 'ride / learn / repeat', tourist: 'Crew of 15', date: '23—27.12' },
     photoAlt: 'Ilia Baskakov in a one-hand plant on a rainbow rail, mountains behind',
-    insetAlt: 'Ilia upside down in the air above a kicker',
   },
 
-  // 02 the idea
-  idea: {
-    kicker: 'The idea',
-    pre: 'Not just a lesson.',
-    h2: ['3 days', 'of progression.'],
-    days: [
-      { n: 'Day 01', t: 'Find it.', lines: ['Observe riding.', 'Choose the problem worth solving.'] },
-      { n: 'Day 02', t: 'Work on it.', lines: ['Exercise.', 'Ride.', 'Feedback.', 'Film.', 'Repeat.'] },
-      { n: 'Day 03', t: 'Lock it in.', lines: ['Adjust.', 'Repeat.', 'Understand what to work on next.'] },
+  // 02 where we ride — photos from Wikimedia Commons, credited on the page (see `credits`)
+  ride: {
+    kicker: 'Where we ride',
+    h2: ['Livigno.', 'Italian Alps.'],
+    line: 'Wide pistes. Park sessions. Big mountain views.',
+    facts: [
+      { v: '115 km', l: 'of pistes', s: 'For every level.' },
+      { v: 'The Beach', l: 'snowpark', s: 'Easy & medium lines.' },
+      { v: '2026', l: 'Olympic venue', s: 'Snowboard & freestyle.' },
     ],
-    support: ['A normal lesson ends after a few hours.', 'At BAS, your next session starts where the previous one stopped.'],
-    notes: ['eyes up', 'earlier!', 'better.'],
+    photos: [
+      { photo: 'livigno-pistes', cap: 'the pistes', alt: 'Snowy Livigno valley seen from the top of a piste, peaks all round' },
+      { photo: 'livigno-village', cap: 'the village', alt: 'Livigno village at the bottom of the slopes, skiers on the snow in front' },
+      { photo: 'livigno-halfpipe', cap: 'Olympic halfpipe', alt: 'The Livigno Snow Park halfpipe at the 2026 Winter Olympics, a crowd watching' },
+    ] as { photo: PlacePhoto; cap: string; alt: string }[],
+    note: 'our office',
   },
 
-  // 03 a training day
+  // 03 progress with a plan
+  idea: {
+    kicker: 'The plan',
+    h2: ['Progress', 'with a plan.'],
+    steps: [
+      { n: '01', t: 'Understand.', s: 'Know what holds your riding back and why.' },
+      { n: '02', t: 'Improve.', s: 'Targeted exercises. Coach feedback. Repeat and refine.' },
+      { n: '03', t: 'Keep going.', s: 'A personal programme after camp: what to train and which exercises to use.' },
+    ],
+    cta: 'View training programme',
+    notes: ['why?', 'again!', 'take it home'],
+  },
+
+  // 08 camp organisation + a day at camp
   day: {
-    kicker: 'A training day at BAS',
-    h2: ['Your day.', 'More or less.'],
-    caveat: 'An example training day — not every day of the trip runs like this.',
+    kicker: 'Camp organisation',
+    h2: ['We plan.', 'You ride.'],
+    lines: ['Training, activities and the daily schedule — organised for you.', 'Know where to be, what’s next and who to ask.'],
+    cta: 'View camp guide',
+    title: 'A day at camp',
+    caveat: 'Example schedule · times may vary.',
     small: [
       { t: '07:00', w: 'Wake up' },
       { t: '07:30', w: 'Warm-up' },
@@ -373,9 +407,15 @@ export const campPage = {
       { t: '08:30', w: 'Out' },
     ],
     mountain: { t: '09:00—14:00', w: 'Mountain.', lines: ['Riding', 'Coaching', 'Exercises', 'Feedback', 'Filming'], alt: 'Ilia and a rider going over a clip on a phone on the slope' },
-    cool: { t: '15:00—15:30', w: 'Cool-down' },
-    video: { t: '19:00—20:00', w: 'Video.', line: 'Video analysis: the day’s riding on the screen, what changed, what’s next.', gif: '/clips/camp-video.gif', alt: 'Riders with boards in hand at the top of a run, clouds over the peaks' },
-    notes: { mountain: 'the main thing', video: 'the other main thing' },
+    after: [
+      { t: '14:00—15:00', w: 'Lunch' },
+      { t: '15:00—15:30', w: 'Cool-down' },
+      { t: '15:30—16:30', w: 'Rest' },
+      { t: '16:30—18:00', w: 'Ice karting', hot: true },
+      { t: '18:00—19:00', w: 'Dinner' },
+    ] as { t: string; w: string; hot?: boolean }[],
+    video: { t: '19:00—20:00', w: 'Video review.', line: 'The day’s riding on the screen: what changed, what’s next.', gif: '/clips/camp-video.gif', alt: 'Riders with boards in hand at the top of a run, clouds over the peaks' },
+    notes: { mountain: 'the main thing', video: 'the other main thing', kart: 'vroom' },
   },
 
   // 04 coaches
@@ -401,11 +441,12 @@ export const campPage = {
       alt: 'Ilia Baskakov upside down in the air above a kicker',
       alt2: 'Ilia in a red competition bib, number 27',
       note: 'the face of BAS',
+      ig: rider.instagram,
     },
     aleksey: {
-      discipline: 'Freeski',
+      discipline: 'Ski',
       name: ['Aleksey', 'Bogatyrev'],
-      role: 'Freeski coach',
+      role: 'Ski coach',
       big: [
         { v: '14+', l: 'Years on skis' },
         { v: '25 m', l: 'Biggest gap' },
@@ -422,6 +463,7 @@ export const campPage = {
       tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
       alt: 'Aleksey Bogatyrev on skis, crossing his skis over a rail in a snowy park',
       note: 'behind the camera too',
+      ig: '', // TODO(alekseyInstagram): his handle, without the @
     },
   },
 
@@ -457,51 +499,47 @@ export const campPage = {
     notes: { xmas: 'christmas!!', arrow: 'then →' },
   },
 
-  // 08 camp life
+  // 06 camp life — where the crew goes off the slope
   life: {
     kicker: 'Camp life',
     h2: ['Yes, we leave', 'the slope sometimes.'],
-    line: 'Coming alone is fine: you ride, have breakfast and watch the footage with the same small crew.',
-    tiles: [
-      { photo: 'glacier', cap: 'Alps', alt: 'A rider in a red jacket pulling on goggles above a glacier', pos: '50% 40%' },
-      { photo: 'sauna', cap: 'Spa', alt: 'A rider in a felt sauna hat resting in a wooden sauna', pos: '50% 30%' },
-      { photo: 'fisheye', cap: 'Snow', alt: 'Fisheye shot of a rider in yellow doing a handplant in the park', pos: '50% 50%' },
-      { photo: 'dinner', cap: 'Dinner', alt: 'The whole crew around a long table of pizza boxes after riding', pos: '50% 62%' },
-      { photo: 'crew', cap: 'Crew', alt: 'Riders lined up on the snow behind the fence, laughing and throwing horns', pos: '50% 62%' },
-      { cap: 'St. Moritz', todo: '[Photo: St. Moritz]' },
-      { photo: 'bandana', cap: 'Park', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
-      { cap: 'Christmas', todo: '[Photo: Christmas]' },
-    ] as { photo?: 'glacier' | 'fisheye' | 'bandana' | 'smile' | 'night' | 'sauna' | 'dinner' | 'crew'; cap: string; alt?: string; pos?: string; todo?: string }[],
-    swipe: 'swipe →',
+    line: 'Off the board we go together. Here’s where:',
+    stamp: 'We’re going',
+    acts: [
+      { photo: 'ice-karting', cap: 'Ice karting', when: 'After riding', alt: 'A driver in a helmet racing a kart on an ice track', src: 'place' },
+      { photo: 'sauna', cap: 'Spa', when: '24 Dec, evening', note: 'Entry not included', alt: 'A rider in a felt sauna hat resting in a wooden sauna', src: 'own' },
+      { photo: 'st-moritz', cap: 'St. Moritz', when: '25 Dec, day trip', alt: 'St. Moritz above its frozen lake under snow, hotels on the hillside', src: 'place' },
+    ] as { photo: PlacePhoto | 'sauna'; cap: string; when: string; note?: string; alt: string; src: 'place' | 'own' }[],
   },
 
-  // 09 hotel
-  hotel: {
-    kicker: 'Where we stay',
-    h2: 'Base camp.',
-    name: 'Meublè Rosalpina',
-    place: ['Valdidentro', 'Italy'],
-    facts: [['23—27 Dec', 'Check-in → check-out'], ['4 nights', 'Accommodation'], ['Breakfast', 'Included']],
-    address: ['Via San Carlo 16', 'Valdidentro, Italy'],
-    map: 'Open in Maps ↗',
-    mapUrl: 'https://www.google.com/maps/search/?api=1&query=Meubl%C3%A8+Rosalpina%2C+Via+San+Carlo+16%2C+Valdidentro%2C+Italy',
-    photos: [
-      { photo: 'outside', cap: 'Rosalpina', alt: 'Meublè Rosalpina in the snow: a three-storey chalet with wooden balconies under a pine slope' },
-      { photo: 'room', cap: 'Your room', alt: 'A bright hotel room with a wooden double bed and a white curtain' },
-      { photo: 'breakfast', cap: 'Breakfast', alt: 'A breakfast table with croissants and coffee cups by a window full of geraniums and pine forest' },
-    ] as { photo: 'outside' | 'room' | 'breakfast'; cap: string; alt: string }[],
-    note: 'home for 4 nights',
+  // 07 the crew
+  crew: {
+    kicker: 'Community',
+    h2: ['Same mountain.', 'Same crew.'],
+    lines: [
+      'BAS is a bunch of riders and skiers who train together, eat together and watch each other’s clips at night.',
+      'Snowboard and ski culture from the inside: park laps, filming, the jokes from the lift line. Coming alone is normal — you won’t ride alone.',
+    ],
+    tiles: [
+      { photo: 'crew', cap: 'Crew', alt: 'Riders lined up on the snow behind the fence, laughing and throwing horns', pos: '50% 62%' },
+      { photo: 'dinner', cap: 'Dinner', alt: 'The whole crew around a long table of pizza boxes after riding', pos: '50% 62%' },
+      { photo: 'glacier', cap: 'Alps', alt: 'A rider in a red jacket pulling on goggles above a glacier', pos: '50% 40%' },
+      { photo: 'bandana', cap: 'Park', alt: 'A rider in a skull bandana and silver sunglasses looking over the park', pos: '50% 30%' },
+      { photo: 'fisheye', cap: 'Snow', alt: 'Fisheye shot of a rider in yellow doing a handplant in the park', pos: '50% 50%' },
+    ] as { photo: 'glacier' | 'fisheye' | 'bandana' | 'crew' | 'dinner'; cap: string; alt: string; pos?: string }[],
+    note: 'the crew',
+    swipe: 'swipe →',
   },
 
   // 10 price
   price: {
     kicker: 'Price',
     value: '€800',
-    h2: 'What’s in the €800?',
+    h2: 'What’s included?',
     inLabel: 'In',
     outLabel: 'Out',
-    included: ['4 nights accommodation', 'Hotel breakfast', 'Snowboard or ski coaching', 'Coached riding program', 'Video analysis', 'Morning warm-up', 'Cool-down / recovery', 'Camp organization'],
-    excluded: ['Ski pass', 'Travel to / from the camp', 'Equipment rental', 'Lunch, dinner and other meals', 'Spa entrance'],
+    included: ['4 nights’ accommodation', 'Hotel breakfasts', 'Snowboard or ski coaching & tailored exercises', 'Filming & video analysis', 'Personal training programme after camp', 'Warm-up & cool-down', 'Ice karting', 'Camp organisation'],
+    excluded: ['Ski pass', 'Travel to and from the camp', 'Equipment rental', 'Lunch, dinner & other food and drinks', 'Spa entry'],
     note: 'no small print',
     cta: 'Join the camp',
   },
@@ -514,17 +552,19 @@ export const campPage = {
       { q: 'I’ve never been on a snowboard / skis. Can I come?', a: 'Yes. Complete beginners are welcome.' },
       { q: 'Can experienced riders join?', a: 'Yes. Groups are divided by discipline and level.' },
       { q: 'Can I come alone?', a: 'Yes.' },
-      { q: 'Snowboard or ski?', a: 'Both. There is a snowboard coach and a freeski coach.' },
+      { q: 'Snowboard or ski?', a: 'Both. There is a snowboard coach and a ski coach.' },
       { q: 'How many people?', a: 'Maximum 15 participants.' },
       { q: 'Is the hotel included?', a: 'Yes. 4 nights.' },
+      { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno.' },
       { q: 'Is breakfast included?', a: 'Yes.' },
+      { q: 'Is ice karting included?', a: 'Yes.' },
       { q: 'Is the ski pass included?', a: 'No.' },
       { q: 'Is the spa included?', a: 'No.' },
       { q: 'Is rental included?', a: 'No.' },
       { q: 'What happens on December 25?', a: 'Current plan: day off / St. Moritz.' },
       { q: 'Can I ride on December 27?', a: 'Potentially until lunch, depending on departure plans and conditions.' },
       // TODO(campFaq): confirm these three before launch — nothing is promised until then
-      { q: 'How do we get there?', a: '[To be confirmed: travel to Valdidentro]', todo: true },
+      { q: 'How do we get there?', a: '[To be confirmed: travel to Livigno / Valdidentro]', todo: true },
       { q: 'Payment / deposit?', a: '[To be confirmed: payment and deposit]', todo: true },
       { q: 'Cancellation?', a: '[To be confirmed: cancellation policy]', todo: true },
     ] as { q: string; a: string; todo?: boolean }[],
