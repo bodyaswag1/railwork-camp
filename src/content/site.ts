@@ -9,7 +9,7 @@
 
 export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
-  lifeMedia: 'TODO: St. Moritz / Christmas / breakfast photos (home BAS life + /camp camp life)',
+  lifeMedia: 'TODO: our own photos of the Livigno Christmas market, ice karting and the spa (the current ones are stand-ins)',
   campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
@@ -313,7 +313,7 @@ export const nextLevel = {
 // A multi-day progression camp first (ride → feedback → video → adjust → ride again), the coaches second,
 // the trip third. Public price €999 only; a promo code is collected with the application and checked later
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
-export type PlacePhoto = 'ice-karting' | 'st-moritz' | 'livigno-village' | 'livigno-pistes' | 'livigno-halfpipe';
+export type PlacePhoto = 'ice-karting' | 'christmas-market' | 'livigno-village' | 'livigno-pistes' | 'livigno-halfpipe';
 /** photos of places from Wikimedia Commons, used under their licences (cropped); photos supplied by BAS have no entry */
 export const credits: Partial<Record<PlacePhoto, { author: string; license: string; licenseUrl?: string; source: string }>> = {
   'livigno-pistes': { author: 'Ting read', license: 'Public domain', source: 'https://commons.wikimedia.org/wiki/File:Livigno_Winter_2013.JPG' },
@@ -486,12 +486,12 @@ export const campPage = {
     kicker: 'The five days',
     h2: ['5 days.', 'No copy-paste days.'],
     days: [
-      { d: '23', m: 'Dec', t: ['Ride.'], body: 'Coached riding / training day.', small: 'Exact hours depend on arrival and logistics.', tone: 'paper' },
-      { d: '24', m: 'Dec', t: ['Ride.', 'Then spa.'], body: 'Training day. Spa in the evening.', stamp: 'Spa entrance not included', tone: 'ice' },
-      { d: '25', m: 'Dec', t: ['Off.', 'St. Moritz.'], body: 'Recovery, a day trip, hanging out. Current plan: St. Moritz.', small: 'What you spend in St. Moritz isn’t part of the price.', tone: 'pink' },
-      { d: '26', m: 'Dec', t: ['Back on.'], body: 'Coached riding day: apply and lock in what you worked on.', tone: 'red' },
-      { d: '27', m: 'Dec', t: ['One more?'], body: 'Departure. Optional riding until lunch, depending on your travel plans and mountain conditions.', tone: 'dark' },
-    ],
+      { d: '23', m: 'Dec', t: ['Arrive.', 'Christmas market.'], body: 'Arrival and check-in. An evening at the Livigno Christmas market, then the intro meeting: the crew, the coaches, the plan.', tone: 'paper' },
+      { d: '24', m: 'Dec', t: ['Slope.', 'Then ice karting.'], body: 'Coached day on the mountain. Ice karting after riding.', tone: 'ice' },
+      { d: '25', m: 'Dec', t: ['Slope.', 'Then free time.'], body: 'Coached day on the mountain. The rest of the day is yours.', tone: 'pink' },
+      { d: '26', m: 'Dec', t: ['Slope.', 'Then spa.'], body: 'Coached day on the mountain: lock in what you worked on. Spa in the evening.', stamp: 'Spa entry not included', tone: 'red' },
+      { d: '27', m: 'Dec', t: ['One more?', 'Then home.'], body: 'Optional skiing or riding on your own, without a coach. Then the road back home.', tone: 'dark' },
+    ] as { d: string; m: string; t: string[]; body: string; small?: string; stamp?: string; tone: string }[],
     notes: { xmas: 'christmas!!', arrow: 'then →' },
   },
 
@@ -502,9 +502,9 @@ export const campPage = {
     line: 'Off the board we go together. Here’s where:',
     stamp: 'We’re going',
     acts: [
-      { photo: 'ice-karting', cap: 'Ice karting', when: 'After riding', alt: 'Two drivers in orange helmets racing red karts side by side on a snow track', src: 'place' },
-      { photo: 'sauna', cap: 'Spa', when: '24 Dec, evening', note: 'Entry not included', alt: 'A rider in a felt sauna hat resting in a wooden sauna', src: 'own' },
-      { photo: 'st-moritz', cap: 'St. Moritz', when: '25 Dec, day trip', alt: 'St. Moritz at dusk above its frozen lake, hotels lit up under a snowy pine slope', src: 'place' },
+      { photo: 'christmas-market', cap: 'Christmas market', when: '23 Dec, evening', note: 'Livigno', alt: 'A snowy alpine village street at dusk, strung with lights and red baubles, a lit Christmas tree at the end', src: 'place' },
+      { photo: 'ice-karting', cap: 'Ice karting', when: '24 Dec, after riding', alt: 'Two drivers in orange helmets racing red karts side by side on a snow track', src: 'place' },
+      { photo: 'sauna', cap: 'Spa', when: '26 Dec, evening', note: 'Entry not included', alt: 'A rider in a felt sauna hat resting in a wooden sauna', src: 'own' },
     ] as { photo: PlacePhoto | 'sauna'; cap: string; when: string; note?: string; alt: string; src: 'place' | 'own' }[],
   },
 
@@ -565,8 +565,8 @@ export const campPage = {
       { q: 'What’s included in the €999?', a: 'Three days of coaching, a 3-day ski pass, 4 nights at the hotel with breakfast, hotel–resort transfers, ice karting, a preparation guide, an exercise set for after camp, pro videos and photos, and prizes for best progress.' },
       { q: 'What’s not included?', a: 'Travel to and from the camp, equipment rental, lunches and dinners, and spa entry.' },
       { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno. Transfers to the resort and back are included.' },
-      { q: 'What happens on December 25?', a: 'Current plan: day off / St. Moritz.' },
-      { q: 'Can I ride on December 27?', a: 'Potentially until lunch, depending on departure plans and conditions.' },
+      { q: 'What’s the plan day by day?', a: '23 Dec: arrival, the Livigno Christmas market and an intro meeting. 24 Dec: slope, then ice karting. 25 Dec: slope, then free time. 26 Dec: slope, then spa. 27 Dec: optional skiing or riding without a coach, then the road home.' },
+      { q: 'Can I ride on December 27?', a: 'Yes, if you want to: it’s optional and on your own, without a coach, before the road home.' },
       // TODO(campFaq): confirm these three before launch — nothing is promised until then
       { q: 'How do we get there?', a: '[To be confirmed: travel to Livigno / Valdidentro]', todo: true },
       { q: 'Payment / deposit?', a: '[To be confirmed: payment and deposit]', todo: true },

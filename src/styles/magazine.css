@@ -516,7 +516,6 @@ main { position: absolute; inset: 0; }
   .nextcamp__photo { left: 45%; }
   .nextcamp__photo img { -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%); mask-image: linear-gradient(90deg, transparent, #000 40%); opacity: .62; }
   .nextcamp__inner { justify-content: safe center; }
-  .nextcamp__top { position: absolute; top: var(--top); left: var(--side); }
   .nextcamp__place { font-size: min(24vw, 40svh); }
   .nextcamp__dates { font-size: min(7vw, 12svh); }
 }

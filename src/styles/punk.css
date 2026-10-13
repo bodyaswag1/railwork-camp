@@ -41,12 +41,11 @@
 
 /* ---------- logo: the whole rider on a transparent background (components/Logo.astro) ---------- */
 .logo { display: block; width: auto; height: 56px; aspect-ratio: 1308 / 1762; flex: none; }
-/* in the header it stands a little taller than the bar and hangs over its lower edge */
-.logo--head { height: 64px; margin: -8px 0 -18px; }
-.topbar .logo--head { height: 60px; margin: -6px 0 -16px; }
+/* in the headers it fits inside the bar */
+.logo--head { height: 50px; margin: -6px 0; }
 .logo--foot { height: 50px; }
-.logo--lg { height: clamp(96px, 13svh, 150px); rotate: -4deg; }
-.logo--xl { height: clamp(170px, 18vw, 260px); rotate: -4deg; margin: -6px 0 -10px -8px; }
+.logo--lg { height: clamp(60px, 8svh, 84px); rotate: -4deg; }
+.logo--xl { height: clamp(130px, 14vw, 190px); rotate: -4deg; }
 /* outline button (menu, back to top) */
 .btn-line {
   appearance: none; background: none; border: 1.5px solid currentColor; color: inherit; border-radius: 0;

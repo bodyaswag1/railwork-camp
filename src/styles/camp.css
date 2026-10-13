@@ -374,6 +374,7 @@ summary::-webkit-details-marker { display: none; }
 .dz__t span { display: block; }
 .dz__p { margin: 0; max-width: 40ch; font-size: 17px; line-height: 1.45; font-weight: 600; }
 .dz__small { margin: 0; max-width: 46ch; font-size: 14px; line-height: 1.45; opacity: .85; }
+.dz--red .dz__stamp, .dz--dark .dz__stamp { color: var(--airbag-ice); }
 .dz__stamp { position: relative; align-self: flex-start; margin: 8px 0 0; rotate: -4deg; }
 .dz__xmas { position: absolute; right: 22px; top: -18px; rotate: 8deg; color: var(--night-run); font-size: clamp(24px, 2.6vw, 36px); background: var(--goggle-tint); padding: 0 6px; }
 .dz__arrow { left: 50%; bottom: -62px; width: 28px; height: 50px; }
@@ -510,7 +511,7 @@ fieldset[aria-invalid='true'] .methods span { border-color: var(--park-signal); 
 /* ---------- footer ---------- */
 .foot__wrap { padding-top: 48px; padding-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; }
 .foot__l { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.foot .logo--xl { height: clamp(130px, 14vw, 170px); margin-left: 0; }
+.foot .logo--xl { height: clamp(110px, 12vw, 150px); }
 .foot__c { margin: 0; font-size: 14px; line-height: 1.6; color: var(--slush-concrete); }
 .foot__c a { color: var(--airbag-ice); }
 .foot__r { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--slush-concrete); text-align: right; }

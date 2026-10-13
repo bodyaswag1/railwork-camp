@@ -16,8 +16,8 @@ const clashes = (scopeSel) => {
   if (!scope) return [];
   const W = innerWidth;
   const vis = (el) => { const cs = getComputedStyle(el); return cs.visibility !== 'hidden' && cs.display !== 'none' && +cs.opacity > 0.05; };
-  const decor = [...scope.querySelectorAll('.marker[aria-hidden="true"], [aria-hidden="true"] .marker, .stamp, .sticker, svg.mk, .splat')].filter(vis);
-  const copy = [...scope.querySelectorAll('h1,h2,h3,p,li,dt,dd,a,button,time,figcaption,label,summary')].filter((el) => !el.closest('[aria-hidden="true"]') && vis(el) && el.children.length === [...el.children].filter((c) => c.matches('svg,span,b,strong,em,br,small,i')).length);
+  const decor = [...scope.querySelectorAll('.marker[aria-hidden="true"], [aria-hidden="true"] .marker, .stamp, .sticker, svg.mk, .splat, img.logo'), ...document.querySelectorAll('.masthead img.logo, .topbar img.logo')].filter(vis);
+  const copy = [...scope.querySelectorAll('h1,h2,h3,p,li,dt,dd,a,button,time,figcaption,label,summary,span.nextcamp__issue'), ...document.querySelectorAll('.masthead .counter, .topbar__issue')].filter((el) => !el.closest('[aria-hidden="true"]') && vis(el) && el.children.length === [...el.children].filter((c) => c.matches('svg,span,b,strong,em,br,small,i')).length);
   const res = [];
   for (const d of decor) {
     const r = d.getBoundingClientRect();
@@ -27,10 +27,15 @@ const clashes = (scopeSel) => {
     if (d.matches('svg.mk') || d.matches('.splat')) continue; // strokes are meant to circle / underline copy
     for (const c of copy) {
       if (c.contains(d) || d.contains(c)) continue;
-      const range = document.createRange(); range.selectNodeContents(c);
-      for (const q of range.getClientRects()) {
+      // the rects of the copy a reader can see (screen-reader-only text reports a box it doesn't paint)
+      const rects = [], tw = document.createTreeWalker(c, NodeFilter.SHOW_TEXT);
+      for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+        if (!n.textContent.trim() || n.parentElement.closest('.sr-only, [aria-hidden="true"]')) continue;
+        const range = document.createRange(); range.selectNodeContents(n); rects.push(...range.getClientRects());
+      }
+      for (const q of rects) {
         const ox = Math.min(r.right, q.right) - Math.max(r.left, q.left), oy = Math.min(r.bottom, q.bottom) - Math.max(r.top, q.top);
-        if (ox > 6 && oy > 6 && ox * oy > 0.12 * r.width * r.height) { res.push(`OVERLAP ${name} on "${(c.textContent || '').trim().slice(0, 24)}"`); break; }
+        if (ox > 6 && oy > 6 && ox * oy > (d.matches('img.logo') ? 0.01 : 0.12) * r.width * r.height) { res.push(`OVERLAP ${name} on "${(c.textContent || '').trim().slice(0, 24)}"`); break; }
       }
     }
   }
@@ -48,9 +53,9 @@ for (const { w, h } of sizes) {
       await page.reload({ waitUntil: 'networkidle' });
       await page.waitForTimeout(3600);
       await page.screenshot({ path: `${out}/home-${id}-${w}.png` });
+      const c = await page.evaluate(clashes, `#${id}`); // before any scrolling: the header overlays scrolled copy by design
       const inner = await page.evaluate(() => { const sc = document.querySelector('.page.is-active [data-scroll]'); return sc ? sc.scrollHeight - sc.clientHeight : 0; });
       if (inner > 4) { await page.evaluate(() => { const sc = document.querySelector('.page.is-active [data-scroll]'); sc.scrollTop = sc.scrollHeight; }); await page.waitForTimeout(250); await page.screenshot({ path: `${out}/home-${id}-${w}-end.png` }); }
-      const c = await page.evaluate(clashes, `#${id}`);
       console.log(`home ${id} @${w}: scrolls ${inner}px${c.length ? '\n   ' + c.join('\n   ') : ''}`);
     }
   }

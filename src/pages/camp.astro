@@ -20,14 +20,14 @@ import dinner from '../assets/photos/life-dinner.jpg';
 import crew from '../assets/photos/life-crew.jpg';
 import air from '../assets/photos/ilia-air.jpg';
 import karting from '../assets/places/ice-karting.png';
-import moritz from '../assets/places/st-moritz.webp';
+import market from '../assets/places/christmas-market.webp';
 import village from '../assets/places/livigno-village.jpg';
 import pistes from '../assets/places/livigno-pistes.jpg';
 import halfpipe from '../assets/places/livigno-halfpipe.jpg';
 import { rider, camp, campPage as c, ui, type PlacePhoto } from '../content/site';
 
 const lifePhotos = { glacier, fisheye, bandana, smile, night, sauna, dinner, crew };
-const places: Record<PlacePhoto, ImageMetadata> = { 'ice-karting': karting, 'st-moritz': moritz, 'livigno-village': village, 'livigno-pistes': pistes, 'livigno-halfpipe': halfpipe };
+const places: Record<PlacePhoto, ImageMetadata> = { 'ice-karting': karting, 'christmas-market': market, 'livigno-village': village, 'livigno-pistes': pistes, 'livigno-halfpipe': halfpipe };
 const site = Astro.site!;
 const jsonLd = [{
   '@context': 'https://schema.org', '@type': 'Event', name: `${camp.name} ${camp.issue} — ${camp.kind}`,
@@ -350,7 +350,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 {d.small && <p class="dz__small">{d.small}</p>}
                 {d.stamp && <p class="stamp dz__stamp" data-slam style="--d:.5s">{d.stamp}</p>}
               </div>
-              {i === 2 && <span class="dz__xmas marker" data-slam style="--d:.8s" aria-hidden="true">{c.schedule.notes.xmas}</span>}
+              {i === 0 && <span class="dz__xmas marker" data-slam style="--d:.8s" aria-hidden="true">{c.schedule.notes.xmas}</span>}
               {i < 4 && <svg class="mk dz__arrow" aria-hidden="true" viewBox="0 0 40 70" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={downD} stroke="#BA1422" stroke-width="3" /></svg>}
             </li>
           ))}

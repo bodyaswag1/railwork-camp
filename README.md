@@ -44,8 +44,8 @@ Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TO
 - **Student progress (`progress.cases`):** per rider, name, where they started,
   what they worked on, the result and an optional quote. Nothing here is invented: until a case is real it
   stays a placeholder.
-- **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (St. Moritz, Christmas; `life.tiles`).
-- **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €999 includes, the second
+- **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (Christmas market, ice karting, spa; `campPage.life.acts`).
+- **Camp page:** the day-by-day program, Livigno Christmas market, ice karting, spa, what the €999 includes, the second
   coach.
 
 Content rules from the brief, kept in `site.ts`: the public BAS CAMP price is **€999** (no other price is
