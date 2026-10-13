@@ -1,0 +1,16 @@
+---
+// One of the Figma marker doodles (content/doodles.ts), in the colour of the text around it.
+// `anim`: 'draw' = drawn on when a magazine page lands (marks.ts), 'pen' = drawn on as a /camp section
+// scrolls in (camp.ts). Size comes from the class: `.doodle--in` sits inline in a headline at its height.
+import { doodles, type Doodle, type DoodleName } from '../content/doodles';
+interface Props { name: DoodleName; anim?: 'draw' | 'pen'; class?: string; style?: string }
+const { name, anim = 'pen', class: cls = '', style } = Astro.props;
+const d: Doodle = doodles[name];
+const [, , w, h] = d.vb.split(' ').map(Number);
+const weight = { 3: 3, 2: 2, 1: 1.2 };
+const attr = anim === 'draw' ? { 'data-draw': '' } : { 'data-pen': '' };
+---
+<svg class:list={['doodle', `doodle--${name}`, cls]} style={`--ar:${(w / h).toFixed(3)};${style ?? ''}`} viewBox={d.vb} fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {(d.s ?? []).map(([k, p]) => <path d={p} stroke-width={weight[k]} vector-effect="non-scaling-stroke" {...attr} />)}
+  {(d.f ?? []).map((p) => <path d={p} fill="currentColor" stroke="none" />)}
+</svg>

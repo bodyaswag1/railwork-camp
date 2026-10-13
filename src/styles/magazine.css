@@ -720,3 +720,14 @@ main { position: absolute; inset: 0; }
   .cover__hint i { animation: none; }
   .print__img img, .masthead, .masthead::before { transition: none; }
 }
+
+/* ---------- doodles on the magazine pages ---------- */
+.cover__horns { --dh: 54px; margin-left: 10px; rotate: -8deg; align-self: center; }
+.xg__trophy { --dh: 46px; rotate: 6deg; }
+.board__crown { position: absolute; top: -42px; left: 50%; --dh: 36px; translate: -50% 0; rotate: -4deg; }
+.nextcamp__gog { --dh: 34px; rotate: -6deg; }
+.loop__bulb { position: absolute; left: calc(100% + 10px); top: -16px; --dh: 34px; rotate: 10deg; }
+/* beside the A / B box, out of the flow so the options keep their height */
+.opt__label { position: relative; }
+.opt__doodle { position: absolute; left: 38px; top: 1px; --dh: 17px; }
+.opt__doodle--board { --dh: 26px; left: 44px; top: -4px; rotate: 78deg; }

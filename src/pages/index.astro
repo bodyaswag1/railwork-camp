@@ -4,6 +4,7 @@ import Stage from '../components/Stage.astro';
 import Wear from '../components/Wear.astro';
 import Splat from '../components/Splat.astro';
 import Logo from '../components/Logo.astro';
+import Doodle from '../components/Doodle.astro';
 import { Image, Picture, getImage } from 'astro:assets';
 import '../styles/punk.css';
 import '../styles/magazine.css';
@@ -77,7 +78,6 @@ const dblD = 'M1 10 C 25 3, 55 15, 99 5 M6 14 C 40 9, 70 13, 94 10';
 const circleD = 'M52 6 C 90 4, 99 32, 97 56 C 95 90, 22 98, 7 70 C -3 42, 20 8, 60 10';
 const boxD = 'M2 5 L 98 2 L 97 97 L 3 95 Z M5 1 L 99 7 L 95 99 L 1 93 L 4 3';
 const burstD = 'M50 4 L 57 32 L 84 14 L 68 41 L 97 48 L 69 58 L 87 86 L 57 70 L 50 97 L 43 70 L 13 86 L 31 58 L 3 48 L 32 41 L 16 14 L 43 32 Z';
-const zigD = 'M2 2 L 18 10 L 2 18 L 18 26 L 2 34';
 const curveD = 'M6 44 C 20 14, 46 6, 70 12 M58 4 L 72 12 L 60 24';
 const ext = { target: '_blank', rel: 'noopener' };
 ---
@@ -135,6 +135,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           <div class="cover__ctas">
             <a class="btn btn--red" href="/camp">{hero.ctaCamp}</a>
             <a class="btn btn--ghost" href="#train" data-go={P('train')}>{hero.ctaCoaching}</a>
+            <Doodle name="horns" anim="draw" class="doodle--pink cover__horns hide-m" />
           </div>
         </div>
         <p class="cover__hint" aria-hidden="true"><span class="cover__hint-m">{hero.hint}</span><span class="cover__hint-d">{hero.hintDesktop}</span><i></i></p>
@@ -177,6 +178,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                 <p class="xg">
                   <span class="xg__place">{riderPage.xgames.place}<small>{riderPage.xgames.ord}</small></span>
                   <span class="xg__event"><b>{riderPage.xgames.event}</b>{riderPage.xgames.where}</span>
+                  <Doodle name="trophy" anim="draw" class="xg__trophy hide-m" />
                   <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-6px;top:-6px;width:calc(100% + 12px);height:calc(100% + 12px)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={boxD} stroke="#101314" stroke-width="2.5" /></svg>
                 </p>
               </div>
@@ -196,7 +198,7 @@ const ext = { target: '_blank', rel: 'noopener' };
               <span class="stamp stamp--boards" data-stamp="1.15" aria-hidden="true">{riderPage.notes.stamp}</span>
               {riderPage.boards.map((b, i) => (
                 <figure class="board">
-                  {i === 0 && <svg class="mk" aria-hidden="true" viewBox="0 0 60 40" style="top:-34px;left:50%;width:46px;margin-left:-23px" fill="none" stroke="#BA1422" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path data-draw d="M6 34 L 9 8 L 21 24 L 30 4 L 39 24 L 51 8 L 54 34 Z M8 38 L 52 37" /></svg>}
+                  {i === 0 && <Doodle name="crown" anim="draw" class="board__crown" />}
                   <div class="board__tag">{b.tag && <span>{b.tag}</span>}</div>
                   <div class="board__drop" data-drop>
                     <div class="board__card" data-spin={i} role="button" tabindex="0" aria-label={b.spinLabel}>
@@ -233,6 +235,7 @@ const ext = { target: '_blank', rel: 'noopener' };
         <div class="nextcamp__top">
           <Logo class="logo--lg" tone="red" sizes="(min-width: 900px) 130px, 90px" />
           <span class="nextcamp__issue">{nextCamp.issue}</span>
+          <Doodle name="goggles" anim="draw" class="doodle--ice nextcamp__gog" />
         </div>
         <div class="nextcamp__main">
           <p class="kicker kicker--ice">{nextCamp.kicker}</p>
@@ -267,7 +270,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <p class="coach__lead"><strong>{coachPage.lead}</strong> {coachPage.leadMore}</p>
           </header>
           <div class="loop">
-            <p class="loop__label">{coachPage.loopLabel}<svg class="mk" aria-hidden="true" viewBox="0 0 20 40" style="right:-28px;top:-8px;width:14px;height:28px" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw d={zigD} stroke="#FF94E3" stroke-width="2.5" /></svg></p>
+            <p class="loop__label">{coachPage.loopLabel}<Doodle name="bulb" anim="draw" class="doodle--pink loop__bulb" /></p>
             <ol class="loop__steps" role="list">
               {coachPage.loop.map((s, i) => (
                 <li class="loop__step"><span class="loop__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="loop__w">{s.word}</span><span class="loop__l">{s.line}</span></li>
@@ -297,7 +300,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <span class="reg progress__reg hide-m"></span>
           </div>
           <header class="pg__head progress__head">
-            <p class="kicker"><span class="kicker__n">05</span>{progress.kicker}</p>
+            <p class="kicker"><span class="kicker__n">05</span>{progress.kicker}<Doodle name="smiley" anim="draw" class="kicker__doodle" /></p>
             <span class="stamp progress__stamp" data-stamp="0.7" aria-hidden="true">{progress.stamp}</span>
             <h2 class="h2 progress__h2" id="h-progress" tabindex="-1"><span class="progress__pre">{progress.h2[0]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="left:-1%;top:46%;width:102%;height:.5em" fill="none" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d="M1 12 C 30 6, 60 15, 99 7" stroke="#BA1422" stroke-width="3" /></svg></span> <span class="progress__main">{progress.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#101314" stroke-width="4" /></svg></span></h2>
           </header>
@@ -367,7 +370,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <Splat class="train__splat hide-m" stamp="1" />
           </div>
           <header class="pg__head train__head">
-            <p class="kicker"><span class="kicker__n">06</span>{train.kicker}</p>
+            <p class="kicker"><span class="kicker__n">06</span>{train.kicker}<Doodle name="horns" anim="draw" class="doodle--pink kicker__doodle" /></p>
             <h2 class="h2" id="h-train" tabindex="-1">{train.h2[0]} <span class="u">{train.h2[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.08em;width:100%;height:.14em" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-draw vector-effect="non-scaling-stroke" d={dblD} stroke="#FF94E3" stroke-width="4" /></svg></span></h2>
             <span class="train__note marker" data-ink aria-hidden="true">{train.note}</span>
           </header>
@@ -375,7 +378,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             <article class="opt tilt" aria-labelledby="h-opt-a">
               <div class="opt__media"><Image src={coachingPic} alt={train.coaching.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 42%" /></div>
               <div class="opt__body">
-                <p class="opt__label"><span>{train.coaching.label}</span></p>
+                <p class="opt__label"><span>{train.coaching.label}</span><Doodle name="goggles" anim="draw" class="doodle--pink opt__doodle" /></p>
                 <h3 class="opt__title" id="h-opt-a">{train.coaching.title}</h3>
                 <p class="opt__price"><strong>{train.coaching.price}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-12%;top:-14%;width:124%;height:128%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg></strong> <span class="opt__per">{train.coaching.per}</span> <span class="opt__day">{train.coaching.day}</span></p>
                 <p class="opt__text">{train.coaching.body}</p>
@@ -391,7 +394,7 @@ const ext = { target: '_blank', rel: 'noopener' };
               <span class="train__or marker" data-ink aria-hidden="true">{train.or}</span>
               <div class="opt__media"><Image src={crew} alt={train.camp.alt} widths={[480, 960]} sizes="(min-width: 900px) 40vw, 100vw" format="webp" loading="lazy" style="object-position:50% 52%" /></div>
               <div class="opt__body">
-                <p class="opt__label"><span>{train.camp.label}</span></p>
+                <p class="opt__label"><span>{train.camp.label}</span><Doodle name="board" anim="draw" class="opt__doodle opt__doodle--board" /></p>
                 <h3 class="opt__title" id="h-opt-b">{train.camp.title}</h3>
                 <p class="opt__lines">{train.camp.lines.map((l) => <span>{l}</span>)}</p>
                 <dl class="opt__facts">

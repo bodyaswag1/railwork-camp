@@ -27,13 +27,11 @@ summary::-webkit-details-marker { display: none; }
 /* ---------- top bar ---------- */
 .topbar {
   position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 12px;
-  padding: 7px var(--side); background: rgba(16,19,20,.95); color: var(--airbag-ice);
+  padding: 8px var(--side); background: rgba(16,19,20,.95); color: var(--airbag-ice);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(71,76,72,.6);
 }
 .topbar__brand { display: flex; text-decoration: none; color: inherit; }
-.topbar__issue { font-family: var(--font-display); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--slush-concrete); }
 .topbar__nav { display: none; }
-@media (max-width: 420px) { .topbar__issue { display: none; } }
 .topbar__cta { margin-left: auto; }
 .topbar .topbar__cta { min-height: 38px; padding: 0 14px; border: 1.5px solid var(--park-signal); font-weight: 900; font-size: 12px; letter-spacing: .08em; line-height: 1; }
 .cmenu[hidden] { display: none; }
@@ -536,3 +534,14 @@ fieldset[aria-invalid='true'] .methods span { border-color: var(--park-signal); 
   .foot__wrap { padding-bottom: 96px; }
 }
 @media (prefers-reduced-motion: reduce) { .ticket { transition: none; } }
+
+/* ---------- doodles on /camp: they boil a little, like marker on film ---------- */
+.camp .doodle { animation: boil 1.5s steps(2, jump-none) infinite; }
+@keyframes boil { 50% { transform: rotate(2.5deg) translate(1px, -1px); } }
+@media (prefers-reduced-motion: reduce) { .camp .doodle { animation: none; } }
+.poster__speed { --dh: clamp(54px, 7vw, 100px); align-self: center; margin-left: clamp(10px, 2vw, 28px); }
+@media (max-width: 599px) { .poster__speed { display: none; } }
+.ch__crown { position: absolute; left: calc(100% + 8px); top: -4px; --dh: clamp(30px, 3.4vw, 46px); rotate: 10deg; }
+.crew__horns { position: absolute; right: var(--side); top: clamp(64px, 10vw, 128px); --dh: clamp(120px, 13vw, 190px); rotate: 10deg; }
+@media (max-width: 899px) { .crew__horns { display: none; } }
+.notebook__h .doodle--in { height: .7em; }

@@ -41,8 +41,9 @@
 
 /* ---------- logo: the whole rider on a transparent background (components/Logo.astro) ---------- */
 .logo { display: block; width: auto; height: 56px; aspect-ratio: 1308 / 1762; flex: none; }
-/* in the headers it fits inside the bar */
+/* in the headers it fits inside the bar; a little smaller with more air round it on phones */
 .logo--head { height: 50px; margin: -6px 0; }
+@media (max-width: 899px) { .logo--head { height: 40px; margin: 3px 4px 3px 2px; } }
 .logo--foot { height: 50px; }
 .logo--lg { height: clamp(60px, 8svh, 84px); rotate: -4deg; }
 .logo--xl { height: clamp(130px, 14vw, 190px); rotate: -4deg; }
@@ -53,3 +54,14 @@
   font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 12px; letter-spacing: .08em; line-height: 1;
   cursor: pointer; text-transform: uppercase; text-decoration: none;
 }
+
+/* ---------- doodles: the Figma marker set (components/Doodle.astro) ---------- */
+.doodle { display: inline-block; flex: none; height: var(--dh, 56px); width: auto; aspect-ratio: var(--ar); overflow: visible; pointer-events: none; color: var(--park-signal); }
+.doodle--pink { color: var(--goggle-tint); }
+.doodle--ice { color: var(--airbag-ice); }
+.doodle--ink { color: var(--night-run); }
+/* inline at the end of a headline, at its height */
+.doodle--in { height: .82em; vertical-align: -.08em; margin-left: .2em; rotate: 6deg; }
+/* on a kicker line: taller than the line, without making the line taller */
+.kicker__doodle { --dh: 26px; margin: -7px 0 -7px 4px; rotate: -6deg; }
+.kicker__doodle--board { --dh: 20px; rotate: 72deg; margin: -4px 10px; }

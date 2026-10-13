@@ -16,7 +16,7 @@ const clashes = (scopeSel) => {
   if (!scope) return [];
   const W = innerWidth;
   const vis = (el) => { const cs = getComputedStyle(el); return cs.visibility !== 'hidden' && cs.display !== 'none' && +cs.opacity > 0.05; };
-  const decor = [...scope.querySelectorAll('.marker[aria-hidden="true"], [aria-hidden="true"] .marker, .stamp, .sticker, svg.mk, .splat, img.logo'), ...document.querySelectorAll('.masthead img.logo, .topbar img.logo')].filter(vis);
+  const decor = [...scope.querySelectorAll('.marker[aria-hidden="true"], [aria-hidden="true"] .marker, .stamp, .sticker, svg.mk, .splat, svg.doodle, img.logo'), ...document.querySelectorAll('.masthead img.logo, .topbar img.logo')].filter(vis);
   const copy = [...scope.querySelectorAll('h1,h2,h3,p,li,dt,dd,a,button,time,figcaption,label,summary,span.nextcamp__issue'), ...document.querySelectorAll('.masthead .counter, .topbar__issue')].filter((el) => !el.closest('[aria-hidden="true"]') && vis(el) && el.children.length === [...el.children].filter((c) => c.matches('svg,span,b,strong,em,br,small,i')).length);
   const res = [];
   for (const d of decor) {
