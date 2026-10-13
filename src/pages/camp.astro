@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Splat from '../components/Splat.astro';
 import Credit from '../components/Credit.astro';
+import Logo from '../components/Logo.astro';
 import { Image, Picture } from 'astro:assets';
 import '../styles/punk.css';
 import '../styles/camp.css';
@@ -63,7 +64,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <a class="skip" href="#main">{ui.skip}</a>
 
   <header class="topbar">
-    <a class="topbar__brand" href="/"><span class="logo-box" aria-hidden="true">BAS<b>★</b>CAMP</span><span class="sr-only">{c.back}</span></a>
+    <a class="topbar__brand" href="/"><Logo class="logo--head" eager sizes="80px" /><span class="sr-only">{c.back}</span></a>
     <span class="topbar__issue" aria-hidden="true">{c.hero.issue}</span>
     <nav class="topbar__nav" aria-label="Camp">
       {c.nav.map((l) => <a href={l.href}>{l.label}</a>)}
@@ -84,11 +85,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <span class="halftone"></span>
       </div>
       <div class="poster__inner">
-        <div class="poster__top">
-          <span class="poster__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
-          <span class="stamp stamp--pink" data-slam style="--d:.5s" aria-hidden="true">{c.hero.issue}</span>
-          <span class="poster__season">{c.hero.season}</span>
-        </div>
         <h1 class="poster__h1"><span>{c.hero.h1[0]}</span> <span class="pk">{c.hero.h1[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.12em;width:100%;height:.18em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#BA1422" stroke-width="3" /></svg></span></h1>
         <p class="poster__sub">{c.hero.sub}</p>
         <p class="poster__date"><span class="poster__dd">{c.hero.dates[0]}</span><span class="poster__my"><span>{c.hero.dates[1]}</span><span>{c.hero.dates[2]}</span></span></p>
@@ -103,11 +99,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </div>
       </div>
       <div class="decor" aria-hidden="true">
-        <span class="sticker sticker--ice poster__tourist" data-slam style="--d:.8s">{c.hero.notes.tourist}</span>
-        <span class="scrawl marker poster__ride" data-slam style="--d:1s">{c.hero.notes.ride}</span>
         <span class="vtext poster__vt">{c.hero.notes.date} · BAS★CAMP · {c.hero.issue} · Livigno · {c.hero.notes.date}</span>
-        <Splat class="poster__splat" />
-        <svg class="mk poster__x" viewBox="0 0 60 40" fill="none" stroke-linecap="round"><path data-pen d={xD} stroke="#BA1422" stroke-width="3.5" /></svg>
         <span class="barcode poster__bar"><i></i><span>BAS 2026 1223 27</span></span>
       </div>
       <a class="poster__scroll" href="#ride" aria-label={c.hero.scroll}><span class="poster__mouse" aria-hidden="true"><i></i></span><span class="poster__scroll-l" aria-hidden="true">{c.hero.scroll}</span></a>
@@ -153,15 +145,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <ol class="idea__days" role="list">
           {c.idea.steps.map((d, i) => (
             <li class="iday">
-              <span class="iday__n">{d.n}</span>
-              <h3 class="iday__t">{d.t}</h3>
-              <p class="iday__p">{d.s}</p>
+              <span class="iday__n" aria-hidden="true">{d.n}</span>
+              <div class="iday__b">
+                <h3 class="iday__t">{d.t}</h3>
+                <p class="iday__p">{d.s}</p>
+              </div>
               <span class="iday__note marker" data-slam style={`--d:${0.6 + i * 0.2}s`} aria-hidden="true">{c.idea.notes[i]}</span>
-              {i < 2 && <svg class="mk iday__arrow" aria-hidden="true" viewBox="0 0 80 30" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={arrowR} stroke="#BA1422" stroke-width="3" style={`--d:${0.3 + i * 0.25}s`} /></svg>}
+              {/* to the next step: across on wide screens, down the number column on narrow ones */}
+              {i < 2 && <svg class="mk iday__arrow iday__arrow--h" aria-hidden="true" viewBox="0 0 80 30" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={arrowR} stroke="#BA1422" stroke-width="3" style={`--d:${0.3 + i * 0.25}s`} /></svg>}
+              {i < 2 && <svg class="mk iday__arrow iday__arrow--v" aria-hidden="true" viewBox="0 0 40 70" preserveAspectRatio="none" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={downD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" style={`--d:${0.3 + i * 0.25}s`} /></svg>}
             </li>
           ))}
         </ol>
-        <a class="btn btn--dark idea__cta" href="#day">{c.idea.cta} <span aria-hidden="true">→</span></a>
+        <p class="idea__get">
+          <a class="btn idea__cta" href={c.idea.file} download>{c.idea.cta} <span aria-hidden="true">↓</span></a>
+          <span class="idea__meta">{c.idea.ctaMeta}</span>
+        </p>
       </div>
     </section>
 
@@ -181,7 +180,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
             <div class="ch__body">
               <p class="ch__kick">{c.coaches.ilia.discipline}</p>
               <h3 class="ch__name" id="h-ilia">{c.coaches.ilia.name[0]} <span>{c.coaches.ilia.name[1]}</span></h3>
-              <span class="ch__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.coaches.ilia.note}</span>
               <a class="ch__ig" href={`https://instagram.com/${c.coaches.ilia.ig}`} {...ext}><span class="ch__ig-i" aria-hidden="true">IG</span>@{c.coaches.ilia.ig} <span aria-hidden="true">↗</span><span class="sr-only"> {ui.newTab}</span></a>
               <dl class="ch__big">
                 {c.coaches.ilia.big.map((b, i) => <div><dt>{b.l}</dt><dd>{b.v}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-8%;top:-10%;width:116%;height:120%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg>}</dd></div>)}
@@ -202,7 +200,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
             <div class="ch__body">
               <p class="ch__kick">{c.coaches.aleksey.role}</p>
               <h3 class="ch__name" id="h-aleksey">{c.coaches.aleksey.name[0]} <span>{c.coaches.aleksey.name[1]}</span></h3>
-              <span class="ch__note marker" data-slam style="--d:1s" aria-hidden="true">{c.coaches.aleksey.note}</span>
               {c.coaches.aleksey.ig
                 ? <a class="ch__ig" href={`https://instagram.com/${c.coaches.aleksey.ig}`} {...ext}><span class="ch__ig-i" aria-hidden="true">IG</span>@{c.coaches.aleksey.ig} <span aria-hidden="true">↗</span><span class="sr-only"> {ui.newTab}</span></a>
                 : <span class="ch__ig ch__ig--todo"><span class="ch__ig-i" aria-hidden="true">IG</span>[@instagram]</span>}
@@ -242,7 +239,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <div class="groups">
           <span class="groups__a">{c.level.groups.a}</span>
           <span class="groups__b">{c.level.groups.b}</span>
-          <span class="groups__mid">{c.level.groups.mid[0]} {c.level.groups.mid[1]}<svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-14%;top:-30%;width:128%;height:160%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg></span>
+          <span class="groups__mid"><span>{c.level.groups.mid[0]}</span> <span>{c.level.groups.mid[1]}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-14%;top:-30%;width:128%;height:160%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#BA1422" stroke-width="3" vector-effect="non-scaling-stroke" /></svg></span>
           <svg class="mk groups__arrows" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d="M4 18 C 30 18, 50 30, 70 46 M60 44 L 71 47 L 66 36" stroke="#101314" stroke-width="2.5" vector-effect="non-scaling-stroke" /><path data-pen d="M4 82 C 30 82, 50 70, 70 54 M60 56 L 71 53 L 66 64" stroke="#101314" stroke-width="2.5" vector-effect="non-scaling-stroke" style="--d:.3s" /></svg>
         </div>
         <p class="level__groups">{c.level.groupLine}</p>
@@ -297,7 +294,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
           ))}
         </ul>
         <p class="swipe-hint marker" aria-hidden="true">{c.crew.swipe}</p>
-        <span class="crew__note marker" data-slam style="--d:.6s" aria-hidden="true">{c.crew.note}</span>
       </div>
     </section>
 
@@ -310,7 +306,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <h2 class="h2" id="h-day">{c.day.h2[0]}<br /><span class="pk-t">{c.day.h2[1]}</span></h2>
           <div class="day__lines">{c.day.lines.map((l) => <p>{l}</p>)}</div>
           <a class="btn btn--ghost day__cta" href="#schedule">{c.day.cta} <span aria-hidden="true">→</span></a>
-          <Splat class="day__splat" a="#BA1422" b="#FF94E3" />
         </div>
         <div class="notebook">
           <span class="tape notebook__tape" aria-hidden="true"></span>
@@ -368,19 +363,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="grain" data-grain="D" aria-hidden="true"></div>
       <div class="wrap">
         <p class="kicker kicker--ice"><span class="kicker__n">10</span>{c.price.kicker}</p>
-        <p class="price__big"><span>{c.price.value}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-5%;top:-4%;width:110%;height:108%" fill="none" stroke-linecap="round"><path data-pen d={circleD} stroke="#E1EFFA" stroke-width="3" vector-effect="non-scaling-stroke" /></svg><span class="price__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.price.note}</span></p>
+        <p class="price__big"><span>{c.price.value}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.12em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#101314" stroke-width="5" vector-effect="non-scaling-stroke" /></svg><span class="price__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.price.note}</span></p>
         <h2 class="price__h2" id="h-price">{c.price.h2}</h2>
         <div class="inout">
           <div class="inout__in">
             <p class="inout__k">{c.price.inLabel}</p>
             <ul role="list">{c.price.included.map((t) => <li><b aria-hidden="true">✓</b>{t}</li>)}</ul>
           </div>
-          <div class="inout__out">
-            <p class="inout__k">{c.price.outLabel}</p>
-            <ul role="list">{c.price.excluded.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
+          <div class="inout__side">
+            <div class="inout__out">
+              <p class="inout__k">{c.price.outLabel}</p>
+              <ul role="list">{c.price.excluded.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
+            </div>
+            <a class="btn btn--ice btn--lg price__cta" href="#apply">{c.price.cta} <span aria-hidden="true">→</span></a>
           </div>
         </div>
-        <a class="btn btn--ice btn--lg price__cta" href="#apply">{c.price.cta} <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
@@ -390,14 +387,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="wrap final__wrap">
         <div class="final__poster">
           <div class="poster__top">
-            <span class="poster__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
+            <Logo class="logo--lg" alt="BAS CAMP" sizes="150px" />
             <span class="stamp stamp--pink" data-slam style="--d:.3s" aria-hidden="true">{c.apply.issue}</span>
           </div>
           <h2 class="final__h2" id="h-apply">{c.apply.h2[0]}<br /><span class="pk-t">{c.apply.h2[1]}</span></h2>
           <ul class="final__facts" role="list">
             {c.apply.poster.map(([a, b]) => <li><span>{a}</span>{b && <small>{b}</small>}</li>)}
           </ul>
-          <Splat class="final__splat" />
           <svg class="mk final__arrow" aria-hidden="true" viewBox="0 0 80 50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path data-pen d={curveD} stroke="#FF94E3" stroke-width="3" /></svg>
         </div>
         <div class="coupon-form">
@@ -485,7 +481,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <footer class="sec dk foot">
     <div class="wrap foot__wrap">
       <div class="foot__l">
-        <span class="foot__logo" role="img" aria-label="BAS CAMP">BAS<b aria-hidden="true">★</b>CAMP</span>
+        <Logo class="logo--lg" alt="BAS CAMP" sizes="150px" />
         <p class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br /><a href={rider.phoneHref}>{rider.phone}</a> · <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
       </div>
       <div class="foot__r">

@@ -2,7 +2,7 @@
 // Anything still unknown is marked TODO and rendered in [square brackets] so it is easy to spot.
 //
 // Content rules (from the brief):
-//  - the public BAS CAMP price is €800 (no other price is ever shown)
+//  - the public BAS CAMP price is €999 (no other price is ever shown)
 //  - BAS CAMP takes every level, complete beginners included (never say beginners can't come); riders are
 //    grouped by snowboard / ski, experience and level
 //  - no invented achievements, results, reviews or quotes: student cases stay placeholders until they're real
@@ -51,8 +51,8 @@ export const camp = {
   endDate: '2026-12-27',
   country: 'Italy',
   place: 'Valdidentro',
-  price: '€800',
-  priceValue: 800,
+  price: '€999',
+  priceValue: 999,
   spots: 15,
   days: 5,
   ridingDays: 3,
@@ -131,9 +131,8 @@ export const riderPage = {
   h2: ['Ilia', 'Baskakov'],
   sub: 'Career stats',
   meta: '20 years riding · 3 years coaching',
-  note: 'the legend',
   // the headline result, under the name
-  xgames: { place: '2nd', ord: 'place', event: 'X Games', where: 'China', ink: 'silver!' },
+  xgames: { place: '2nd', ord: 'place', event: 'X Games', where: 'China' },
   pics: {
     label: 'Photos of Ilia',
     note: '← swipe →',
@@ -147,14 +146,15 @@ export const riderPage = {
       { kind: 'photo', photo: 'air', pos: '42% 38%', cap: 'Cab 540 Japan grab', alt: 'Ilia upside down in the air above a kicker, a drone filming him' },
     ] as RiderPic[],
   },
-  badges: {
-    champ: { big: '3×', small: ['National', 'Champion'] },
-    europa: { top: 'Europa Cup', marker: 'Podiums', ink: '!!' },
-    junior: { top: 'Junior World', mid: 'Championship', low: 'participant' },
-    spin: { label: 'Biggest spin', value: '1620°' },
-    trick: { label: 'Favorite trick', value: 'Miller Flip' },
-    stance: { label: 'Stance', value: 'Regular' },
-  },
+  // six facts, one shape each: a small label over a big value
+  badges: [
+    { label: 'National Champion', value: '3×', hot: true },
+    { label: 'Europa Cup', value: 'Podiums' },
+    { label: 'Junior World Championship', value: 'Participant' },
+    { label: 'Biggest spin', value: '1620°', circle: true },
+    { label: 'Favorite trick', value: 'Miller Flip' },
+    { label: 'Stance', value: 'Regular' },
+  ] as { label: string; value: string; hot?: boolean; circle?: boolean }[],
   boards: [
     {
       top: 'board-1-top', base: 'board-1-base',
@@ -179,7 +179,7 @@ export const riderPage = {
       small: 'Pro Collage · 2024/25',
     },
   ] as { top: string; base: string; alt: string; spinLabel: string; big: string; small: string; tag?: string }[],
-  notes: { pro: 'pro ×3', one: '#1', egg: '1620°!', stamp: 'Joint × Baskakov' },
+  notes: { egg: '1620°!', stamp: 'Joint × Baskakov' },
   hint: 'Joint pro models · tap a board',
 };
 
@@ -218,7 +218,7 @@ export const progress = {
   kicker: 'Student progress',
   h2: ["Don't take our word for it.", 'Watch the progress.'],
   stamp: 'Real riders',
-  note: 'proof ↓',
+  note: 'proof',
   carousel: 'Student stories',
   labels: { start: 'Starting point', work: 'Worked on', result: 'Result', video: 'Student video' },
   // from Ilia (Oct 2026): names, levels, starting point and result; "worked on" is the coaching focus in short
@@ -278,7 +278,7 @@ export const train = {
     when: '23–27 December 2026',
     where: 'Italy',
     disciplines: 'Snowboard + Freeski',
-    price: '€800',
+    price: '€999',
     sticker: '15 spots',
     cta: 'Explore camp',
     alt: 'The BAS crew lined up on the snow, laughing',
@@ -289,10 +289,9 @@ export const train = {
 export const nextCamp = {
   kicker: 'Next camp',
   issue: 'Issue 01',
-  stamp: '15 spots',
   place: 'Italy',
   dates: camp.datesPoster,
-  facts: ['Snowboard + Freeski', '15 spots', '€800', 'All levels'],
+  facts: ['Snowboard + Freeski', '15 spots', '€999', 'All levels'],
   line: camp.line,
   cta: 'Explore BAS CAMP',
   photoAlt: '',
@@ -312,7 +311,7 @@ export const nextLevel = {
 
 // ---------------------------------------------------------------- /camp
 // A multi-day progression camp first (ride → feedback → video → adjust → ride again), the coaches second,
-// the trip third. Public price €800 only; a promo code is collected with the application and checked later
+// the trip third. Public price €999 only; a promo code is collected with the application and checked later
 // (by Ilia, or a backend once PUBLIC_PROMO_ENDPOINT exists) — never priced in the page.
 export type PlacePhoto = 'ice-karting' | 'st-moritz' | 'livigno-village' | 'livigno-pistes' | 'livigno-halfpipe';
 /** photos of places from Wikimedia Commons, used under their licences (cropped); photos supplied by BAS have no entry */
@@ -324,7 +323,7 @@ export const credits: Partial<Record<PlacePhoto, { author: string; license: stri
 
 export const campPage = {
   title: 'BAS CAMP Issue 01 — Snowboard + Ski training camp in Livigno, Italy, 23–27 Dec 2026',
-  description: 'Snowboard + ski training camp in Livigno, Italian Alps, with Ilia Baskakov and Aleksey Bogatyrev: coaching, filming and video analysis, a personal programme after camp, ice karting, 4 nights with breakfast. Beginner to advanced, 15 spots, €800. 23–27 December 2026.',
+  description: 'Snowboard + ski training camp in Livigno, Italian Alps, with Ilia Baskakov and Aleksey Bogatyrev: coaching, filming and video analysis, a personal programme after camp, ice karting, 4 nights with breakfast. 3-day ski pass included. Beginner to advanced, 15 spots, €999. 23–27 December 2026.',
   nav: [
     { label: 'Livigno', href: '#ride' },
     { label: 'Coaches', href: '#coaches' },
@@ -348,13 +347,13 @@ export const campPage = {
     dates: ['23—27', 'Dec', '2026'],
     place: 'Italy',
     spots: '15 spots',
-    price: '€800',
+    price: '€999',
     levelsLabel: 'Levels',
     levels: ['Beginner', 'Intermediate', 'Advanced'],
     cta: 'Join the camp',
     how: 'How it works ↓',
     scroll: 'Scroll',
-    notes: { ride: 'ride / learn / repeat', tourist: 'Crew of 15', date: '23—27.12' },
+    notes: { date: '23—27.12' },
     photoAlt: 'Ilia Baskakov in a one-hand plant on a rainbow rail, mountains behind',
   },
 
@@ -385,7 +384,9 @@ export const campPage = {
       { n: '02', t: 'Improve.', s: 'Targeted exercises. Coach feedback. Repeat and refine.' },
       { n: '03', t: 'Keep going.', s: 'A personal programme after camp: what to train and which exercises to use.' },
     ],
-    cta: 'View training programme',
+    cta: 'Download training programme',
+    ctaMeta: 'PDF · 4 pages',
+    file: '/BAS-CAMP-training-programme.pdf',
     notes: ['why?', 'again!', 'take it home'],
   },
 
@@ -437,7 +438,6 @@ export const campPage = {
       details: [{ l: 'Stance', v: 'Regular' }, { l: 'Favorite trick', v: 'Miller Flip' }],
       alt: 'Ilia Baskakov upside down in the air above a kicker',
       alt2: 'Ilia in a red competition bib, number 27',
-      note: 'the face of BAS',
       ig: rider.instagram,
     },
     aleksey: {
@@ -459,7 +459,6 @@ export const campPage = {
       ],
       tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
       alt: 'Aleksey Bogatyrev on skis, crossing his skis over a rail in a snowy park',
-      note: 'behind the camera too',
       ig: 'aleksey_bogatyrev',
     },
   },
@@ -489,7 +488,7 @@ export const campPage = {
     days: [
       { d: '23', m: 'Dec', t: ['Ride.'], body: 'Coached riding / training day.', small: 'Exact hours depend on arrival and logistics.', tone: 'paper' },
       { d: '24', m: 'Dec', t: ['Ride.', 'Then spa.'], body: 'Training day. Spa in the evening.', stamp: 'Spa entrance not included', tone: 'ice' },
-      { d: '25', m: 'Dec', t: ['Off.', 'St. Moritz.'], body: 'Recovery, a day trip, hanging out. Current plan: St. Moritz.', small: 'What you spend in St. Moritz isn’t part of the €800.', tone: 'pink' },
+      { d: '25', m: 'Dec', t: ['Off.', 'St. Moritz.'], body: 'Recovery, a day trip, hanging out. Current plan: St. Moritz.', small: 'What you spend in St. Moritz isn’t part of the price.', tone: 'pink' },
       { d: '26', m: 'Dec', t: ['Back on.'], body: 'Coached riding day: apply and lock in what you worked on.', tone: 'red' },
       { d: '27', m: 'Dec', t: ['One more?'], body: 'Departure. Optional riding until lunch, depending on your travel plans and mountain conditions.', tone: 'dark' },
     ],
@@ -531,12 +530,24 @@ export const campPage = {
   // 10 price
   price: {
     kicker: 'Price',
-    value: '€800',
+    value: '€999',
     h2: 'What’s included?',
     inLabel: 'In',
     outLabel: 'Out',
-    included: ['4 nights’ accommodation', 'Hotel breakfasts', 'Snowboard or ski coaching & tailored exercises', 'Filming & video analysis', 'Personal training programme after camp', 'Warm-up & cool-down', 'Ice karting', 'Camp organisation'],
-    excluded: ['Ski pass', 'Travel to and from the camp', 'Equipment rental', 'Lunch, dinner & other food and drinks', 'Spa entry'],
+    included: [
+      '3 days of coaching — the best-value package',
+      '3-day ski pass',
+      '4 nights’ accommodation',
+      'Breakfasts',
+      'Preparation guide',
+      'Exercise set to keep progressing after camp',
+      'Pro videos and photos',
+      'Ice karting — the one and only',
+      'Hotel ⇄ resort transfers',
+      'Prizes for best progress',
+      'Good atmosphere and new connections',
+    ],
+    excluded: ['Travel to and from the camp', 'Equipment rental', 'Lunch, dinner & other food and drinks', 'Spa entry'],
     note: 'no small print',
     cta: 'Join the camp',
   },
@@ -551,13 +562,9 @@ export const campPage = {
       { q: 'Can I come alone?', a: 'Yes.' },
       { q: 'Snowboard or ski?', a: 'Both. There is a snowboard coach and a ski coach.' },
       { q: 'How many people?', a: 'Maximum 15 participants.' },
-      { q: 'Is the hotel included?', a: 'Yes. 4 nights.' },
-      { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno.' },
-      { q: 'Is breakfast included?', a: 'Yes.' },
-      { q: 'Is ice karting included?', a: 'Yes.' },
-      { q: 'Is the ski pass included?', a: 'No.' },
-      { q: 'Is the spa included?', a: 'No.' },
-      { q: 'Is rental included?', a: 'No.' },
+      { q: 'What’s included in the €999?', a: 'Three days of coaching, a 3-day ski pass, 4 nights at the hotel with breakfast, hotel–resort transfers, ice karting, a preparation guide, an exercise set for after camp, pro videos and photos, and prizes for best progress.' },
+      { q: 'What’s not included?', a: 'Travel to and from the camp, equipment rental, lunches and dinners, and spa entry.' },
+      { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno. Transfers to the resort and back are included.' },
       { q: 'What happens on December 25?', a: 'Current plan: day off / St. Moritz.' },
       { q: 'Can I ride on December 27?', a: 'Potentially until lunch, depending on departure plans and conditions.' },
       // TODO(campFaq): confirm these three before launch — nothing is promised until then
@@ -571,7 +578,7 @@ export const campPage = {
   apply: {
     issue: 'Issue 01',
     h2: ['See you', 'on the mountain.'],
-    poster: [['Italy', ''], ['23—27 Dec', '2026'], ['15 spots', ''], ['€800', '']],
+    poster: [['Italy', ''], ['23—27 Dec', '2026'], ['15 spots', ''], ['€999', '']],
     kicker: 'Apply',
     lead: 'Not a payment — an application. We’ll contact you to confirm your place, riding group and next steps.',
     name: 'Name',
@@ -613,7 +620,7 @@ export const campPage = {
       intro: 'Hi Ilia! I’d like to join BAS CAMP Issue 01, Italy, 23–27 Dec 2026.',
     },
   },
-  sticky: { dates: '23—27 Dec', price: '€800', cta: 'Join →' },
+  sticky: { dates: '23—27 Dec', price: '€999', cta: 'Join →' },
   footer: {
     issue: 'BAS CAMP · Issue 01 · Winter 26/27',
     back: '← Back to start',

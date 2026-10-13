@@ -7,7 +7,7 @@ ecosystem: six full-screen pages, one gesture = one page, with a WebGL paper-cru
 | --- | --- | --- |
 | 01 | Cover (`cover`) | Name, "Ride better.", the headline results, the two CTAs |
 | 02 | The rider (`ilia`) | Career stats: a swipeable pile of trick prints, 2nd at X Games China, badges, the three pro boards |
-| 03 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, €800 (→ `/camp`) |
+| 03 | Next camp (`next-camp`) | BAS CAMP Issue 01 teaser: Italy, 23—27 Dec 2026, €999 (→ `/camp`) |
 | 04 | The coach (`coaching`) | 20 years riding / 3 years coaching, how a session works, a training-session GIF |
 | 05 | Student progress (`progress`) | A pile of before/after postcards (Katya → Max → Timur), each with its story |
 | 06 | Train with Ilia (`train`) | Private coaching (opens an Instagram DM) or BAS CAMP (→ `/camp`); contacts and "back to start" at the foot |
@@ -45,10 +45,10 @@ Every visible string lives in **`src/content/site.ts`**. Unknowns are marked `TO
   what they worked on, the result and an optional quote. Nothing here is invented: until a case is real it
   stays a placeholder.
 - **Coaching photo or clip (`coachPage.media`)**, **BAS life photos** (St. Moritz, Christmas; `life.tiles`).
-- **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €800 includes, the second
+- **Camp page:** the day-by-day program, hotel, St. Moritz itinerary, spa, what the €999 includes, the second
   coach.
 
-Content rules from the brief, kept in `site.ts`: the public BAS CAMP price is **€800** (no other price is
+Content rules from the brief, kept in `site.ts`: the public BAS CAMP price is **€999** (no other price is
 shown); BAS CAMP takes **every level, complete beginners included**, with groups by snowboard / ski,
 experience and level; no invented achievements, results, reviews or quotes; no fake urgency.
 

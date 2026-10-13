@@ -38,3 +38,17 @@
 .tilt:hover { rotate: 0deg !important; }
 @media (max-width: 899px) { .hide-m { display: none !important; } }
 @media (min-width: 900px) { .hide-d { display: none !important; } }
+
+/* ---------- logo: the BAS CAMP patch (components/Logo.astro) ---------- */
+.logo { display: block; width: auto; height: 40px; aspect-ratio: 640 / 416; flex: none; }
+.logo--head { height: 40px; }
+.logo--lg { height: clamp(64px, 9vw, 96px); rotate: -3deg; box-shadow: 4px 5px 0 rgba(16,19,20,.35); }
+.logo--foot { height: 36px; }
+.logo--full { height: auto; width: clamp(150px, 16vw, 230px); aspect-ratio: 900 / 1138; }
+/* outline button (menu, back to top) */
+.btn-line {
+  appearance: none; background: none; border: 1.5px solid currentColor; color: inherit; border-radius: 0;
+  display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 14px;
+  font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 12px; letter-spacing: .08em; line-height: 1;
+  cursor: pointer; text-transform: uppercase; text-decoration: none;
+}
