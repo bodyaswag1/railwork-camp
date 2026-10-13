@@ -94,7 +94,7 @@ const ext = { target: '_blank', rel: 'noopener' };
 
   <header class="masthead" data-chrome data-head="dark">
     <a class="masthead__brand" href="#cover" data-go="0">
-      <Logo class="logo--head" eager sizes="80px" />
+      <Logo class="logo--head" tone="auto" eager sizes="56px" />
       <span class="sr-only">{brand.logoAlt}</span>
     </a>
     <span class="counter" aria-hidden="true" data-counter>01/{String(pages.length).padStart(2, '0')}</span>
@@ -231,7 +231,7 @@ const ext = { target: '_blank', rel: 'noopener' };
           <Splat class="nextcamp__splat" a="#E1EFFA" b="#101314" stamp="1.2" />
         </div>
         <div class="nextcamp__top">
-          <Logo class="logo--lg" sizes="(min-width: 900px) 150px, 110px" />
+          <Logo class="logo--lg" tone="red" sizes="(min-width: 900px) 130px, 90px" />
           <span class="nextcamp__issue">{nextCamp.issue}</span>
         </div>
         <div class="nextcamp__main">
@@ -406,7 +406,7 @@ const ext = { target: '_blank', rel: 'noopener' };
             </article>
           </div>
           <footer class="train__foot final__foot">
-            <Logo class="logo--foot" sizes="70px" />
+            <Logo class="logo--foot" sizes="60px" />
             <p class="final__ig"><span class="final__ig-l">{nextLevel.social}</span> <a href={rider.instagramUrl} {...ext}>@{rider.instagram} <span aria-hidden="true">↗</span></a></p>
             <p class="final__contact"><a href={rider.phoneHref}>{rider.phone}</a> <span aria-hidden="true">·</span> <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
             <span class="train__copy">{nextLevel.footer.copyright}</span>

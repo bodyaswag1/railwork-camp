@@ -64,7 +64,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <a class="skip" href="#main">{ui.skip}</a>
 
   <header class="topbar">
-    <a class="topbar__brand" href="/"><Logo class="logo--head" eager sizes="80px" /><span class="sr-only">{c.back}</span></a>
+    <a class="topbar__brand" href="/"><Logo class="logo--head" eager sizes="56px" /><span class="sr-only">{c.back}</span></a>
     <span class="topbar__issue" aria-hidden="true">{c.hero.issue}</span>
     <nav class="topbar__nav" aria-label="Camp">
       {c.nav.map((l) => <a href={l.href}>{l.label}</a>)}
@@ -363,19 +363,19 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="grain" data-grain="D" aria-hidden="true"></div>
       <div class="wrap">
         <p class="kicker kicker--ice"><span class="kicker__n">10</span>{c.price.kicker}</p>
-        <p class="price__big"><span>{c.price.value}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.12em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#101314" stroke-width="5" vector-effect="non-scaling-stroke" /></svg><span class="price__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.price.note}</span></p>
+        <div class="price__head">
+          <p class="price__big"><span>{c.price.value}</span><svg class="mk" aria-hidden="true" viewBox="0 0 100 16" preserveAspectRatio="none" style="left:0;bottom:-.1em;width:100%;height:.12em" fill="none" stroke-linecap="round"><path data-pen d={dblD} stroke="#101314" stroke-width="5" vector-effect="non-scaling-stroke" /></svg><span class="price__note marker" data-slam style="--d:.8s" aria-hidden="true">{c.price.note}</span></p>
+          <a class="btn btn--ice btn--lg price__cta" href="#apply">{c.price.cta} <span aria-hidden="true">→</span></a>
+        </div>
         <h2 class="price__h2" id="h-price">{c.price.h2}</h2>
         <div class="inout">
           <div class="inout__in">
             <p class="inout__k">{c.price.inLabel}</p>
             <ul role="list">{c.price.included.map((t) => <li><b aria-hidden="true">✓</b>{t}</li>)}</ul>
           </div>
-          <div class="inout__side">
-            <div class="inout__out">
-              <p class="inout__k">{c.price.outLabel}</p>
-              <ul role="list">{c.price.excluded.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
-            </div>
-            <a class="btn btn--ice btn--lg price__cta" href="#apply">{c.price.cta} <span aria-hidden="true">→</span></a>
+          <div class="inout__out">
+            <p class="inout__k">{c.price.outLabel}</p>
+            <ul role="list">{c.price.excluded.map((t) => <li><b aria-hidden="true">✕</b>{t}</li>)}</ul>
           </div>
         </div>
       </div>
@@ -387,7 +387,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="wrap final__wrap">
         <div class="final__poster">
           <div class="poster__top">
-            <Logo class="logo--lg" alt="BAS CAMP" sizes="150px" />
+            <Logo class="logo--xl" alt="BAS CAMP" sizes="(min-width: 900px) 220px, 150px" />
             <span class="stamp stamp--pink" data-slam style="--d:.3s" aria-hidden="true">{c.apply.issue}</span>
           </div>
           <h2 class="final__h2" id="h-apply">{c.apply.h2[0]}<br /><span class="pk-t">{c.apply.h2[1]}</span></h2>
@@ -481,7 +481,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <footer class="sec dk foot">
     <div class="wrap foot__wrap">
       <div class="foot__l">
-        <Logo class="logo--lg" alt="BAS CAMP" sizes="150px" />
+        <Logo class="logo--xl" alt="BAS CAMP" sizes="(min-width: 900px) 200px, 150px" />
         <p class="foot__c">Instagram <a href={rider.instagramUrl} {...ext}>@{rider.instagram}</a><br /><a href={rider.phoneHref}>{rider.phone}</a> · <a href={`mailto:${rider.email}`}>{rider.email}</a></p>
       </div>
       <div class="foot__r">

@@ -10,8 +10,9 @@ const b64 = (file, mime) => `data:${mime};base64,${fs.readFileSync(file).toStrin
 const jpg = async (file, width, opts = {}) => `data:image/jpeg;base64,${(await sharp(file).resize({ width, ...opts }).jpeg({ quality: 82, mozjpeg: true }).toBuffer()).toString('base64')}`;
 const font = (file) => b64(file, 'font/woff2');
 
-const logo = await jpg('src/assets/brand/bas-camp-logo.png', 900);
-const wordmark = await jpg('src/assets/brand/bas-camp-wordmark.png', 480);
+const png = async (file, width) => `data:image/png;base64,${(await sharp(file).resize({ width }).png({ compressionLevel: 9 }).toBuffer()).toString('base64')}`;
+const logo = await png('src/assets/brand/bas-camp-on-dark.png', 520);
+const wordmark = await png('src/assets/brand/bas-camp-on-light.png', 200);
 const photoCoach = await jpg('src/assets/photos/camp-coaching.jpg', 900);
 // the cover photo is toned here, not with a CSS filter: a filtered image is embedded uncompressed
 const photoRail = `data:image/jpeg;base64,${(await sharp('src/assets/photos/ilia-rail.jpg').resize({ width: 1100 }).grayscale().linear(1.2, -38).jpeg({ quality: 80, mozjpeg: true }).toBuffer()).toString('base64')}`;
@@ -71,7 +72,7 @@ h1, h2, h3, p { margin: 0; }
 /* ---- 01 cover ---- */
 .cover__photo { position: absolute; right: 0; top: 0; width: 62%; height: 58%; object-fit: cover; object-position: 60% 40%; clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%, 5% 90%, 0 79%, 6% 68%, 2% 55%, 7% 43%, 3% 30%, 8% 16%); }
 .cover__tint { position: absolute; right: 0; top: 0; width: 62%; height: 58%; background: linear-gradient(200deg, rgba(186,20,34,.0) 30%, rgba(16,19,20,.85) 96%); clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%, 5% 90%, 0 79%, 6% 68%, 2% 55%, 7% 43%, 3% 30%, 8% 16%); }
-.cover__logo { width: 62mm; display: block; margin: -4mm 0 0 -5mm; }
+.cover__logo { width: 50mm; display: block; margin: -4mm 0 0 -3mm; rotate: -4deg; }
 .cover__k { margin-top: 10mm; font-size: 9pt; color: var(--pink); }
 .cover h1 { margin-top: 3mm; font-size: 96pt; letter-spacing: -.01em; }
 .cover h1 span { display: block; }
@@ -88,8 +89,8 @@ h1, h2, h3, p { margin: 0; }
 .path i { position: absolute; right: -3.2mm; top: 50%; z-index: 2; width: 6.4mm; height: 6.4mm; margin-top: -3.2mm; border-radius: 50%; background: var(--pink); color: var(--night); display: grid; place-items: center; font: 900 9pt 'Archivo'; font-style: normal; }
 
 /* ---- steps ---- */
-.head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9mm; }
-.head img { height: 13mm; display: block; }
+.head { display: flex; justify-content: space-between; align-items: center; margin: -5mm 0 5mm; }
+.head img { height: 22mm; display: block; rotate: -4deg; }
 .head span { font-family: 'Archivo', sans-serif; font-weight: 800; font-stretch: 112%; font-size: 7.4pt; letter-spacing: .16em; text-transform: uppercase; color: var(--tower); }
 .step { position: relative; display: grid; grid-template-columns: 30mm 1fr; column-gap: 6mm; padding: 5mm 0 6mm; border-top: 1.4mm solid var(--night); }
 .step--tight { padding-bottom: 2mm; }
@@ -133,7 +134,7 @@ h1, h2, h3, p { margin: 0; }
   <span class="crop" style="left:8mm;top:8mm;border-top-width:.4mm;border-left-width:.4mm"></span>
   <span class="crop" style="right:8mm;bottom:8mm;border-bottom-width:.4mm;border-right-width:.4mm"></span>
   <img class="cover__logo" src="${logo}" alt="BAS CAMP">
-  <span class="stamp" style="left:74mm;top:30mm;rotate:-7deg;color:var(--pink)">Issue 01 · Winter 26/27</span>
+  <span class="stamp" style="left:66mm;top:30mm;rotate:-7deg;color:var(--pink)">Issue 01 · Winter 26/27</span>
   <p class="cover__k wide">Snowboard + ski training camp · Livigno, Italy · 23—27 Dec 2026</p>
   <h1 class="disp"><span>Training</span><span>programme.${mark(dblD, 'left:0;bottom:-3.2mm;width:100%;height:4.6mm', '#E1EFFA', 4, '0 0 100 16')}</span></h1>
   <p class="cover__tag">Understand your riding. <em>Know what to train next.</em></p>

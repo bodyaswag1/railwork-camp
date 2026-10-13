@@ -1,10 +1,16 @@
 ---
-// The BAS CAMP logo (white lettering over the red rider, on Night Run): a patch that sits on any page colour.
-// `full` adds the whole rider; sizes are set by the class of the place it sits in.
+// The BAS CAMP logo: the whole rider with the lettering across him, on a transparent background.
+// `tone` is the page it sits on (white lettering needs a dark or red page; a red rider needs a non-red one);
+// 'auto' renders all three and the masthead shows the one for the page under it (magazine.css).
 import { Image } from 'astro:assets';
-import wordmark from '../assets/brand/bas-camp-wordmark.png';
-import full from '../assets/brand/bas-camp-logo.png';
-interface Props { class?: string; full?: boolean; alt?: string; eager?: boolean; sizes?: string }
-const { class: cls = '', full: whole = false, alt = '', eager = false, sizes = '120px' } = Astro.props;
+import onDark from '../assets/brand/bas-camp-on-dark.png';
+import onLight from '../assets/brand/bas-camp-on-light.png';
+import onRed from '../assets/brand/bas-camp-on-red.png';
+interface Props { class?: string; tone?: 'dark' | 'light' | 'red' | 'auto'; alt?: string; eager?: boolean; sizes?: string }
+const { class: cls = '', tone = 'dark', alt = '', eager = false, sizes = '120px' } = Astro.props;
+const files = { dark: onDark, light: onLight, red: onRed };
+const tones = tone === 'auto' ? (['dark', 'light', 'red'] as const) : [tone];
 ---
-<Image src={whole ? full : wordmark} alt={alt} class:list={['logo', cls]} widths={whole ? [240, 480, 900] : [96, 192, 384, 640]} sizes={sizes} format="webp" loading={eager ? 'eager' : 'lazy'} draggable="false" />
+{tones.map((t, i) => (
+  <Image src={files[t]} alt={i === 0 ? alt : ''} class:list={['logo', `logo--on-${t}`, cls]} widths={[64, 128, 256, 480, 720]} sizes={sizes} format="webp" loading={eager ? 'eager' : 'lazy'} draggable="false" />
+))}

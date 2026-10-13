@@ -418,8 +418,6 @@ summary::-webkit-details-marker { display: none; }
 .price__note { position: absolute; left: 100%; top: 6%; margin-left: 4px; rotate: 9deg; color: var(--airbag-ice); font-size: clamp(22px, 2.6vw, 38px); white-space: nowrap; }
 .price__h2 { margin: clamp(24px, 4vw, 48px) 0 0; font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 4vw, 58px); line-height: .95; text-transform: uppercase; }
 .inout { display: grid; align-items: start; margin-top: 26px; }
-.inout__side { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; }
-.inout__side .inout__out { align-self: stretch; }
 .inout__in, .inout__out { padding: clamp(20px, 3vw, 36px); }
 .inout__in { background: var(--airbag-ice); color: var(--night-run); rotate: -.6deg; }
 .inout__out { background: var(--night-run); color: var(--airbag-ice); rotate: .5deg; }
@@ -431,7 +429,8 @@ summary::-webkit-details-marker { display: none; }
 .inout li b { flex: none; width: 1.1em; font-weight: 900; }
 .inout__in li b { color: var(--park-signal); }
 .inout__out li b { color: var(--goggle-tint); }
-.price__cta { margin-top: 0; color: var(--park-signal) !important; }
+.price__head { display: flex; flex-wrap: wrap; align-items: center; gap: 22px clamp(170px, 21vw, 320px); }
+.price__cta { color: var(--park-signal) !important; box-shadow: 5px 5px 0 var(--night-run); }
 @media (min-width: 900px) { .inout { grid-template-columns: repeat(2, minmax(0, 1fr)); } .price__big { font-size: min(20vw, 260px); } }
 @media (max-width: 599px) { .price__note { top: 26%; width: 5.2em; white-space: normal; font-size: 19px; line-height: 1.05; } }
 
@@ -510,7 +509,8 @@ fieldset[aria-invalid='true'] .methods span { border-color: var(--park-signal); 
 
 /* ---------- footer ---------- */
 .foot__wrap { padding-top: 48px; padding-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; }
-.foot__l { display: flex; flex-direction: column; gap: 12px; }
+.foot__l { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.foot .logo--xl { height: clamp(130px, 14vw, 170px); margin-left: 0; }
 .foot__c { margin: 0; font-size: 14px; line-height: 1.6; color: var(--slush-concrete); }
 .foot__c a { color: var(--airbag-ice); }
 .foot__r { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--slush-concrete); text-align: right; }

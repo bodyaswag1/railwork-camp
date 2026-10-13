@@ -28,6 +28,10 @@ body { font-family: var(--font-body); color: var(--night-run); -webkit-font-smoo
 .masthead[data-head='light'] { color: var(--night-run); }
 .masthead a, .masthead button { pointer-events: auto; }
 .masthead__brand { display: flex; align-items: center; text-decoration: none; color: inherit; }
+/* the logo takes the colours of the page under it */
+.masthead .logo--on-light, .masthead .logo--on-red { display: none; }
+.masthead[data-head='light'] .logo--on-dark, .masthead[data-head='red'] .logo--on-dark { display: none; }
+.masthead[data-head='light'] .logo--on-light, .masthead[data-head='red'] .logo--on-red { display: block; }
 .masthead__brand:hover { color: inherit !important; }
 .counter { font-family: var(--font-display); font-weight: 800; font-size: 12px; letter-spacing: .1em; font-variant-numeric: tabular-nums; opacity: .75; }
 .masthead__nav { display: none; }
