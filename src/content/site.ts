@@ -448,14 +448,14 @@ export const campPage = {
         { v: '14+', l: 'Years on skis' },
         { v: '25 m', l: 'Biggest gap' },
       ],
+      // the same shape as Ilia's facts: a big value over a small label
       facts: [
         { v: 'Lifesteez Media', l: 'Rider + filmer' },
-        { v: 'Action sports', l: 'Cinematographer' },
-      ],
-      bio: [
-        'Started freeskiing in 2012 after 10+ years of aggressive inline skating.',
-        'Coaches beginner → advanced. Based in the Austrian Alps.',
-        'Works across skiing, snowboarding and action-sports film production.',
+        { v: 'Cinematographer', l: 'Ski, snowboard & action-sports film' },
+        { v: 'Since 2012', l: 'Freeskiing' },
+        { v: '10+ years', l: 'Aggressive inline skating before skis' },
+        { v: 'Every level', l: 'Coaches beginners to advanced' },
+        { v: 'Austrian Alps', l: 'Home base' },
       ],
       tricks: { l: 'Favorite tricks', v: ['Knuckle nose butter 7', 'Tail press variations'] },
       alt: 'Aleksey Bogatyrev on skis, crossing his skis over a rail in a snowy park',

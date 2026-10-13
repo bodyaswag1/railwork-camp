@@ -294,16 +294,13 @@ summary::-webkit-details-marker { display: none; }
 .ch__big dt { margin-top: 4px; font-family: var(--font-display); font-weight: 800; font-stretch: 112%; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 .ch__big dd { position: relative; align-self: flex-start; margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 62%; font-size: clamp(66px, 8vw, 120px); line-height: .8; color: var(--park-signal); }
 .ch__facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 24px; }
-.ch__facts div { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1.5px solid var(--night-run); }
-.ch__facts dt { order: 2; font-size: 12px; font-weight: 600; color: var(--lift-tower); }
-.ch__facts dd { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; font-size: clamp(22px, 2.2vw, 30px); line-height: .95; text-transform: uppercase; }
-.ch__facts--2 { grid-template-columns: 1fr; }
+.ch__facts div { display: flex; flex-direction: column; gap: 3px; padding-top: 8px; border-top: 1.5px solid var(--night-run); container-type: inline-size; }
+.ch__facts dt { order: 2; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--lift-tower); }
+.ch__facts dd { margin: 0; font-family: var(--font-display); font-weight: 900; font-stretch: 75%; font-size: min(30px, 11.2cqi); line-height: .95; text-transform: uppercase; }
 .ch__details { margin: 0; display: flex; flex-wrap: wrap; gap: 14px 30px; }
 .ch__details div { display: flex; flex-direction: column; gap: 3px; }
 .ch__details dt { font-weight: 700; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--lift-tower); }
 .ch__details dd { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: var(--font-display); font-weight: 900; font-stretch: 112%; font-size: 15px; letter-spacing: .03em; text-transform: uppercase; }
-.ch__bio { display: flex; flex-direction: column; gap: 8px; max-width: 46ch; }
-.ch__bio p { margin: 0; font-size: 16px; line-height: 1.5; }
 @media (min-width: 900px) {
   .spread { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 5vw; align-items: start; }
   .ch--aleksey { margin-top: 140px; }

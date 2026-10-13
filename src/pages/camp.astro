@@ -206,10 +206,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <dl class="ch__big">
                 {c.coaches.aleksey.big.map((b) => <div><dt>{b.l}</dt><dd>{b.v}</dd></div>)}
               </dl>
-              <dl class="ch__facts ch__facts--2">
+              <dl class="ch__facts">
                 {c.coaches.aleksey.facts.map((f) => <div><dt>{f.l}</dt><dd>{f.v}</dd></div>)}
               </dl>
-              <div class="ch__bio">{c.coaches.aleksey.bio.map((p) => <p>{p}</p>)}</div>
               <dl class="ch__details">
                 <div><dt>{c.coaches.aleksey.tricks.l}</dt><dd>{c.coaches.aleksey.tricks.v.map((t) => <span>{t}</span>)}</dd></div>
               </dl>
