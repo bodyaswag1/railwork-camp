@@ -10,7 +10,6 @@
 export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
   lifeMedia: 'TODO: our own photos of the Livigno Christmas market, ice karting and the spa (the current ones are stand-ins)',
-  campFaq: 'TODO: how to get there and cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
   formEndpoint: 'TODO: set RESEND_API_KEY in Vercel (and verify bascamp.world in Resend); until then /api/apply answers 503 and the camp form hands the application over in an Instagram DM',
   campChannel: 'TODO: the BAS CAMP Telegram channel link (campMail.channelUrl); until then the applicant email leaves the "join the channel" block out',
@@ -86,12 +85,9 @@ export const pageIndex = (id: (typeof pages)[number]['id']) => pages.findIndex((
 
 export const nav = {
   label: 'Main',
-  links: [
-    { label: 'Ilia', page: 'ilia' },
-    { label: 'Coaching', page: 'coaching' },
-    { label: 'Camp', href: '/camp' },
-    { label: 'Instagram', href: rider.instagramUrl, external: true },
-  ],
+  /** the cover's masthead lists the sections; every other page keeps just the camp button + Menu */
+  links: pages.slice(1).map((p) => ({ label: p.title, page: p.id })),
+  instagram: { label: 'Instagram', href: rider.instagramUrl },
   cta: 'Join BAS CAMP',
   ctaShort: 'Join camp',
 };
@@ -572,10 +568,9 @@ export const campPage = {
       { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno. Transfers to the resort and back are included.' },
       { q: 'What’s the plan day by day?', a: '23 Dec: arrival, the Livigno Christmas market and an intro meeting. 24 Dec: slope, then ice karting. 25 Dec: slope, then free time. 26 Dec: slope, then spa. 27 Dec: optional skiing or riding without a coach, then the road home.' },
       { q: 'Can I ride on December 27?', a: 'Yes, if you want to: it’s optional and on your own, without a coach, before the road home.' },
-      // TODO(campFaq): confirm travel and cancellation before launch — nothing is promised until then
-      { q: 'How do we get there?', a: '[To be confirmed: travel to Livigno / Valdidentro]', todo: true },
+      { q: 'How do we get there?', a: 'Livigno is 218 km from Milan: 2–3 hours by car, or about 4–6 hours by public transport.' },
       { q: 'Payment / deposit?', a: 'A €250 reservation fee locks in your spot. The remaining €749 is due by 9 December 2026 (two weeks before camp), or in cash when you arrive. Ilia sends you the payment details once you’ve applied.' },
-      { q: 'Cancellation?', a: '[To be confirmed: cancellation policy]', todo: true },
+      { q: 'Cancellation?', a: 'You can cancel until 3 December 2026, three weeks before camp starts.' },
     ] as { q: string; a: string; todo?: boolean }[],
   },
 

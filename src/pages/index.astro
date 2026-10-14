@@ -92,19 +92,23 @@ const ext = { target: '_blank', rel: 'noopener' };
   <a class="skip" href="#main" data-skip>{ui.skip}</a>
   <div class="sr-only" aria-live="polite" data-live></div>
 
-  <header class="masthead" data-chrome data-head="dark">
+  <header class="masthead" data-chrome data-head="dark" data-at="cover">
     <a class="masthead__brand" href="#cover" data-go="0">
       <Logo class="logo--head" tone="auto" eager sizes="56px" />
       <span class="sr-only">{brand.logoAlt}</span>
     </a>
     <span class="counter" aria-hidden="true" data-counter>01/{String(pages.length).padStart(2, '0')}</span>
-    <nav class="masthead__nav" aria-label={nav.label}>
-      {nav.links.map((l) => l.page
-        ? <a href={`#${l.page}`} data-go={P(l.page as any)} data-nav={l.page}>{l.label}</a>
-        : <a href={l.href} {...(l.external ? ext : {})}>{l.label}{l.external && <span aria-hidden="true"> ↗</span>}{l.external && <span class="sr-only"> {ui.newTab}</span>}</a>)}
-    </nav>
-    <a class="btn btn--red btn--sm masthead__cta" href="/camp"><span class="masthead__cta-l">{nav.cta}</span><span class="masthead__cta-s" aria-hidden="true">{nav.ctaShort}</span></a>
-    <button class="btn-line masthead__menu" type="button" aria-haspopup="dialog" aria-controls="menu" data-menu-open>{ui.menu}</button>
+    <!-- the cover lists the sections + Instagram; on every other page they fold into Menu and the camp button pops in -->
+    <div class="masthead__end">
+      <nav class="masthead__nav" aria-label={nav.label}>
+        {nav.links.map((l, i) => <a href={`#${l.page}`} data-go={P(l.page)} data-nav={l.page} style={`--i:${nav.links.length - 1 - i}`}>{l.label}</a>)}
+      </nav>
+      <a class="btn btn--red btn--sm masthead__cta" href="/camp"><span class="masthead__cta-l">{nav.cta}</span><span class="masthead__cta-s" aria-hidden="true">{nav.ctaShort}</span></a>
+      <button class="btn-line masthead__menu" type="button" aria-haspopup="dialog" aria-controls="menu" data-menu-open>{ui.menu}</button>
+      <a class="masthead__ig" href={nav.instagram.href} {...ext} aria-label={nav.instagram.label}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5.5" /><circle cx="12" cy="12" r="4.2" /><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" /></svg>
+      </a>
+    </div>
   </header>
 
   <main id="main">
@@ -235,7 +239,7 @@ const ext = { target: '_blank', rel: 'noopener' };
         <div class="nextcamp__top">
           <Logo class="logo--lg" tone="red" sizes="(min-width: 900px) 130px, 90px" />
           <span class="nextcamp__issue">{nextCamp.issue}</span>
-          <Doodle name="goggles" anim="draw" class="doodle--ice nextcamp__gog" />
+          <Doodle name="crown" anim="draw" class="doodle--ice nextcamp__crown" />
         </div>
         <div class="nextcamp__main">
           <p class="kicker kicker--ice">{nextCamp.kicker}</p>
@@ -262,10 +266,10 @@ const ext = { target: '_blank', rel: 'noopener' };
             <span class="vtext coach__vt hide-m">Watch · Understand · Adjust · Repeat · Watch · Understand</span>
           </div>
           <header class="pg__head coach__head">
-            <p class="kicker"><span class="kicker__n">04</span>{coachPage.kicker}</p>
+            <p class="kicker"><span class="kicker__n">04</span>{coachPage.kicker}<Doodle name="spiky" anim="draw" class="doodle--pink kicker__doodle" /></p>
             <span class="stamp stamp--ice coach__stamp" data-stamp="0.8" aria-hidden="true">Coach mode: on</span>
             <h2 class="h2 coach__h2" id="h-coaching" tabindex="-1">
-              {coachPage.h2.map(([n, rest], i) => <span class="coach__line"><em>{n}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-28%;top:-8%;width:156%;height:112%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg>}</em> {rest}</span>)}
+              {coachPage.h2.map(([n, rest], i) => <span class="coach__line"><em>{n}{i === 1 && <svg class="mk" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="left:-28%;top:-8%;width:156%;height:112%" fill="none" stroke="#FF94E3" stroke-width="3" stroke-linecap="round"><path data-draw vector-effect="non-scaling-stroke" d={circleD} /></svg>}</em> {rest}{i === 0 && <Doodle name="speed" anim="draw" class="doodle--pink doodle--in coach__speed hide-m" />}</span>)}
             </h2>
             <p class="coach__lead"><strong>{coachPage.lead}</strong> {coachPage.leadMore}</p>
           </header>
@@ -276,6 +280,7 @@ const ext = { target: '_blank', rel: 'noopener' };
                 <li class="loop__step"><span class="loop__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="loop__w">{s.word}</span><span class="loop__l">{s.line}</span></li>
               ))}
             </ol>
+            <Doodle name="ttt" anim="draw" class="doodle--ice coach__ttt hide-m" />
           </div>
           <figure class="coach__media tilt">
             <span class="tape coach__tape1" aria-hidden="true"></span><span class="tape coach__tape2" aria-hidden="true"></span>
@@ -283,6 +288,8 @@ const ext = { target: '_blank', rel: 'noopener' };
             {/* the session GIF over its still: fetched when this page comes up (magazine.ts), never in the paper's copies */}
             <img class="coach__gif" data-page-gif={coachPage.media.gif} data-nocopy alt="" aria-hidden="true" decoding="async" />
             <span class="coach__rec" aria-hidden="true"><i></i>REC</span>
+            <Doodle name="horns" anim="draw" class="doodle--pink coach__horns" />
+            <Doodle name="goggles" anim="draw" class="doodle--ice coach__gog" />
           </figure>
         </div>
       </div>

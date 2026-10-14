@@ -158,7 +158,19 @@ export function prepare(i: number) {
 
 /** the masthead takes the colours of the page under it ('dark' while the paper is on the black stage) */
 const setHead = (tone: string) => { masthead.dataset.head = tone; };
-const setAt = (i: number) => { masthead.dataset.at = ids[i]; };
+// leaving the cover, its section links fly into the Menu button (each needs its own distance to it)
+const setAt = (i: number) => {
+  const was = masthead.dataset.at;
+  if (was === ids[i]) return;
+  if (was === 'cover' && busy) {
+    const to = menuBtn.getBoundingClientRect().left + 12;
+    masthead.querySelectorAll<HTMLElement>('.masthead__nav a').forEach((a) => a.style.setProperty('--fly', `${Math.round(to - a.getBoundingClientRect().left)}px`));
+    menuBtn.classList.remove('is-gulp');
+    setTimeout(() => menuBtn.classList.add('is-gulp'), 260);
+    setTimeout(() => menuBtn.classList.remove('is-gulp'), 800);
+  }
+  masthead.dataset.at = ids[i];
+};
 
 function setActive(i: number) {
   secs.forEach((s, k) => {

@@ -34,11 +34,8 @@ body { font-family: var(--font-body); color: var(--night-run); -webkit-font-smoo
 .masthead[data-head='light'] .logo--on-light, .masthead[data-head='red'] .logo--on-red { display: block; }
 .masthead__brand:hover { color: inherit !important; }
 .counter { font-family: var(--font-display); font-weight: 800; font-size: 12px; letter-spacing: .1em; font-variant-numeric: tabular-nums; opacity: .75; }
-.masthead__nav { display: none; }
-.masthead__cta { margin-left: auto; }
 .masthead__cta-s { display: none; }
 .masthead[data-head='red'] .masthead__cta { background: var(--airbag-ice); color: var(--park-signal); }
-.masthead[data-at='cover'] .masthead__cta { visibility: hidden; }
 .masthead .masthead__cta, .masthead .masthead__menu {
   min-height: 38px; padding: 0 14px; border: 1.5px solid currentColor; font-weight: 900; font-size: 12px; letter-spacing: .08em; line-height: 1;
 }
@@ -49,17 +46,57 @@ body { font-family: var(--font-body); color: var(--night-run); -webkit-font-smoo
   .masthead__cta-l { display: none; }
   .masthead__cta-s { display: inline; }
 }
-@media (min-width: 900px) {
-  .masthead { gap: 18px; }
-  .masthead__nav { display: flex; gap: clamp(18px, 2.2vw, 34px); margin-left: auto; }
+@media (min-width: 900px) { .masthead { gap: 18px; } }
+
+/* Menu sits at the right; the section links (cover) and the camp button (every other page) are laid over the
+   space to its left, so swapping one for the other moves nothing else. Instagram, a plain glyph at the very
+   right, folds away on the inner pages. */
+.masthead__end { position: relative; display: flex; align-items: center; margin-left: auto; --gap: 10px; }
+@media (min-width: 900px) { .masthead__end { --gap: 18px; } }
+.masthead__nav, .masthead__cta { position: absolute; right: calc(100% + var(--gap)); top: 50%; }
+.masthead__nav { display: none; width: max-content; gap: clamp(14px, 1.7vw, 30px); translate: 0 -50%; pointer-events: none; }
+.masthead__cta {
+  width: max-content; translate: 0 -50%; transform-origin: 85% 50%;
+  transition: opacity .3s ease .2s, scale .55s cubic-bezier(.3, 1.7, .5, 1) .2s, rotate .55s cubic-bezier(.3, 1.7, .5, 1) .2s, visibility 0s .2s,
+    background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.masthead[data-at='cover'] .masthead__cta {
+  opacity: 0; scale: .3; rotate: -14deg; visibility: hidden; pointer-events: none;
+  transition: opacity .15s ease, scale .2s ease-in, rotate .2s ease-in, visibility 0s .2s;
+}
+.masthead__ig {
+  display: grid; place-items: center; width: 0; height: 38px; margin-left: calc(-1 * var(--gap)); margin-right: -7px; overflow: hidden;
+  opacity: 0; visibility: hidden; color: inherit; transition: width .35s ease, margin .35s ease, opacity .2s ease, visibility 0s .35s;
+}
+.masthead[data-at='cover'] .masthead__ig { width: 38px; margin-left: 0; opacity: 1; visibility: visible; transition: width .35s ease, margin .35s ease, opacity .3s ease .15s; }
+.masthead__ig svg { flex: none; width: 24px; height: 24px; transition: transform .2s ease; }
+.masthead__ig:hover { color: var(--goggle-tint) !important; }
+.masthead__ig:hover svg { transform: rotate(-8deg) scale(1.08); }
+/* Menu swallows the links as they fly in (magazine.ts sets .is-gulp) */
+.masthead__menu.is-gulp { animation: gulp .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes gulp { 0% { scale: 1; } 35% { scale: 1.18; rotate: -5deg; } 100% { scale: 1; rotate: 0deg; } }
+
+/* the section list: cover only, where there is room for all five */
+@media (min-width: 1024px) {
+  .masthead__nav { display: flex; }
   .masthead__nav a {
-    position: relative; padding: 8px 0; text-decoration: none; color: inherit;
-    font-family: var(--font-display); font-weight: 800; font-stretch: 112%; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    position: relative; padding: 8px 0; text-decoration: none; color: inherit; white-space: nowrap; pointer-events: none;
+    font-family: var(--font-display); font-weight: 800; font-stretch: 112%; font-size: clamp(11px, .95vw, 13px); letter-spacing: .1em; text-transform: uppercase;
+    /* folded: flown into the Menu button (--fly = distance to it, measured by magazine.ts) */
+    opacity: 0; visibility: hidden; translate: var(--fly, 120px) 0; scale: .2; transform-origin: 100% 50%;
+    transition: translate .32s cubic-bezier(.6, 0, .9, .5) calc(var(--i) * 35ms), scale .32s ease-in calc(var(--i) * 35ms), opacity .2s ease calc(var(--i) * 35ms + 120ms), visibility 0s calc(var(--i) * 35ms + .32s);
+  }
+  .masthead[data-at='cover'] .masthead__nav a {
+    opacity: 1; visibility: visible; translate: 0 0; scale: 1; pointer-events: auto;
+    transition: translate .5s cubic-bezier(.2, 1.3, .4, 1) calc(var(--i) * 55ms + 80ms), scale .5s cubic-bezier(.2, 1.3, .4, 1) calc(var(--i) * 55ms + 80ms), opacity .25s ease calc(var(--i) * 55ms + 80ms), visibility 0s calc(var(--i) * 55ms + 80ms);
   }
   .masthead__nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
-  .masthead__nav a:hover, .masthead__nav a[aria-current] { color: inherit !important; }
-  .masthead__nav a:hover::after, .masthead__nav a[aria-current]::after { transform: scaleX(1); }
-  .masthead__cta { margin-left: 8px; }
+  .masthead__nav a:hover { color: inherit !important; }
+  .masthead__nav a:hover::after { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .masthead__nav a, .masthead[data-at='cover'] .masthead__nav a, .masthead__cta, .masthead[data-at='cover'] .masthead__cta, .masthead__ig, .masthead[data-at='cover'] .masthead__ig { transition: none; }
+  .masthead__menu.is-gulp { animation: none; }
 }
 
 /* ---------- pages ---------- */
@@ -725,7 +762,17 @@ main { position: absolute; inset: 0; }
 .cover__horns { --dh: 54px; margin-left: 10px; rotate: -8deg; align-self: center; }
 .xg__trophy { --dh: 46px; rotate: 6deg; }
 .board__crown { position: absolute; top: -42px; left: 50%; --dh: 36px; translate: -50% 0; rotate: -4deg; }
-.nextcamp__gog { --dh: 34px; rotate: -6deg; }
+.nextcamp__crown { --dh: 34px; rotate: -6deg; }
+/* page 04: speed lines after "20 years riding.", a playbook grid under the loop,
+   stickers on the photo's free corners */
+.coach__speed { rotate: 0deg; margin-left: .25em; height: .6em; vertical-align: .05em; }
+.coach__ttt { position: absolute; right: 0; top: calc(100% + 18px); --dh: 64px; rotate: -8deg; }
+.coach__horns { position: absolute; right: -22px; top: -30px; --dh: 50px; rotate: 14deg; z-index: 2; }
+.coach__gog { position: absolute; left: -26px; bottom: -22px; --dh: 38px; rotate: -10deg; z-index: 2; }
+@media (max-width: 899px) {
+  .coach__horns { right: 4px; top: -24px; --dh: 40px; }
+  .coach__gog { left: 8px; bottom: -16px; --dh: 30px; }
+}
 .loop__bulb { position: absolute; left: calc(100% + 10px); top: -16px; --dh: 34px; rotate: 10deg; }
 /* beside the A / B box, out of the flow so the options keep their height */
 .opt__label { position: relative; }

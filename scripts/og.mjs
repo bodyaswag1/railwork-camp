@@ -8,7 +8,7 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, dev
 await page.goto(`${base}/#cover`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(3500);
 // a share card, not a screenshot: no navigation chrome
-await page.addStyleTag({ content: '.skip,.masthead__nav,.masthead__menu,.counter,.cover__hint{display:none!important}' });
+await page.addStyleTag({ content: '.skip,.masthead__nav,.masthead__menu,.masthead__ig,.counter,.cover__hint{display:none!important}' });
 const png = await page.screenshot();
 await sharp(png).resize(1200, 630).jpeg({ quality: 84, mozjpeg: true }).toFile('public/og.jpg');
 await browser.close();
