@@ -1,10 +1,11 @@
 // /camp: grain textures, marks that draw on as sections scroll in, the compact phone menu, the sticky ticket
-// and the application form. The form either POSTs to PUBLIC_FORM_ENDPOINT or — with no
-// backend configured — writes the application out for the rider to send Ilia as an Instagram DM; it never
-// pretends to have sent anything. A promo code is only ever collected: it is checked by PUBLIC_PROMO_ENDPOINT
+// and the application form. The form POSTs to /api/apply (which emails Ilia and the rider); when that
+// can't take it (not set up yet, an outage, offline) it writes the application out for the rider to send
+// Ilia as an Instagram DM. It never pretends to have sent anything. A promo code is only ever collected: it is checked by PUBLIC_PROMO_ENDPOINT
 // when there is one, otherwise by hand when the place is confirmed. No price logic lives in the page.
 import { makeNoise } from './paper';
-import { camp, campPage } from '../content/site';
+import { camp, campPage, type Chat } from '../content/site';
+import { check, chatName, cleanHandle, firstName, levelText } from '../lib/apply';
 
 const gL = makeNoise([16, 19, 20], 120, 11), gD = makeNoise([225, 239, 250], 90, 23);
 document.querySelectorAll<HTMLElement>('[data-grain]').forEach((el) => { el.style.backgroundImage = `url(${el.dataset.grain === 'D' ? gD : gL})`; });
@@ -94,7 +95,6 @@ const sent = document.querySelector<HTMLElement>('[data-sent]')!;
 const handoff = document.querySelector<HTMLElement>('[data-handoff]')!;
 const handoffMsg = handoff.querySelector<HTMLTextAreaElement>('[data-handoff-msg]')!;
 const copyBtn = handoff.querySelector<HTMLButtonElement>('[data-handoff-copy]')!;
-const net = form.querySelector<HTMLElement>('[data-net]')!;
 const submit = form.querySelector<HTMLButtonElement>('.submit')!;
 const levelSet = form.querySelector<HTMLElement>('fieldset[aria-describedby="e-level"]')!;
 const promoInput = form.querySelector<HTMLInputElement>('#f-promo')!;
@@ -102,19 +102,18 @@ const promoMsg = form.querySelector<HTMLElement>('[data-promo-msg]')!;
 const promoBtn = form.querySelector<HTMLButtonElement>('[data-promo-apply]')!;
 let tried = false;
 
-function errors() {
-  const d = new FormData(form), e: Record<string, string> = {};
-  if (!String(d.get('name') ?? '').trim()) e.name = t.errors.name;
-  const c = String(d.get('contact') ?? '').trim();
-  if (c.length < 2) e.contact = t.errors.contact;
-  else if (/^[^@\s]+@[^@\s]*$/.test(c) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)) e.contact = t.errors.email; // looks like an email, but isn't one
-  if (!d.get('level')) e.level = t.errors.level;
-  return e;
-}
+const handleLabel = form.querySelector<HTMLElement>('[data-handle-label]')!;
+const handleHint = form.querySelector<HTMLElement>('[data-handle-hint]')!;
+const showChat = () => { const c = chosenChat(); handleLabel.textContent = t.handle[c]; handleHint.textContent = t.handleHint[c]; };
+form.querySelectorAll('[data-chat]').forEach((r) => r.addEventListener('change', showChat));
+
+const field = (k: string) => String(new FormData(form).get(k) ?? '').trim();
+const chosenChat = () => field('chat') as Chat;
+const fields = () => ({ name: field('name'), email: field('email'), chat: chosenChat(), handle: field('handle'), level: field('level') });
 
 function validate() {
-  const e = errors();
-  for (const k of ['name', 'contact']) {
+  const e: Record<string, string | undefined> = check(fields());
+  for (const k of ['name', 'email', 'handle']) {
     form.querySelector<HTMLElement>(`#f-${k}`)!.setAttribute('aria-invalid', e[k] ? 'true' : 'false');
     form.querySelector<HTMLElement>(`#e-${k}`)!.textContent = e[k] ?? '';
   }
@@ -123,7 +122,6 @@ function validate() {
   return e;
 }
 
-const levelText = (v: string) => t.levels.find(([k]) => k === v)?.[1] ?? v;
 const promoCode = () => promoInput.value.trim().toUpperCase();
 
 // "Apply" on a code: with a promo endpoint, it answers; without one, the code just rides along with the
@@ -147,40 +145,35 @@ form.addEventListener('input', () => { if (tried) validate(); });
 form.addEventListener('change', () => { if (tried) validate(); });
 form.addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  tried = true; net.textContent = '';
+  tried = true;
   const e = validate();
   const first = Object.keys(e)[0];
   if (first) { (form.querySelector<HTMLElement>(first === 'level' ? 'input[name=level]' : `#f-${first}`))?.focus(); return; }
-  const d = new FormData(form);
+  const f = fields();
   const body = {
-    name: String(d.get('name') ?? '').trim(), contact: String(d.get('contact') ?? '').trim(),
-    discipline: String(d.get('discipline') ?? ''), level: String(d.get('level') ?? ''),
-    msg: String(d.get('msg') ?? '').trim(), promo: promoCode(), camp: camp.full,
+    ...f, handle: cleanHandle(f.chat, f.handle), discipline: field('discipline'),
+    msg: field('msg'), promo: promoCode(), camp: camp.full, company: field('company'),
   };
-  const endpoint = form.dataset.endpoint;
-  if (!endpoint) {
-    // TODO(formEndpoint): no backend yet — hand the application over as a DM the rider sends themselves
+  submit.disabled = true; submit.textContent = t.sending;
+  try {
+    const res = await fetch(form.dataset.endpoint || '/api/apply', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(String(res.status));
+    sent.querySelector('[data-sent-line]')!.textContent = t.sent.line(firstName(body.name));
+    sent.querySelector('[data-sent-reply]')!.textContent = t.sent.reply(chatName(body.chat));
+    form.hidden = true; sent.hidden = false; sent.focus();
+  } catch {
+    // TODO(formEndpoint): the mail isn't set up or didn't go out: hand the application over as a DM instead
     handoffMsg.value = [
       t.handoff.intro,
       `Name: ${body.name}`,
-      `Contact: ${body.contact}`,
+      `Email: ${body.email}`,
+      `${chatName(body.chat)}: ${body.handle}`,
       `Discipline: ${body.discipline}`,
       `Level: ${levelText(body.level)}`,
       body.msg ? `Message: ${body.msg}` : '',
       body.promo ? `Code: ${body.promo}` : '',
     ].filter(Boolean).join('\n');
     form.hidden = true; handoff.hidden = false; handoff.focus();
-    return;
-  }
-  submit.disabled = true; submit.textContent = t.sending;
-  try {
-    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-    if (!res.ok) throw new Error(String(res.status));
-    const firstName = body.name.split(/\s+/)[0] || 'rider';
-    sent.querySelector('[data-sent-line]')!.textContent = t.sent.line(firstName);
-    form.hidden = true; sent.hidden = false; sent.focus();
-  } catch {
-    net.textContent = t.errors.network;
   } finally {
     submit.disabled = false; submit.innerHTML = `${t.submit} <span aria-hidden="true">→</span>`;
   }
@@ -202,6 +195,7 @@ document.querySelectorAll('[data-again]').forEach((b) => b.addEventListener('cli
   form.querySelectorAll('.err, [data-promo-msg]').forEach((el) => { el.textContent = ''; });
   form.querySelectorAll('[aria-invalid]').forEach((el) => el.setAttribute('aria-invalid', 'false'));
   copyBtn.textContent = `${t.handoff.copy} ↗`;
+  showChat();
   sent.hidden = true; handoff.hidden = true; form.hidden = false;
   form.querySelector<HTMLElement>('#f-name')!.focus();
 }));

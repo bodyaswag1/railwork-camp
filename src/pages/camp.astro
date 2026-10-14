@@ -41,7 +41,8 @@ const jsonLd = [{
   offers: { '@type': 'Offer', price: String(camp.priceValue), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: new URL('/camp', site).href },
   image: new URL('/og.jpg', site).href, url: new URL('/camp', site).href,
 }];
-const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+// /api/apply (api/apply.ts) emails Ilia and the rider; PUBLIC_FORM_ENDPOINT can point the form elsewhere
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT || '/api/apply';
 const promoEndpoint = import.meta.env.PUBLIC_PROMO_ENDPOINT ?? '';
 const ext = { target: '_blank', rel: 'noopener' };
 
@@ -403,7 +404,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <div class="sent" role="status" hidden data-sent tabindex="-1">
             <div class="sent__stamp">{c.apply.sent.stamp}</div>
             <p class="sent__line" data-sent-line></p>
-            <p>{c.apply.sent.reply}</p>
+            <p data-sent-reply></p>
             <button class="linkbtn" type="button" data-again>{c.apply.sent.again}</button>
           </div>
           <div class="handoff" role="status" hidden data-handoff tabindex="-1">
@@ -424,10 +425,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <input class="in" id="f-name" name="name" autocomplete="name" required aria-describedby="e-name" />
               <span class="err" id="e-name" aria-live="polite"></span>
             </label>
-            <label class="fl" for="f-contact">{c.apply.contact} <small>{c.apply.contactHint}</small>
-              <input class="in" id="f-contact" name="contact" autocomplete="off" placeholder={c.apply.contactPh} required aria-describedby="e-contact" />
-              <span class="err" id="e-contact" aria-live="polite"></span>
+            <label class="fl" for="f-email">{c.apply.email}
+              <input class="in" id="f-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder={c.apply.emailPh} required aria-describedby="e-email" />
+              <span class="err" id="e-email" aria-live="polite"></span>
             </label>
+            <fieldset class="chat">
+              <legend>{c.apply.chat}</legend>
+              <div class="methods">
+                {c.apply.chats.map(([v, t], i) => <label><input type="radio" name="chat" value={v} checked={i === 0} data-chat /><span>{t}</span></label>)}
+              </div>
+              <label class="fl" for="f-handle"><span data-handle-label>{c.apply.handle.telegram}</span> <small data-handle-hint>{c.apply.handleHint.telegram}</small>
+                <input class="in" id="f-handle" name="handle" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder={c.apply.handlePh} required aria-describedby="e-handle" />
+                <span class="err" id="e-handle" aria-live="polite"></span>
+              </label>
+            </fieldset>
+            <label class="hp" aria-hidden="true">Company <input name="company" tabindex="-1" autocomplete="off" /></label>
             <fieldset>
               <legend>{c.apply.discipline}</legend>
               <div class="methods">
@@ -453,7 +465,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
               </div>
               <span class="promo__msg" id="e-promo" aria-live="polite" data-promo-msg></span>
             </details>
-            <span class="err" data-net aria-live="polite"></span>
             <button class="submit" type="submit">{c.apply.submit} <span aria-hidden="true">→</span></button>
           </form>
         </div>

@@ -32,7 +32,7 @@ npm run preview      # serves dist/ on http://localhost:4322
 
 `vercel.json` pins the framework (Astro), install/build commands and the `dist` output, so a branch builds
 even if the Vercel project was set up for a plain static site. If the site sits in a subfolder of the repo,
-set that as the project's root directory. Set the environment variable `PUBLIC_FORM_ENDPOINT` (see below) and update `site` in
+set that as the project's root directory. Set the environment variable `RESEND_API_KEY` (see below) and update `site` in
 `astro.config.mjs` to the real domain (canonical and OG URLs use it). `vercel.json` adds clean URLs (`/camp`)
 and long cache headers for hashed assets and fonts.
 
@@ -79,8 +79,23 @@ stories fit side by side and the carousel switches itself off.
 
 ## Apply form
 
-`/camp` POSTs JSON `{ name, discipline, method, contact, level, msg, camp }` to `PUBLIC_FORM_ENDPOINT` (set it
-in Vercel or `.env`: Formspree, a Telegram-bot webhook or similar). **With no endpoint** (the current state)
+`/camp` asks for name, email, where Ilia should text them (Telegram or Instagram + username), discipline,
+level, an optional note and code, and POSTs it as JSON to **`/api/apply`** (`api/apply.ts`, a Vercel function;
+`PUBLIC_FORM_ENDPOINT` can point the form elsewhere). The flow:
+
+1. The function checks the application (`src/lib/apply.ts`, shared with the form) and emails **Ilia**
+   (`rider.email`, or `NOTIFY_TO`) through [Resend](https://resend.com): the details, a one-tap "write in
+   Telegram/Instagram" button and a ready message with camp info and payment terms. Reply-to is the rider.
+2. It then emails the **rider** a note from Ilia: what they sent, what happens next, payment terms, the
+   training programme and, once `campMail.channelUrl` is set, the BAS CAMP Telegram channel. Reply-to is Ilia.
+3. Ilia texts the rider in their chat and pastes the ready message.
+
+Copy for both emails is `campMail` in `site.ts`; the layout is `src/emails/apply.ts`; the poster graphics are
+images in `public/mail/` baked by `node scripts/mail-art.mjs` (mail apps drop SVG and web fonts).
+`npm run mail:preview` renders both emails into `shots/mail/`.
+
+Env in Vercel: `RESEND_API_KEY` (required; bascamp.world is verified in Resend, DNS records live in Vercel
+DNS), optional `NOTIFY_TO` and `MAIL_FROM`. Without the key the function answers 503. On anything but a 200
 the form never pretends to send: it writes the application out and offers "Copy & open Instagram", which
 copies it and opens a DM with @baskakov74 (`ig.me/m/baskakov74`) to paste and send. Private coaching CTAs open
 that DM directly.

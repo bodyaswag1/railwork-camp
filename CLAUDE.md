@@ -39,7 +39,12 @@ in site.ts).
 Sections in order: poster · where we ride (Livigno) · progress with a plan (+ training-programme PDF)
 · coaches (Ilia snowboard, Aleksey Bogatyrev ski) · level · camp life · the crew · camp organisation
 (a training day: coaching photo, evening video GIF) · the five days · price · final poster + apply
-form · FAQ. With no `PUBLIC_FORM_ENDPOINT` set, the form hands the application over as an Instagram DM.
+form · FAQ. The form posts to `/api/apply` (`api/apply.ts`), which emails Ilia the application (with a
+one-tap chat link and a ready message) and emails the rider a note from Ilia, through Resend from
+ilia@bascamp.world. If that fails it hands the application over as an Instagram DM. Email copy is `campMail` in
+site.ts, layout `src/emails/apply.ts`, graphics `public/mail/` (re-bake with `node scripts/mail-art.mjs`),
+preview with `npm run mail:preview`. Payment terms: €250 reservation fee, the remaining €749 by 9 Dec or in
+cash on arrival.
 
 ## Patterns worth reusing
 
@@ -101,7 +106,8 @@ npx vercel deploy --prod --yes                   # look for "Aliased https://bas
 
 See `TODO` in `src/content/site.ts`: fuller student write-ups and quotes from Ilia; our own photos of
 the Christmas market, ice karting and spa; FAQ answers on travel, payment and cancellation;
-original-quality photos; `PUBLIC_FORM_ENDPOINT` in Vercel. Two smaller ones: a real coaching-moment
+original-quality photos; the BAS CAMP Telegram channel link (`campMail.channelUrl`) and how to pay the
+fee (`campPay.how`). Two smaller ones: a real coaching-moment
 clip to replace the slope GIF on the coach page (it's the same footage as /camp's evening video), and
 Ilia confirming each student's level (he listed beginner / intermediate / advanced in the same order
 as Max, Timur, Katya).

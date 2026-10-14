@@ -480,6 +480,10 @@ legend { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transfor
 .methods input:checked + span { background: var(--night-run); color: var(--airbag-ice); }
 .methods input:focus-visible + span { outline: 2px dashed var(--park-signal); outline-offset: 3px; }
 fieldset[aria-invalid='true'] .methods span { border-color: var(--park-signal); }
+.chat .methods label { flex: 1; }
+.chat .fl { margin-top: 10px; }
+/* a field people never see: bots fill it in */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 /* promo code: deliberately quiet, nobody should feel they're missing a public sale */
 .promo summary { cursor: pointer; display: inline-block; font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; color: var(--lift-tower); }
 .promo__row { display: flex; gap: 8px; margin-top: 10px; }

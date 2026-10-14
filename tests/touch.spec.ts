@@ -183,23 +183,50 @@ test('/camp "back to top"', async ({ page }) => {
   await page.waitForFunction(() => window.scrollY < 5, null, { timeout: 5000 });
 });
 
-test('/camp without a form backend: the application goes to Ilia as an Instagram DM, never a fake "sent"', async ({ page, context }) => {
+test('/camp when the mail can’t go out: the application goes to Ilia as an Instagram DM, never a fake "sent"', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.route('**/api/apply', (r) => r.fulfill({ status: 503, json: { ok: false } }));
   await page.goto('/camp');
   await page.waitForLoadState('networkidle');
   await page.fill('#f-name', 'Test Rider');
   await page.check('input[name=discipline][value=Snowboard]', { force: true });
-  await page.fill('#f-contact', '@testrider');
+  await page.fill('#f-email', 'test@example.com');
+  await page.fill('#f-handle', '@testrider');
   await page.check('input[name=level][value=first]', { force: true });
   await page.locator('form .submit').click({ force: true });
   await expect(page.locator('[data-handoff]')).toBeVisible();
   await expect(page.locator('[data-sent]')).toBeHidden();
   const msg = await page.locator('[data-handoff-msg]').inputValue();
   expect(msg).toContain('Name: Test Rider');
+  expect(msg).toContain('Email: test@example.com');
+  expect(msg).toContain('Telegram: @testrider');
   expect(msg).toContain('Level: First time');
   expect(msg).not.toContain('750');
   const popup = page.waitForEvent('popup');
   await page.locator('[data-handoff-copy]').click({ force: true });
   expect((await popup).url()).toMatch(/ig\.me\/m\/baskakov74|instagram\.com/);
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('Name: Test Rider');
+});
+
+test('/camp application: email and a chat handle are required, and the API gets a clean handle', async ({ page }) => {
+  let body: Record<string, string> | null = null;
+  await page.route('**/api/apply', async (r) => { body = r.request().postDataJSON(); await r.fulfill({ json: { ok: true, mailed: true } }); });
+  await page.goto('/camp');
+  await page.waitForLoadState('networkidle');
+  await page.fill('#f-name', 'Test Rider');
+  await page.check('input[name=level][value=beginner]', { force: true });
+  await page.locator('form .submit').click({ force: true });
+  await expect(page.locator('#e-email')).not.toBeEmpty();
+  await expect(page.locator('#e-handle')).not.toBeEmpty();
+  expect(body).toBeNull();
+  await page.fill('#f-email', 'test@example.com');
+  const insta = page.locator('.chat label', { hasText: 'Instagram' });
+  await insta.scrollIntoViewIfNeeded();
+  await insta.click();
+  await expect(page.locator('[data-handle-label]')).toHaveText(/Instagram/);
+  await page.fill('#f-handle', 'https://www.instagram.com/test.rider/');
+  await page.locator('form .submit').click({ force: true });
+  await expect(page.locator('[data-sent]')).toBeVisible();
+  await expect(page.locator('[data-sent-reply]')).toContainText('Instagram');
+  expect(body).toMatchObject({ email: 'test@example.com', chat: 'instagram', handle: '@test.rider', level: 'beginner' });
 });

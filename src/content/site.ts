@@ -10,9 +10,11 @@
 export const TODO = {
   studentCases: 'TODO: Ilia to write up each student in more detail (what they worked on, quotes)',
   lifeMedia: 'TODO: our own photos of the Livigno Christmas market, ice karting and the spa (the current ones are stand-ins)',
-  campFaq: 'TODO: how to get there, payment / deposit, cancellation — nothing is promised until confirmed',
+  campFaq: 'TODO: how to get there and cancellation — nothing is promised until confirmed',
   photos: 'TODO: original-quality photos (the current files are compressed messenger copies)',
-  formEndpoint: 'TODO: set PUBLIC_FORM_ENDPOINT in Vercel; until then the camp form hands the application over in an Instagram DM',
+  formEndpoint: 'TODO: set RESEND_API_KEY in Vercel (and verify bascamp.world in Resend); until then /api/apply answers 503 and the camp form hands the application over in an Instagram DM',
+  campChannel: 'TODO: the BAS CAMP Telegram channel link (campMail.channelUrl); until then the applicant email leaves the "join the channel" block out',
+  campPayment: 'TODO: how the €250 reservation fee is paid (bank details / link) — campPay.how; until then Ilia’s ready message carries a [bracketed] gap to fill before sending',
   promoEndpoint: 'TODO: optional PUBLIC_PROMO_ENDPOINT (POST {code} → {valid, message}); until then codes travel with the application and are checked by hand',
   figma: 'TODO: Figma exports hit the MCP rate limit — swap in bas-camp-logo, mascot-snowboard, bas-camp-splatter and the rest of the marker set',
 } as const;
@@ -36,6 +38,9 @@ export const rider = {
   phoneHref: 'tel:+436769828836',
   email: 'baskakov.ilia74@gmail.com',
 };
+
+/** where a camp applicant wants Ilia to text them */
+export type Chat = 'telegram' | 'instagram';
 
 export const camp = {
   name: 'BAS CAMP',
@@ -567,9 +572,9 @@ export const campPage = {
       { q: 'Where do we stay?', a: 'Meublè Rosalpina, a family-run guesthouse in Valdidentro (Via San Carlo 16), next to Livigno. Transfers to the resort and back are included.' },
       { q: 'What’s the plan day by day?', a: '23 Dec: arrival, the Livigno Christmas market and an intro meeting. 24 Dec: slope, then ice karting. 25 Dec: slope, then free time. 26 Dec: slope, then spa. 27 Dec: optional skiing or riding without a coach, then the road home.' },
       { q: 'Can I ride on December 27?', a: 'Yes, if you want to: it’s optional and on your own, without a coach, before the road home.' },
-      // TODO(campFaq): confirm these three before launch — nothing is promised until then
+      // TODO(campFaq): confirm travel and cancellation before launch — nothing is promised until then
       { q: 'How do we get there?', a: '[To be confirmed: travel to Livigno / Valdidentro]', todo: true },
-      { q: 'Payment / deposit?', a: '[To be confirmed: payment and deposit]', todo: true },
+      { q: 'Payment / deposit?', a: 'A €250 reservation fee locks in your spot. The remaining €749 is due by 9 December 2026 (two weeks before camp), or in cash when you arrive. Ilia sends you the payment details once you’ve applied.' },
       { q: 'Cancellation?', a: '[To be confirmed: cancellation policy]', todo: true },
     ] as { q: string; a: string; todo?: boolean }[],
   },
@@ -580,11 +585,15 @@ export const campPage = {
     h2: ['See you', 'on the mountain.'],
     poster: [['Italy', ''], ['23—27 Dec', '2026'], ['15 spots', ''], ['€999', '']],
     kicker: 'Apply',
-    lead: 'Not a payment — an application. We’ll contact you to confirm your place, riding group and next steps.',
+    lead: 'Not a payment — an application. You’ll get an email from me straight away, then I’ll text you to talk it through. — Ilia',
     name: 'Name',
-    contact: 'Contact',
-    contactHint: 'Instagram / Telegram / email',
-    contactPh: '@yourname or you@example.com',
+    email: 'Email',
+    emailPh: 'you@example.com',
+    chat: 'Where should I text you?',
+    chats: [['telegram', 'Telegram'], ['instagram', 'Instagram']] as [Chat, string][],
+    handle: { telegram: 'Your Telegram', instagram: 'Your Instagram' } as Record<Chat, string>,
+    handleHint: { telegram: '@username or phone number', instagram: '@username' } as Record<Chat, string>,
+    handlePh: '@yourname',
     discipline: 'Discipline',
     disciplines: ['Snowboard', 'Ski'] as const,
     level: 'Level',
@@ -597,18 +606,19 @@ export const campPage = {
     sending: 'Sending…',
     errors: {
       name: 'Your name, please.',
-      contact: 'How can we reach you? Instagram, Telegram or email.',
-      email: 'That email looks off.',
+      email: 'Your email, please: that’s where your confirmation goes.',
+      emailBad: 'That email looks off.',
+      handle: 'Your username, so I can text you.',
       level: 'Pick your level.',
-      network: 'Couldn’t send it. Check your connection and try again.',
     },
     sent: {
       stamp: 'Application in',
       line: (first: string) => `See you on the mountain, ${first}.`,
-      reply: 'We’ll contact you to confirm your place, riding group and next steps.',
+      reply: (chat: string) => `I’ve just emailed you the details (check spam if it isn’t there). I’ll text you on ${chat} to confirm your place, riding group and next steps. — Ilia`,
       again: 'Send another',
     },
-    // no form backend yet: the application goes to Ilia as an Instagram DM the rider sends themselves
+    // when /api/apply can't take it (no mail key yet, or an outage): the application goes to Ilia as an
+    // Instagram DM the rider sends themselves — never a fake "sent"
     handoff: {
       stamp: 'One last step',
       line: 'Send it to Ilia on Instagram.',
@@ -632,4 +642,90 @@ export const seo = {
   title: 'Ilia Baskakov — Pro snowboarder & coach · BAS',
   description: 'Ilia Baskakov, professional snowboarder and coach: 2nd at X Games China, 3× National Champion, Europa Cup podiums, 20 years riding, 1620° biggest spin. Private coaching (€100 an hour, €300 a day) and BAS CAMP, 23–27 December 2026 in Italy.',
   ogAlt: 'Ilia Baskakov — Ride better.',
+};
+
+// ---------------------------------------------------------------- camp application emails
+// Sent by /api/apply (layout in src/emails/apply.ts). The rider gets a note from Ilia; Ilia gets the
+// application with a one-tap link to their chat and a ready message to paste. Same content rules as the site.
+/** payment terms: a €250 reservation fee holds the spot, the rest is due two weeks before camp or in cash on arrival */
+export const campPay = {
+  fee: '€250',
+  rest: '€749',
+  restBy: '9 December 2026',
+  /** TODO(campPayment): how to pay the fee, as Ilia would write it in the chat */
+  how: '[how to pay: bank details / link]',
+};
+
+export const campMail = {
+  from: 'Ilia · BAS CAMP <ilia@bascamp.world>',
+  /** TODO(campChannel): t.me link of the BAS CAMP channel; empty = the email leaves that block out */
+  channelUrl: '',
+  site: 'https://bascamp.world',
+  programme: 'https://bascamp.world/BAS-CAMP-training-programme.pdf',
+  rider: {
+    subject: (first: string) => `${first}, it’s Ilia: got your BAS CAMP application 🤘`,
+    preheader: 'Here’s what you sent me and what happens next.',
+    hi: 'Hi',
+    intro: [
+      'This is Ilia. Your application for BAS CAMP Italy just landed in my inbox, and honestly, it made my day. Thank you for wanting to ride with us!',
+    ],
+    cardTitle: 'Your application',
+    cardStamp: 'Not a payment',
+    rows: { camp: 'Camp', where: 'Where', when: 'When', discipline: 'Discipline', level: 'Level', chat: 'I’ll text you on', price: 'Price', msg: 'Your note', promo: 'Code' },
+    where: 'Livigno, Italian Alps',
+    nextTitle: 'What happens next',
+    next: [
+      (chat: string, handle: string) => `I’ll text you on <b>${chat}</b> (${handle}) myself. No bots, just me.`,
+      () => 'I’ll send you everything about the camp and how to pay, and answer any question you’ve got.',
+      () => 'Once your spot is confirmed, I’ll add you to the crew chat with the rest of the riders.',
+    ],
+    payTitle: 'How payment works',
+    pay: [
+      ['Reservation fee', `${campPay.fee}, locks in your spot`],
+      ['The rest', `${campPay.rest} by ${campPay.restBy} (two weeks before camp), or in cash when you arrive`],
+    ] as [string, string][],
+    payNote: 'I’ll send you the payment details in the chat. Nothing to pay before that.',
+    levels: 'Every level is welcome. We split into groups by discipline and level, so you’ll ride with people at your pace.',
+    channel: {
+      title: 'While you wait',
+      body: 'Join the BAS CAMP channel on Telegram. That’s where I post camp news, the packing list and Livigno tips.',
+      cta: 'Join the channel →',
+    },
+    programme: 'Curious what we’ll work on?',
+    programmeCta: 'See the camp training programme (PDF)',
+    questions: 'Questions before I text you? Just reply to this email. It comes straight to me.',
+    bye: 'See you on the mountain!',
+    sign: 'Ilia',
+    signLine: 'Pro snowboarder & coach · BAS CAMP',
+    footer: 'You’re getting this because you applied for BAS CAMP at bascamp.world.',
+  },
+  // Ilia's notification: in Russian; the ready message to the rider stays in English, like the site
+  ilia: {
+    subject: (name: string, discipline: string, level: string) => `Новая заявка: ${name} · ${discipline} · ${level}`,
+    preheader: (chat: string, handle: string) => `Напиши в ${chat}: ${handle}`,
+    title: 'Новая заявка на BAS CAMP',
+    rows: { name: 'Имя', email: 'Email', chat: 'Писать в', discipline: 'Дисциплина', level: 'Уровень', msg: 'Сообщение', promo: 'Промокод', at: 'Когда' },
+    open: { telegram: 'Написать в Telegram →', instagram: 'Написать в Instagram →' } as Record<Chat, string>,
+    openNote: { telegram: 'В Telegram сообщение подставится само (если нет, вставь его из блока ниже).', instagram: 'Instagram не подставляет текст: скопируй сообщение ниже и вставь в чат.' } as Record<Chat, string>,
+    readyTitle: 'Готовое сообщение',
+    readyNote: 'То, что в [квадратных скобках], заполни перед отправкой.',
+    reply: (first: string) => `Ответишь на это письмо, и ответ уйдёт ${first} на email.`,
+  },
+  /** the message Ilia sends in the chat (step 4); edit freely */
+  dm: {
+    text: (first: string, discipline: string, level: string) => [
+      `Hey ${first}! It’s Ilia from BAS CAMP 🤙 Got your application, thanks for wanting to ride with us!`,
+      '',
+      'Quick rundown:',
+      '🏔 BAS CAMP Italy, 23–27 Dec 2026, Livigno (we stay in Valdidentro)',
+      `🏂 3 coached days on the mountain, in a group by level (${discipline.toLowerCase()}, ${level.toLowerCase()})`,
+      '🏨 4 nights with breakfast, 3-day ski pass, hotel ⇄ resort transfers, ice karting, pro videos and photos',
+      '💶 €999',
+      '',
+      `To lock in your spot: a ${campPay.fee} reservation fee. ${campPay.how}`,
+      `The remaining ${campPay.rest} is due by ${campPay.restBy} (two weeks before camp), or in cash when you arrive.`,
+      '',
+      'Any questions, fire away. Happy to help!',
+    ].join('\n'),
+  },
 };
