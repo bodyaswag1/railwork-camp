@@ -1,0 +1,1754 @@
+{
+ "source": "crumple.gif, 480x270, 76 frames, total 5070 ms",
+ "notes": "mask = luma > 26, watermark box (x>335,y>232) excluded; *_of_height = fraction of frame height; light_gradient_deg = direction luminance increases across the paper (image coords: 0 = right, -90 = up)",
+ "frames": [
+  {
+   "frame": 0,
+   "t_ms": 0,
+   "delay_ms": 70,
+   "area_of_frame": 0.0228,
+   "equiv_diameter_of_height": 0.227,
+   "bbox_w_of_height": 0.23,
+   "bbox_h_of_height": 0.23,
+   "centroid_from_centre_of_height": [
+    -0.005,
+    -0.01
+   ],
+   "solidity": 0.898,
+   "edge_roughness": 1.03,
+   "principal_axis_deg": -48.3,
+   "luma_p5_p50_p95": [
+    121,
+    218,
+    250
+   ],
+   "light_gradient_deg": -120,
+   "light_gradient_per_height": 315.5
+  },
+  {
+   "frame": 1,
+   "t_ms": 70,
+   "delay_ms": 60,
+   "area_of_frame": 0.0228,
+   "equiv_diameter_of_height": 0.227,
+   "bbox_w_of_height": 0.23,
+   "bbox_h_of_height": 0.23,
+   "centroid_from_centre_of_height": [
+    -0.005,
+    -0.01
+   ],
+   "solidity": 0.898,
+   "edge_roughness": 1.03,
+   "principal_axis_deg": -48.3,
+   "luma_p5_p50_p95": [
+    121,
+    218,
+    250
+   ],
+   "light_gradient_deg": -120,
+   "light_gradient_per_height": 315.3
+  },
+  {
+   "frame": 2,
+   "t_ms": 130,
+   "delay_ms": 70,
+   "area_of_frame": 0.0228,
+   "equiv_diameter_of_height": 0.227,
+   "bbox_w_of_height": 0.23,
+   "bbox_h_of_height": 0.23,
+   "centroid_from_centre_of_height": [
+    -0.005,
+    -0.01
+   ],
+   "solidity": 0.897,
+   "edge_roughness": 1.03,
+   "principal_axis_deg": -48.4,
+   "luma_p5_p50_p95": [
+    121,
+    218,
+    250
+   ],
+   "light_gradient_deg": -120,
+   "light_gradient_per_height": 314.7
+  },
+  {
+   "frame": 3,
+   "t_ms": 200,
+   "delay_ms": 70,
+   "area_of_frame": 0.0228,
+   "equiv_diameter_of_height": 0.227,
+   "bbox_w_of_height": 0.23,
+   "bbox_h_of_height": 0.23,
+   "centroid_from_centre_of_height": [
+    -0.005,
+    -0.01
+   ],
+   "solidity": 0.897,
+   "edge_roughness": 1.03,
+   "principal_axis_deg": -48.4,
+   "luma_p5_p50_p95": [
+    121,
+    218,
+    250
+   ],
+   "light_gradient_deg": -120,
+   "light_gradient_per_height": 314.4
+  },
+  {
+   "frame": 4,
+   "t_ms": 270,
+   "delay_ms": 60,
+   "area_of_frame": 0.0228,
+   "equiv_diameter_of_height": 0.227,
+   "bbox_w_of_height": 0.23,
+   "bbox_h_of_height": 0.23,
+   "centroid_from_centre_of_height": [
+    -0.005,
+    -0.01
+   ],
+   "solidity": 0.897,
+   "edge_roughness": 1.03,
+   "principal_axis_deg": -48.4,
+   "luma_p5_p50_p95": [
+    121,
+    218,
+    250
+   ],
+   "light_gradient_deg": -120,
+   "light_gradient_per_height": 314.3
+  },
+  {
+   "frame": 5,
+   "t_ms": 330,
+   "delay_ms": 70,
+   "area_of_frame": 0.0446,
+   "equiv_diameter_of_height": 0.318,
+   "bbox_w_of_height": 0.359,
+   "bbox_h_of_height": 0.337,
+   "centroid_from_centre_of_height": [
+    -0.019,
+    -0.005
+   ],
+   "solidity": 0.84,
+   "edge_roughness": 1.18,
+   "principal_axis_deg": 22.1,
+   "luma_p5_p50_p95": [
+    138,
+    211,
+    248
+   ],
+   "light_gradient_deg": -101,
+   "light_gradient_per_height": 195.9
+  },
+  {
+   "frame": 6,
+   "t_ms": 400,
+   "delay_ms": 70,
+   "area_of_frame": 0.0446,
+   "equiv_diameter_of_height": 0.318,
+   "bbox_w_of_height": 0.359,
+   "bbox_h_of_height": 0.337,
+   "centroid_from_centre_of_height": [
+    -0.019,
+    -0.005
+   ],
+   "solidity": 0.84,
+   "edge_roughness": 1.18,
+   "principal_axis_deg": 22.2,
+   "luma_p5_p50_p95": [
+    138,
+    211,
+    248
+   ],
+   "light_gradient_deg": -101,
+   "light_gradient_per_height": 196.2
+  },
+  {
+   "frame": 7,
+   "t_ms": 470,
+   "delay_ms": 60,
+   "area_of_frame": 0.0446,
+   "equiv_diameter_of_height": 0.318,
+   "bbox_w_of_height": 0.359,
+   "bbox_h_of_height": 0.337,
+   "centroid_from_centre_of_height": [
+    -0.019,
+    -0.005
+   ],
+   "solidity": 0.84,
+   "edge_roughness": 1.19,
+   "principal_axis_deg": 22.2,
+   "luma_p5_p50_p95": [
+    138,
+    213,
+    248
+   ],
+   "light_gradient_deg": -101,
+   "light_gradient_per_height": 196
+  },
+  {
+   "frame": 8,
+   "t_ms": 530,
+   "delay_ms": 70,
+   "area_of_frame": 0.0446,
+   "equiv_diameter_of_height": 0.318,
+   "bbox_w_of_height": 0.359,
+   "bbox_h_of_height": 0.337,
+   "centroid_from_centre_of_height": [
+    -0.019,
+    -0.005
+   ],
+   "solidity": 0.84,
+   "edge_roughness": 1.19,
+   "principal_axis_deg": 22.2,
+   "luma_p5_p50_p95": [
+    138,
+    213,
+    248
+   ],
+   "light_gradient_deg": -101,
+   "light_gradient_per_height": 196
+  },
+  {
+   "frame": 9,
+   "t_ms": 600,
+   "delay_ms": 70,
+   "area_of_frame": 0.0446,
+   "equiv_diameter_of_height": 0.318,
+   "bbox_w_of_height": 0.359,
+   "bbox_h_of_height": 0.337,
+   "centroid_from_centre_of_height": [
+    -0.019,
+    -0.005
+   ],
+   "solidity": 0.84,
+   "edge_roughness": 1.19,
+   "principal_axis_deg": 22.2,
+   "luma_p5_p50_p95": [
+    138,
+    213,
+    248
+   ],
+   "light_gradient_deg": -101,
+   "light_gradient_per_height": 196
+  },
+  {
+   "frame": 10,
+   "t_ms": 670,
+   "delay_ms": 60,
+   "area_of_frame": 0.0664,
+   "equiv_diameter_of_height": 0.388,
+   "bbox_w_of_height": 0.448,
+   "bbox_h_of_height": 0.419,
+   "centroid_from_centre_of_height": [
+    -0.006,
+    0.008
+   ],
+   "solidity": 0.811,
+   "edge_roughness": 1.17,
+   "principal_axis_deg": 23.9,
+   "luma_p5_p50_p95": [
+    108,
+    206,
+    248
+   ],
+   "light_gradient_deg": -124,
+   "light_gradient_per_height": 231.9
+  },
+  {
+   "frame": 11,
+   "t_ms": 730,
+   "delay_ms": 70,
+   "area_of_frame": 0.0664,
+   "equiv_diameter_of_height": 0.388,
+   "bbox_w_of_height": 0.448,
+   "bbox_h_of_height": 0.419,
+   "centroid_from_centre_of_height": [
+    -0.006,
+    0.008
+   ],
+   "solidity": 0.811,
+   "edge_roughness": 1.17,
+   "principal_axis_deg": 24,
+   "luma_p5_p50_p95": [
+    108,
+    206,
+    248
+   ],
+   "light_gradient_deg": -124,
+   "light_gradient_per_height": 231.9
+  },
+  {
+   "frame": 12,
+   "t_ms": 800,
+   "delay_ms": 70,
+   "area_of_frame": 0.0664,
+   "equiv_diameter_of_height": 0.388,
+   "bbox_w_of_height": 0.448,
+   "bbox_h_of_height": 0.419,
+   "centroid_from_centre_of_height": [
+    -0.006,
+    0.008
+   ],
+   "solidity": 0.811,
+   "edge_roughness": 1.17,
+   "principal_axis_deg": 24,
+   "luma_p5_p50_p95": [
+    108,
+    206,
+    248
+   ],
+   "light_gradient_deg": -124,
+   "light_gradient_per_height": 231.9
+  },
+  {
+   "frame": 13,
+   "t_ms": 870,
+   "delay_ms": 60,
+   "area_of_frame": 0.0664,
+   "equiv_diameter_of_height": 0.388,
+   "bbox_w_of_height": 0.448,
+   "bbox_h_of_height": 0.419,
+   "centroid_from_centre_of_height": [
+    -0.006,
+    0.008
+   ],
+   "solidity": 0.811,
+   "edge_roughness": 1.18,
+   "principal_axis_deg": 23.9,
+   "luma_p5_p50_p95": [
+    108,
+    206,
+    248
+   ],
+   "light_gradient_deg": -124,
+   "light_gradient_per_height": 231.4
+  },
+  {
+   "frame": 14,
+   "t_ms": 930,
+   "delay_ms": 70,
+   "area_of_frame": 0.0917,
+   "equiv_diameter_of_height": 0.456,
+   "bbox_w_of_height": 0.619,
+   "bbox_h_of_height": 0.511,
+   "centroid_from_centre_of_height": [
+    -0.037,
+    -0.004
+   ],
+   "solidity": 0.824,
+   "edge_roughness": 1.04,
+   "principal_axis_deg": 29.9,
+   "luma_p5_p50_p95": [
+    109,
+    194,
+    242
+   ],
+   "light_gradient_deg": -117,
+   "light_gradient_per_height": 37.2
+  },
+  {
+   "frame": 15,
+   "t_ms": 1000,
+   "delay_ms": 70,
+   "area_of_frame": 0.0917,
+   "equiv_diameter_of_height": 0.456,
+   "bbox_w_of_height": 0.619,
+   "bbox_h_of_height": 0.511,
+   "centroid_from_centre_of_height": [
+    -0.037,
+    -0.004
+   ],
+   "solidity": 0.824,
+   "edge_roughness": 1.04,
+   "principal_axis_deg": 29.9,
+   "luma_p5_p50_p95": [
+    109,
+    194,
+    242
+   ],
+   "light_gradient_deg": -117,
+   "light_gradient_per_height": 37.3
+  },
+  {
+   "frame": 16,
+   "t_ms": 1070,
+   "delay_ms": 60,
+   "area_of_frame": 0.0917,
+   "equiv_diameter_of_height": 0.456,
+   "bbox_w_of_height": 0.619,
+   "bbox_h_of_height": 0.511,
+   "centroid_from_centre_of_height": [
+    -0.037,
+    -0.004
+   ],
+   "solidity": 0.824,
+   "edge_roughness": 1.04,
+   "principal_axis_deg": 29.9,
+   "luma_p5_p50_p95": [
+    109,
+    194,
+    242
+   ],
+   "light_gradient_deg": -117,
+   "light_gradient_per_height": 37.3
+  },
+  {
+   "frame": 17,
+   "t_ms": 1130,
+   "delay_ms": 70,
+   "area_of_frame": 0.0917,
+   "equiv_diameter_of_height": 0.455,
+   "bbox_w_of_height": 0.619,
+   "bbox_h_of_height": 0.511,
+   "centroid_from_centre_of_height": [
+    -0.037,
+    -0.004
+   ],
+   "solidity": 0.824,
+   "edge_roughness": 1.04,
+   "principal_axis_deg": 29.9,
+   "luma_p5_p50_p95": [
+    108,
+    194,
+    242
+   ],
+   "light_gradient_deg": -117,
+   "light_gradient_per_height": 37.7
+  },
+  {
+   "frame": 18,
+   "t_ms": 1200,
+   "delay_ms": 70,
+   "area_of_frame": 0.1561,
+   "equiv_diameter_of_height": 0.595,
+   "bbox_w_of_height": 0.73,
+   "bbox_h_of_height": 0.637,
+   "centroid_from_centre_of_height": [
+    -0.029,
+    0.011
+   ],
+   "solidity": 0.839,
+   "edge_roughness": 1.01,
+   "principal_axis_deg": 9.8,
+   "luma_p5_p50_p95": [
+    119,
+    186,
+    242
+   ],
+   "light_gradient_deg": 94,
+   "light_gradient_per_height": 37
+  },
+  {
+   "frame": 19,
+   "t_ms": 1270,
+   "delay_ms": 60,
+   "area_of_frame": 0.1561,
+   "equiv_diameter_of_height": 0.594,
+   "bbox_w_of_height": 0.73,
+   "bbox_h_of_height": 0.637,
+   "centroid_from_centre_of_height": [
+    -0.029,
+    0.011
+   ],
+   "solidity": 0.839,
+   "edge_roughness": 1.01,
+   "principal_axis_deg": 9.8,
+   "luma_p5_p50_p95": [
+    119,
+    186,
+    242
+   ],
+   "light_gradient_deg": 94,
+   "light_gradient_per_height": 37.2
+  },
+  {
+   "frame": 20,
+   "t_ms": 1330,
+   "delay_ms": 70,
+   "area_of_frame": 0.1561,
+   "equiv_diameter_of_height": 0.594,
+   "bbox_w_of_height": 0.73,
+   "bbox_h_of_height": 0.637,
+   "centroid_from_centre_of_height": [
+    -0.029,
+    0.011
+   ],
+   "solidity": 0.839,
+   "edge_roughness": 1.01,
+   "principal_axis_deg": 9.8,
+   "luma_p5_p50_p95": [
+    119,
+    186,
+    242
+   ],
+   "light_gradient_deg": 94,
+   "light_gradient_per_height": 37.3
+  },
+  {
+   "frame": 21,
+   "t_ms": 1400,
+   "delay_ms": 70,
+   "area_of_frame": 0.1561,
+   "equiv_diameter_of_height": 0.594,
+   "bbox_w_of_height": 0.73,
+   "bbox_h_of_height": 0.637,
+   "centroid_from_centre_of_height": [
+    -0.029,
+    0.011
+   ],
+   "solidity": 0.839,
+   "edge_roughness": 1.01,
+   "principal_axis_deg": 9.8,
+   "luma_p5_p50_p95": [
+    119,
+    186,
+    242
+   ],
+   "light_gradient_deg": 94,
+   "light_gradient_per_height": 37.2
+  },
+  {
+   "frame": 22,
+   "t_ms": 1470,
+   "delay_ms": 60,
+   "area_of_frame": 0.3351,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.99,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 23,
+   "t_ms": 1530,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 24,
+   "t_ms": 1600,
+   "delay_ms": 70,
+   "area_of_frame": 0.3351,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 25,
+   "t_ms": 1670,
+   "delay_ms": 60,
+   "area_of_frame": 0.3351,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 26,
+   "t_ms": 1730,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 27,
+   "t_ms": 1800,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 28,
+   "t_ms": 1870,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 29,
+   "t_ms": 1930,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 30,
+   "t_ms": 2000,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 31,
+   "t_ms": 2070,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 32,
+   "t_ms": 2130,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 33,
+   "t_ms": 2200,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 34,
+   "t_ms": 2270,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 35,
+   "t_ms": 2330,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 36,
+   "t_ms": 2400,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 37,
+   "t_ms": 2470,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 38,
+   "t_ms": 2530,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 39,
+   "t_ms": 2600,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 40,
+   "t_ms": 2670,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 41,
+   "t_ms": 2730,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 42,
+   "t_ms": 2800,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 43,
+   "t_ms": 2870,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 44,
+   "t_ms": 2930,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 45,
+   "t_ms": 3000,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 46,
+   "t_ms": 3070,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 47,
+   "t_ms": 3130,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 48,
+   "t_ms": 3200,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 49,
+   "t_ms": 3270,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 50,
+   "t_ms": 3330,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 51,
+   "t_ms": 3400,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 52,
+   "t_ms": 3470,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 53,
+   "t_ms": 3530,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 54,
+   "t_ms": 3600,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 55,
+   "t_ms": 3670,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 56,
+   "t_ms": 3730,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 57,
+   "t_ms": 3800,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 58,
+   "t_ms": 3870,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 59,
+   "t_ms": 3930,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 60,
+   "t_ms": 4000,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 61,
+   "t_ms": 4070,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 62,
+   "t_ms": 4130,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 63,
+   "t_ms": 4200,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 64,
+   "t_ms": 4270,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 65,
+   "t_ms": 4330,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 66,
+   "t_ms": 4400,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 67,
+   "t_ms": 4470,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 68,
+   "t_ms": 4530,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 69,
+   "t_ms": 4600,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 70,
+   "t_ms": 4670,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 71,
+   "t_ms": 4730,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 72,
+   "t_ms": 4800,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 73,
+   "t_ms": 4870,
+   "delay_ms": 60,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 74,
+   "t_ms": 4930,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  },
+  {
+   "frame": 75,
+   "t_ms": 5000,
+   "delay_ms": 70,
+   "area_of_frame": 0.335,
+   "equiv_diameter_of_height": 0.871,
+   "bbox_w_of_height": 1.026,
+   "bbox_h_of_height": 0.719,
+   "centroid_from_centre_of_height": [
+    -0.045,
+    -0.01
+   ],
+   "solidity": 0.899,
+   "edge_roughness": 0.98,
+   "principal_axis_deg": 2,
+   "luma_p5_p50_p95": [
+    138,
+    204,
+    242
+   ],
+   "light_gradient_deg": 106,
+   "light_gradient_per_height": 42.7
+  }
+ ]
+}

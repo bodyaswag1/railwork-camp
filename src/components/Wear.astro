@@ -1,0 +1,9 @@
+---
+// The paper's wear layers (ageing, creases, grain, left-over crumple creases), painted by scripts/paper.ts.
+interface Props { tone: 'L' | 'D' }
+const { tone } = Astro.props;
+---
+<div class:list={['wear', `wear--age-${tone}`]} data-age={tone} aria-hidden="true"></div>
+<div class="wear wear--crease" data-crease aria-hidden="true"></div>
+<div class:list={['wear', `wear--grain-${tone}`]} data-grain={tone} aria-hidden="true"></div>
+<div class:list={['wear', 'wear--handled', `is-${tone}`]} data-handled aria-hidden="true"></div>
