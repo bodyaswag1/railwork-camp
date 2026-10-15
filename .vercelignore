@@ -11,3 +11,4 @@
 /dist/
 /.astro/
 /.env*
+/brag-output/
