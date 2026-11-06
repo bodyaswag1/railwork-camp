@@ -1,0 +1,312 @@
+---
+// Coach panel, phone first. The roster on the left (below on phones), one rider on the right: who they are,
+// confirm a level, and their personal invite link to paste into a DM. Coaches and admins only.
+import App from '../../layouts/App.astro';
+import { LEVELS } from '../../lib/members/rules';
+---
+<App title="Coach" path="/coach" nav>
+  <div id="coach" hidden>
+    <p class="kicker">Coach</p>
+    <h1>Riders</h1>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search name, phone, Instagram" aria-label="Search riders" />
+      <select id="filter" aria-label="Filter by invite status" style="width:auto">
+        <option value="">Everyone</option>
+        <option value="claimed">Has a login</option>
+        <option value="open">No login yet</option>
+      </select>
+      <button class="btn btn--small" type="button" id="add">+ Add a rider</button>
+      <button class="btn btn--small btn--ghost" type="button" id="copy-all">Copy all links</button>
+    </div>
+
+    <div class="grid grid--side">
+      <div>
+        <ul class="roster" id="roster"></ul>
+        <p class="empty" id="roster-empty" hidden>No riders yet. Add the first one: name and level is enough.</p>
+        <p class="small muted" id="roster-count" style="margin-top:12px"></p>
+      </div>
+
+      <div id="panel">
+        <section class="card" data-panel="none">
+          <p class="muted" style="margin:0">Tap a rider to see their level and invite link, or add a new one.</p>
+        </section>
+
+        <section class="card card--tape" data-panel="add" hidden>
+          <h2>Add a rider</h2>
+          <p class="small muted">They get a personal link to claim this profile. Everything here is only seen by you and them.</p>
+          <form class="form" id="add-form" novalidate>
+            <div class="form__row form__row--2">
+              <label class="field"><span>First name</span><input type="text" name="first_name" maxlength="60" required />
+                <span class="err" data-error-for="first_name" hidden></span></label>
+              <label class="field"><span>Last name</span><input type="text" name="last_name" maxlength="60" /></label>
+            </div>
+            <div class="form__row form__row--2">
+              <label class="field"><span>Phone</span><input type="tel" name="phone" maxlength="32" /></label>
+              <label class="field"><span>Instagram</span><input type="text" name="instagram" maxlength="60" placeholder="@handle" autocapitalize="off" /></label>
+            </div>
+            <label class="field"><span>Email <small>(optional)</small></span><input type="email" name="email" maxlength="254" /></label>
+            <label class="field"><span>Level you have seen them ride</span>
+              <select name="band"><option value="">Not sure yet</option>{LEVELS.map((l) => <option value={l.band}>{l.band} · {l.name}</option>)}</select>
+              <small>Picking one confirms it: it shows as verified by you.</small></label>
+            <div class="form__row form__row--2">
+              <label class="field"><span>Sessions together so far</span><input type="number" name="sessions_before" min="0" max="5000" value="0" inputmode="numeric" /></label>
+              <label class="field"><span>Riding with you since</span><input type="date" name="member_since" /></label>
+            </div>
+            <div class="actions"><button class="btn" type="submit">Add and make a link</button>
+              <button class="link" type="button" data-close>Cancel</button></div>
+          </form>
+        </section>
+
+        <section data-panel="rider" hidden>
+          <div class="card card--tape">
+            <div class="who" style="margin-bottom:16px">
+              <div class="avatar" id="r-avatar" aria-hidden="true"></div>
+              <div><h2 id="r-name" style="margin:0 0 6px"></h2><p style="margin:0" id="r-level"></p></div>
+            </div>
+            <dl class="facts" id="r-facts"></dl>
+          </div>
+
+          <div class="card" id="r-invite">
+            <h3>Invite link</h3>
+            <p class="small" id="r-invite-status"></p>
+            <div class="linkbox" id="r-linkbox" hidden>
+              <input type="text" id="r-link" readonly aria-label="Invite link" />
+              <button class="btn btn--small" type="button" id="r-copy">Copy</button>
+            </div>
+            <p class="small muted" id="r-link-note" hidden>Send it whole, as a message on its own. It is shown once: if you lose it, make a new one.</p>
+            <div class="actions" style="margin-top:12px">
+              <button class="btn btn--small" type="button" id="r-mint">Make a link</button>
+              <button class="link small" type="button" id="r-revoke" hidden>Cancel the link</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Confirm a level</h3>
+            <p class="small muted">Only after you have watched them ride at that level. It saves the moment you pick it, and they see it on their profile with your name.</p>
+            <select id="r-band" aria-label="Confirmed level"><option value="">Not confirmed yet</option>{LEVELS.map((l) => <option value={l.band}>{l.band} · {l.name}</option>)}</select>
+          </div>
+
+          <details class="card" id="r-edit-wrap">
+            <summary style="cursor:pointer;font-weight:700">Edit details</summary>
+            <form class="form" id="r-edit" novalidate style="margin-top:16px">
+              <div class="form__row form__row--2">
+                <label class="field"><span>First name</span><input type="text" name="first_name" maxlength="60" /></label>
+                <label class="field"><span>Last name</span><input type="text" name="last_name" maxlength="60" /></label>
+              </div>
+              <div class="form__row form__row--2">
+                <label class="field"><span>Phone</span><input type="tel" name="phone" maxlength="32" /></label>
+                <label class="field"><span>Instagram</span><input type="text" name="instagram" maxlength="60" /></label>
+              </div>
+              <label class="field"><span>Email</span><input type="email" name="email" maxlength="254" /></label>
+              <div class="form__row form__row--2">
+                <label class="field"><span>Sessions together</span><input type="number" name="sessions_before" min="0" max="5000" /></label>
+                <label class="field"><span>Since</span><input type="date" name="member_since" /></label>
+              </div>
+              <p class="small muted" id="r-edit-note" hidden>This rider has a login: the name, phone and Instagram they set on their profile win.</p>
+              <div class="actions"><button class="btn btn--small" type="submit">Save</button></div>
+            </form>
+          </details>
+        </section>
+      </div>
+    </div>
+  </div>
+</App>
+
+<script>
+  import { $, $$, busy, esc, fieldErrors, fmtDate, requireMe, toast } from '../../members/ui';
+  import { levelChip } from '../../members/level';
+  import { levelName } from '../../lib/members/rules';
+  import { sb } from '../../members/sb';
+
+  type Row = {
+    id: string; profile_id: string | null; first_name: string; last_name: string | null; phone: string | null;
+    instagram: string | null; email: string | null; photo_url: string | null; band: number | null; self_band: number | null;
+    verified_at: string | null; coach_name: string | null; sessions_before: number; member_since: string | null;
+    claimed_at: string | null; founding_at: string | null; created_at: string;
+    invite_status: 'claimed' | 'ready' | 'expired' | 'needs_link'; invite_expires_at: string | null;
+  };
+  const STATUS: Record<Row['invite_status'], string> = { claimed: 'Has a login', ready: 'Link sent', expired: 'Link expired', needs_link: 'Needs a link' };
+
+  await requireMe({ staff: true });
+  let rows: Row[] = [];
+  let current: string | null = null;
+  const links = new Map<string, string>(); // links made this visit, so a coach can copy again before leaving
+
+  const linkFor = (token: string) => `${location.origin}/claim#t=${token}`;
+  const fullName = (r: Row) => [r.first_name, r.last_name].filter(Boolean).join(' ');
+  const panel = (name: string) => { for (const el of $$('[data-panel]')) el.hidden = el.dataset.panel !== name; };
+
+  async function load() {
+    const { data, error } = await sb.from('coach_riders').select('*').order('first_name');
+    if (error) { toast('Could not load the riders. Reload the page.', 'bad'); return; }
+    rows = data as Row[];
+    paintRoster();
+    if (current) open(current);
+  }
+
+  function paintRoster() {
+    const q = $<HTMLInputElement>('#q').value.trim().toLowerCase();
+    const f = $<HTMLSelectElement>('#filter').value;
+    const shown = rows.filter((r) =>
+      (!q || [fullName(r), r.phone, r.instagram, r.email].some((v) => v?.toLowerCase().includes(q))) &&
+      (!f || (f === 'claimed' ? r.invite_status === 'claimed' : r.invite_status !== 'claimed')));
+    $('#roster').innerHTML = shown.map((r) => `
+      <li><button type="button" data-id="${r.id}" aria-current="${r.id === current}">
+        <span class="avatar avatar--sm" style="${r.photo_url ? `background-image:url('${esc(r.photo_url)}')` : ''}">${r.photo_url ? '' : esc(r.first_name.slice(0, 1))}</span>
+        <span class="roster__name"><b>${esc(fullName(r))}</b><small>${esc(levelName(r.band ?? r.self_band) ?? 'No level yet')}${r.band ? ' · verified' : r.self_band ? ' · self-rated' : ''}</small></span>
+        <span class="chip chip--status chip--${r.invite_status}">${STATUS[r.invite_status]}</span>
+      </button></li>`).join('');
+    $('#roster-empty').hidden = rows.length > 0;
+    $('#roster-count').textContent = rows.length ? `${shown.length} of ${rows.length} riders · ${rows.filter((r) => r.profile_id).length} with a login` : '';
+  }
+
+  function open(id: string) {
+    const r = rows.find((x) => x.id === id);
+    if (!r) return panel('none');
+    current = id;
+    for (const b of $$('#roster button')) b.setAttribute('aria-current', String(b.dataset.id === id));
+    $('#r-name').textContent = fullName(r);
+    $('#r-level').innerHTML = levelChip(r) || '<span class="muted small">No level yet</span>';
+    const av = $('#r-avatar');
+    av.style.backgroundImage = r.photo_url ? `url("${r.photo_url}")` : '';
+    av.textContent = r.photo_url ? '' : r.first_name.slice(0, 1);
+    const facts: [string, string | null][] = [
+      ['Phone', r.phone], ['Instagram', r.instagram ? `@${r.instagram}` : null], ['Email', r.email],
+      ['Sessions together', r.sessions_before ? String(r.sessions_before) : null],
+      ['Since', r.member_since ? fmtDate(r.member_since, { month: 'short', year: 'numeric' }) : null],
+      ['Self-rated', r.self_band ? levelName(r.self_band) : null],
+      ['Login', r.claimed_at ? `since ${fmtDate(r.claimed_at)}` : 'not yet'],
+      ['Coach', r.coach_name],
+    ];
+    $('#r-facts').innerHTML = facts.filter(([, v]) => v).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+
+    // invite
+    const claimed = r.invite_status === 'claimed';
+    const fresh = links.get(id);
+    $('#r-invite-status').textContent = claimed ? 'They have claimed their profile. Nothing to send.'
+      : fresh ? 'Here is the link. Paste it into a DM.'
+      : r.invite_status === 'ready' ? `A link is out, good until ${fmtDate(r.invite_expires_at)}. Lost it? Make a new one: the old one stops working.`
+      : r.invite_status === 'expired' ? 'The last link expired. Make a new one.' : 'No link yet.';
+    $('#r-linkbox').hidden = !fresh;
+    $('#r-link-note').hidden = !fresh;
+    $<HTMLInputElement>('#r-link').value = fresh ?? '';
+    $('#r-mint').hidden = claimed;
+    $('#r-mint').textContent = r.invite_status === 'needs_link' && !fresh ? 'Make a link' : 'Make a new link';
+    $('#r-revoke').hidden = claimed || r.invite_status !== 'ready';
+
+    $<HTMLSelectElement>('#r-band').value = r.band ? String(r.band) : '';
+    const ed = $<HTMLFormElement>('#r-edit');
+    const set = (n: string, v: string | number | null) => ((ed.elements.namedItem(n) as HTMLInputElement).value = v == null ? '' : String(v));
+    set('first_name', r.first_name); set('last_name', r.last_name); set('phone', r.phone); set('instagram', r.instagram);
+    set('email', r.email); set('sessions_before', r.sessions_before); set('member_since', r.member_since);
+    $('#r-edit-note').hidden = !r.profile_id;
+    panel('rider');
+    if (matchMedia('(max-width: 759px)').matches) $('#panel').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function mint(id: string): Promise<string | null> {
+    const { data, error } = await sb.rpc('mint_invite', { p_rider: id });
+    if (error || !data) { toast('That did not save. Try again.', 'bad'); return null; }
+    const link = linkFor(String(data));
+    links.set(id, link);
+    return link;
+  }
+  async function copy(text: string) {
+    try { await navigator.clipboard.writeText(text); toast('Copied. Paste it into a DM.'); }
+    catch { toast('Copy did not work here: select the link and copy it.', 'bad'); }
+  }
+
+  $('#roster').addEventListener('click', (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>('button[data-id]');
+    if (b) open(b.dataset.id!);
+  });
+  $('#q').addEventListener('input', paintRoster);
+  $('#filter').addEventListener('change', paintRoster);
+  $('#add').addEventListener('click', () => { current = null; paintRoster(); panel('add'); ($('#add-form').querySelector('input') as HTMLInputElement).focus(); });
+  for (const b of $$('[data-close]')) b.addEventListener('click', () => panel('none'));
+
+  $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const f = new FormData(form);
+    const v = (n: string) => String(f.get(n) ?? '').trim() || null;
+    if (fieldErrors(form, { first_name: v('first_name') ? undefined : 'A first name is enough, but it is needed.' })) return;
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    busy(btn, true, 'Adding…');
+    const { data: id, error } = await sb.rpc('create_rider', {
+      p_first_name: v('first_name'), p_last_name: v('last_name'), p_phone: v('phone'), p_instagram: v('instagram'),
+      p_email: v('email'), p_band: v('band') ? Number(v('band')) : null,
+      p_sessions_before: Number(v('sessions_before') ?? 0), p_member_since: v('member_since'),
+    });
+    if (error || !id) { busy(btn, false); return toast('Could not add the rider. Try again.', 'bad'); }
+    const link = await mint(String(id));
+    busy(btn, false);
+    form.reset();
+    current = String(id);
+    await load();
+    if (link) copy(link);
+  });
+
+  $('#r-mint').addEventListener('click', async (e) => {
+    if (!current) return;
+    const btn = e.currentTarget as HTMLButtonElement;
+    busy(btn, true);
+    const link = await mint(current);
+    busy(btn, false);
+    await load();
+    if (link) copy(link);
+  });
+  $('#r-copy').addEventListener('click', () => copy($<HTMLInputElement>('#r-link').value));
+  $('#r-revoke').addEventListener('click', async () => {
+    if (!current || !confirm('Cancel this link? It stops working at once. You can make a new one any time.')) return;
+    const { error } = await sb.rpc('revoke_invite', { p_rider: current });
+    links.delete(current);
+    toast(error ? 'That did not save.' : 'Link cancelled.', error ? 'bad' : 'ok');
+    await load();
+  });
+
+  $('#r-band').addEventListener('change', async (e) => {
+    const sel = e.target as HTMLSelectElement;
+    if (!current || !sel.value) return;
+    const { error } = await sb.rpc('verify_level', { p_rider: current, p_band: Number(sel.value) });
+    toast(error ? 'That did not save.' : `Level confirmed: ${levelName(Number(sel.value))}.`, error ? 'bad' : 'ok');
+    await load();
+  });
+
+  $<HTMLFormElement>('#r-edit').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!current) return;
+    const form = e.currentTarget as HTMLFormElement;
+    const f = new FormData(form);
+    const v = (n: string) => String(f.get(n) ?? '').trim() || null;
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    busy(btn, true, 'Saving…');
+    const { error } = await sb.rpc('update_rider', {
+      p_rider: current, p_first_name: v('first_name'), p_last_name: v('last_name'), p_phone: v('phone'),
+      p_instagram: v('instagram'), p_email: v('email'), p_sessions_before: Number(v('sessions_before') ?? 0), p_member_since: v('member_since'),
+    });
+    busy(btn, false);
+    toast(error ? 'Could not save.' : 'Saved.', error ? 'bad' : 'ok');
+    await load();
+  });
+
+  // every rider without a login: fresh links, as a name + link list ready for Telegram / Instagram
+  $('#copy-all').addEventListener('click', async (e) => {
+    const open = rows.filter((r) => r.invite_status !== 'claimed');
+    if (!open.length) return toast('Everyone already has a login.');
+    if (!confirm(`Make fresh links for ${open.length} rider(s) without a login? Links already sent stop working.`)) return;
+    const btn = e.currentTarget as HTMLButtonElement;
+    busy(btn, true, 'Making links…');
+    const lines: string[] = [];
+    for (const r of open) {
+      const link = await mint(r.id);
+      if (link) lines.push(`${fullName(r)}\n${link}`);
+    }
+    busy(btn, false);
+    await load();
+    copy(lines.join('\n\n'));
+  });
+
+  await load();
+  $('#coach').hidden = false;
+</script>

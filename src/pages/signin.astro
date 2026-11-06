@@ -1,0 +1,103 @@
+---
+import App from '../layouts/App.astro';
+---
+<App title="Sign in" path="/signin" narrow>
+  <section data-state="form">
+    <h1>Sign in</h1>
+    <p class="lede">Welcome back.</p>
+    <p class="card small" id="expired" hidden>That link has expired. Sign in with your email and password, or ask for a new link below.</p>
+    <form class="form" id="signin-form" novalidate>
+      <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" required />
+        <span class="err" data-error-for="email" hidden></span></label>
+      <label class="field"><span>Password</span><input type="password" name="password" autocomplete="current-password" required />
+        <span class="err" data-error-for="password" hidden></span></label>
+      <p class="err" id="signin-error" role="alert" hidden></p>
+      <div id="unverified" class="card small" hidden>
+        <p>Your email is not confirmed yet. Open the link we sent when you signed up, or get a fresh one.</p>
+        <button class="btn btn--small btn--ghost" type="button" id="resend">Send the link again</button>
+      </div>
+      <button class="btn btn--block" type="submit">Sign in</button>
+    </form>
+    <p class="small" style="margin-top:20px">
+      <button class="link" type="button" id="forgot">Forgot password?</button>
+      &nbsp;·&nbsp; New here? <a href="/join" id="to-join">Create an account</a>
+    </p>
+  </section>
+
+  <section data-state="forgot" hidden>
+    <h1>New password</h1>
+    <p class="lede">Type the email you signed up with and we send you a link to set a new password.</p>
+    <form class="form" id="forgot-form" novalidate>
+      <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" required />
+        <span class="err" data-error-for="email" hidden></span></label>
+      <button class="btn btn--block" type="submit">Send me a link</button>
+    </form>
+    <p class="card small" id="forgot-sent" role="status" hidden>If that address has a BAS account, the link is on its way. It works for one hour.</p>
+    <p class="small" style="margin-top:20px"><button class="link" type="button" id="back">Back to sign in</button></p>
+  </section>
+</App>
+
+<script>
+  import { $, busy, fieldErrors, nextParam, post, state, toast } from '../members/ui';
+  import { EMAIL_RE, safeNext } from '../lib/members/rules';
+  import { configured, getSession, sb } from '../members/sb';
+
+  const next = safeNext(nextParam());
+  const form = $<HTMLFormElement>('#signin-form');
+  $<HTMLAnchorElement>('#to-join').href = `/join?next=${encodeURIComponent(next)}`;
+  if (new URLSearchParams(location.search).has('expired')) $('#expired').hidden = false;
+  if (!configured) document.body.dataset.unconfigured = '';
+  else if (await getSession()) location.replace(next);
+
+  const emailOf = (f: HTMLFormElement) => String(new FormData(f).get('email') ?? '').trim().toLowerCase();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailOf(form);
+    const password = String(new FormData(form).get('password') ?? '');
+    $('#signin-error').hidden = true;
+    $('#unverified').hidden = true;
+    if (fieldErrors(form, { email: EMAIL_RE.test(email) ? undefined : 'Enter your email.', password: password ? undefined : 'Enter your password.' })) return;
+
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    busy(btn, true, 'Signing in…');
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    busy(btn, false);
+    if (!error) return location.replace(next);
+
+    const code = (error as { code?: string }).code;
+    if (code === 'email_not_confirmed' || /not confirmed/i.test(error.message)) { $('#unverified').hidden = false; return; }
+    const err = $('#signin-error');
+    err.textContent = code === 'invalid_credentials' || /invalid/i.test(error.message)
+      ? 'That email and password do not match an account.'
+      : error.status === 429 ? 'Too many tries from this connection. Wait a few minutes.' : 'That did not go through. Try again in a moment.';
+    err.hidden = false;
+  });
+
+  $('#resend').addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    busy(btn, true, 'Sending…');
+    const { status } = await post('/api/auth/link', { kind: 'verify', email: emailOf(form), next });
+    busy(btn, false);
+    toast(status === 200 ? 'Link sent. Check your inbox (and spam).' : status === 429 ? 'Wait a minute, then try again.' : 'Could not send. Try again.', status === 200 ? 'ok' : 'bad');
+  });
+
+  $('#forgot').addEventListener('click', () => {
+    ($('#forgot-form').querySelector('input') as HTMLInputElement).value = emailOf(form);
+    state('forgot');
+  });
+  $('#back').addEventListener('click', () => state('form'));
+
+  $<HTMLFormElement>('#forgot-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement;
+    const email = emailOf(f);
+    if (fieldErrors(f, { email: EMAIL_RE.test(email) ? undefined : 'Check the email address.' })) return;
+    const btn = f.querySelector('button') as HTMLButtonElement;
+    busy(btn, true, 'Sending…');
+    const { status } = await post('/api/auth/link', { kind: 'reset', email });
+    busy(btn, false);
+    if (status === 429) return toast('Too many tries. Wait a few minutes.', 'bad');
+    $('#forgot-sent').hidden = false;
+  });
+</script>

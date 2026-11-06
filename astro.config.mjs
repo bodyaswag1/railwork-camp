@@ -28,4 +28,24 @@ export default defineConfig({
   build: { format: 'file', inlineStylesheets: 'always' },
   devToolbar: { enabled: false },
   integrations: [prefetchCrumple],
+  // The rider area talks to Supabase from the browser. Vercel's Supabase integration names the variables
+  // SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY (no PUBLIC_ prefix), so they are passed through here. Both are
+  // public by design: every table is behind row-level security. Locally they come from .env.local.
+  vite: {
+    define: {
+      'import.meta.env.PUBLIC_SUPABASE_URL': JSON.stringify(env('SUPABASE_URL')),
+      'import.meta.env.PUBLIC_SUPABASE_KEY': JSON.stringify(env('SUPABASE_PUBLISHABLE_KEY') || env('SUPABASE_ANON_KEY')),
+    },
+  },
 });
+
+function env(name) {
+  if (process.env[name]) return process.env[name];
+  for (const file of ['.env.local', '.env']) {
+    if (!fs.existsSync(file)) continue;
+    // [ \t] not \s: an empty value must not swallow the newline and read the next line
+    const m = fs.readFileSync(file, 'utf8').match(new RegExp(`^[ \\t]*${name}[ \\t]*=[ \\t]*"?([^"\\r\\n]*)"?`, 'm'));
+    if (m && m[1] && m[1] !== '[SENSITIVE]') return m[1];
+  }
+  return '';
+}

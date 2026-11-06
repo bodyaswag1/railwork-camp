@@ -1,0 +1,124 @@
+---
+// A coach's personal invite: bascamp.world/claim#t=<token>. The token sits after # so it never reaches a server
+// log or an analytics hit. The page shows only what the invite allows (first name, level, sessions), then either
+// sends the rider to /join with the invite kept, or (if already signed in) attaches the record to this account.
+import App from '../layouts/App.astro';
+---
+<App title="Your BAS profile" path="/claim" narrow>
+  <section data-state="loading"><h1>One moment</h1><p class="lede">Opening your invite…</p></section>
+
+  <section data-state="ok" hidden>
+    <p class="kicker">Personal invite</p>
+    <h1 id="ok-title">Your profile is ready</h1>
+    <p class="lede">Your coach set up your BAS profile. Make a login and it is yours, with everything already on it.</p>
+    <div class="card card--tape">
+      <dl class="facts" id="ok-facts"></dl>
+      <span class="stamp">Founding rider</span>
+    </div>
+    <div class="card">
+      <h3>What your profile does</h3>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li>Your level, confirmed by your coach</li>
+        <li>Your sessions and progress in one place (booking comes next)</li>
+        <li>Tricks you land, signed off by your coach (coming soon)</li>
+      </ul>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="claim-go">Claim my profile</button>
+      <a class="link" href="/signin" id="claim-signin" data-signed-out>I already have an account</a>
+    </div>
+    <p class="small muted" style="margin-top:12px">Takes about two minutes.</p>
+  </section>
+
+  <section data-state="other" hidden>
+    <h1>You are signed in as someone else</h1>
+    <p class="lede">This invite belongs to a different rider, and the account you are in already has its own history. Sign out and open the link again.</p>
+    <div class="actions">
+      <button class="btn" type="button" id="signout-use">Sign out and use this link</button>
+      <a class="link" href="/me">Stay in my account</a>
+    </div>
+  </section>
+
+  <section data-state="done" hidden>
+    <span class="stamp">Founding rider</span>
+    <h1 style="margin-top:16px">Welcome to BAS</h1>
+    <p class="lede">Your coach’s record is on your account now. You were here before the app, and the founding badge stays on your profile.</p>
+    <a class="btn" href="/me">Go to my profile</a>
+  </section>
+
+  <section data-state="problem" hidden>
+    <h1 id="problem-title">This link did not open</h1>
+    <p class="lede" id="problem-body">It may be cut short. Ask your coach to send it again, as a message on its own.</p>
+    <div class="actions"><a class="btn btn--ghost" href="/signin">Sign in</a><a class="link" href="https://instagram.com/baskakov74">Message Ilia</a></div>
+  </section>
+</App>
+
+<script>
+  import { $, busy, esc, fmtDate, paintHeader, state } from '../members/ui';
+  import { levelName } from '../lib/members/rules';
+  import { configured, loadMe, sb } from '../members/sb';
+
+  const PROBLEMS: Record<string, [string, string]> = {
+    invalid: ['This link did not open', 'It may be cut short. Ask your coach to send it again, as a message on its own.'],
+    expired: ['This invite has expired', 'Invites last 90 days. Ask your coach for a fresh one: it takes them a second.'],
+    revoked: ['This invite is no longer valid', 'Your coach replaced it. Ask them for the new link.'],
+    used: ['This invite was already used', 'If you made your account, sign in. If not, ask your coach for a new link.'],
+    claimed: ['This profile is already connected', 'Someone already linked this profile to an account. Sign in, or tell your coach if that was not you.'],
+    has_history: ['Your account already has its own history', 'We cannot merge two profiles automatically. Tell your coach and they will sort it out.'],
+    unavailable: ['We could not check that link', 'That is on our side, not your link. Try again in a moment.'],
+  };
+  const problem = (k: string) => {
+    const [t, b] = PROBLEMS[k] ?? PROBLEMS.unavailable;
+    $('#problem-title').textContent = t;
+    $('#problem-body').textContent = b;
+    state('problem');
+  };
+
+  const fromHash = new URLSearchParams(location.hash.slice(1)).get('t');
+  if (fromHash) {
+    sessionStorage.setItem('bas-invite', fromHash);
+    history.replaceState(null, '', '/claim');
+  }
+  const token = fromHash ?? sessionStorage.getItem('bas-invite');
+
+  if (!configured) { document.body.dataset.unconfigured = ''; problem('unavailable'); }
+  else if (!token) problem('invalid');
+  else {
+    const [{ data, error }, me] = await Promise.all([sb.rpc('invite_preview', { p_token: token }), loadMe()]);
+    paintHeader(me);
+    const p = (data as { status: string; first_name: string; sessions_before: number; member_since: string | null; band: number | null; coach_name: string | null }[] | null)?.[0];
+    if (error || !p) problem('unavailable');
+    else if (p.status !== 'ok') problem(p.status);
+    else {
+      sessionStorage.setItem('bas-invite-name', p.first_name);
+      $('#ok-title').textContent = `${p.first_name}, your profile is ready`;
+      const facts: [string, string][] = [];
+      if (levelName(p.band)) facts.push(['Level', levelName(p.band)!]);
+      if (p.coach_name) facts.push(['Coach', p.coach_name]);
+      if (p.sessions_before > 0) facts.push(['Sessions with us', String(p.sessions_before)]);
+      if (p.member_since) facts.push(['Riding with us since', fmtDate(p.member_since, { month: 'short', year: 'numeric' })]);
+      $('#ok-facts').innerHTML = facts.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+      $('#ok-facts').hidden = !facts.length;
+      $('#claim-go').textContent = me ? 'Add this to my account' : 'Claim my profile';
+      $<HTMLAnchorElement>('#claim-signin').href = `/signin?next=${encodeURIComponent('/claim')}`;
+      state('ok');
+
+      $('#claim-go').addEventListener('click', async (e) => {
+        if (!me) return location.assign('/join');
+        const btn = e.currentTarget as HTMLButtonElement;
+        busy(btn, true);
+        const r = await sb.rpc('claim_invite', { p_token: token });
+        busy(btn, false);
+        const status = r.error ? 'unavailable' : String(r.data);
+        if (status === 'ok') { sessionStorage.removeItem('bas-invite'); sessionStorage.removeItem('bas-invite-name'); state('done'); }
+        else if (status === 'has_history') state('other');
+        else problem(status);
+      });
+    }
+  }
+
+  $('#signout-use').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    location.reload();
+  });
+</script>

@@ -1,0 +1,142 @@
+---
+import App from '../layouts/App.astro';
+---
+<App title="Join" path="/join" narrow>
+  <section data-state="form">
+    <p class="kicker" id="invite-kicker" hidden>Personal invite</p>
+    <h1>Join BAS</h1>
+    <p class="lede" id="join-lede">One screen and you are in. Book sessions, see your level, track your tricks.</p>
+    <p class="card card--tape small" id="invite-banner" hidden>
+      Your coach set this profile up. Create your login and your level and history come with you.
+    </p>
+
+    <form class="form" id="join-form" novalidate>
+      <div class="form__row form__row--2">
+        <label class="field"><span>First name</span><input type="text" name="firstName" autocomplete="given-name" maxlength="60" required />
+          <span class="err" data-error-for="firstName" hidden></span></label>
+        <label class="field"><span>Last name</span><input type="text" name="lastName" autocomplete="family-name" maxlength="60" required />
+          <span class="err" data-error-for="lastName" hidden></span></label>
+      </div>
+      <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" maxlength="254" required />
+        <span class="err" data-error-for="email" hidden></span></label>
+      <label class="field"><span>Password</span><input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="72" required />
+        <small>8 characters or more.</small>
+        <span class="err" data-error-for="password" hidden></span></label>
+      <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" maxlength="32" required />
+        <small>So your coach can reach you if a session moves. Never shared.</small>
+        <span class="err" data-error-for="phone" hidden></span></label>
+      <label class="check"><input type="checkbox" name="consent" />
+        <span>I agree to the <a href="/legal/terms">terms</a> and <a href="/legal/privacy">privacy policy</a>.</span></label>
+      <span class="err" data-error-for="consent" hidden></span>
+      <label class="check"><input type="checkbox" name="adult" /><span>I am 18 or over.</span></label>
+      <span class="err" data-error-for="adult" hidden></span>
+      <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <p class="err" id="join-error" role="alert" hidden></p>
+      <button class="btn btn--block" type="submit">Create my account</button>
+    </form>
+    <p class="small" style="margin-top:20px">Already have an account? <a href="/signin" id="to-signin">Sign in</a></p>
+  </section>
+
+  <section data-state="sent" hidden>
+    <p class="kicker">Almost there</p>
+    <h1>Check your inbox</h1>
+    <p class="lede">We sent a link to <b id="sent-email"></b>. Open it and you are in.</p>
+    <p class="card small" id="sent-claim" hidden></p>
+    <div class="actions">
+      <button class="btn btn--ghost" type="button" id="resend">Send the link again</button>
+      <button class="link" type="button" id="wrong">Wrong address? Go back</button>
+    </div>
+    <p class="err" id="sent-error" role="alert" hidden></p>
+  </section>
+</App>
+
+<script>
+  import { $, busy, fieldErrors, nextParam, post, state, toast } from '../members/ui';
+  import { checkJoin, safeNext } from '../lib/members/rules';
+  import { getSession } from '../members/sb';
+
+  const form = $<HTMLFormElement>('#join-form');
+  const invite = sessionStorage.getItem('bas-invite') ?? undefined;
+  const next = safeNext(nextParam());
+  $<HTMLAnchorElement>('#to-signin').href = `/signin?next=${encodeURIComponent(next)}`;
+
+  if (await getSession()) location.replace(invite ? '/claim' : next);
+
+  if (invite) {
+    $('#invite-kicker').hidden = false;
+    $('#invite-banner').hidden = false;
+    const name = sessionStorage.getItem('bas-invite-name');
+    if (name) {
+      (form.elements.namedItem('firstName') as HTMLInputElement).value = name;
+      $('#join-lede').textContent = `${name}, your profile is waiting. Make a login and it is yours.`;
+    }
+  }
+
+  const COPY: Record<string, string> = {
+    leaked: 'That password is on a public list of leaked passwords. Pick another one.',
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const input = {
+      firstName: String(f.get('firstName') ?? ''),
+      lastName: String(f.get('lastName') ?? ''),
+      email: String(f.get('email') ?? '').trim(),
+      password: String(f.get('password') ?? ''),
+      phone: String(f.get('phone') ?? ''),
+      consent: f.get('consent') === 'on',
+      adult: f.get('adult') === 'on',
+      company: String(f.get('company') ?? ''),
+      invite,
+      next,
+    };
+    $('#join-error').hidden = true;
+    if (fieldErrors(form, checkJoin(input))) return;
+
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    busy(btn, true, 'Creating your account…');
+    const { status, data } = await post<{ errors?: Record<string, string>; error?: string; mailed?: boolean; claim?: string }>('/api/auth/join', input);
+    busy(btn, false);
+
+    if (status === 400 && data.errors) {
+      const errs = Object.fromEntries(Object.entries(data.errors).map(([k, v]) => [k, COPY[v] ?? v]));
+      fieldErrors(form, errs);
+      return;
+    }
+    const err = $('#join-error');
+    if (status === 409) {
+      err.innerHTML = 'That email already has an account. <a href="/signin">Sign in</a> instead (the sign-in page can also reset the password).';
+      err.hidden = false;
+      return;
+    }
+    if (status === 429) { err.textContent = 'Too many tries from this connection. Wait a few minutes and try again.'; err.hidden = false; return; }
+    if (status !== 200) { err.textContent = 'That did not go through. Try again in a moment.'; err.hidden = false; return; }
+
+    $('#sent-email').textContent = input.email;
+    sessionStorage.setItem('bas-join-email', input.email);
+    if (invite) {
+      sessionStorage.removeItem('bas-invite');
+      sessionStorage.removeItem('bas-invite-name');
+      const claim = $('#sent-claim');
+      if (data.claim === 'ok') claim.textContent = 'Your coach’s record is attached to this account. It will be there when you open the link.';
+      else if (data.claim) claim.textContent = 'Your account is made, but we could not attach your coach’s record to it. Ask your coach for a fresh link once you are signed in.';
+      claim.hidden = !data.claim;
+    }
+    if (data.mailed === false) {
+      $('#sent-error').textContent = 'Your account is made, but the email did not go out. Send it again below.';
+      $('#sent-error').hidden = false;
+    }
+    state('sent');
+    window.scrollTo(0, 0);
+  });
+
+  $('#resend').addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    busy(btn, true, 'Sending…');
+    const { status } = await post('/api/auth/link', { kind: 'verify', email: sessionStorage.getItem('bas-join-email'), next });
+    busy(btn, false);
+    toast(status === 200 ? 'Sent again. Check spam too.' : status === 429 ? 'Wait a minute, then try again.' : 'Could not send. Try again.', status === 200 ? 'ok' : 'bad');
+  });
+  $('#wrong').addEventListener('click', () => state('form'));
+</script>

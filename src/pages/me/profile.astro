@@ -1,0 +1,156 @@
+---
+// Who you are at BAS: photo, details, level. Identity only; every switch lives on Settings.
+import App from '../../layouts/App.astro';
+import { LEVELS } from '../../lib/members/rules';
+---
+<App title="Profile" path="/me/profile" nav>
+  <div id="profile" hidden>
+    <h1>Profile</h1>
+    <div class="grid grid--side">
+      <div>
+        <section class="card card--tape" id="photo">
+          <h2>Photo</h2>
+          <div class="who">
+            <div class="avatar" id="avatar" aria-hidden="true"></div>
+            <div>
+              <label class="btn btn--small btn--ghost" for="photo-input" style="cursor:pointer">Choose a photo</label>
+              <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" />
+              <p class="small muted" style="margin:8px 0 0">A clear face helps your coach and crew find you on the slope. JPG, PNG or WebP.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="level">
+          <h2>Level</h2>
+          <p id="level-chip"></p>
+          <p class="small muted" id="level-note"></p>
+          <div id="level-edit" hidden>
+            <p class="small">Pick the one that sounds most like you. You can change it until your coach confirms it.</p>
+            <ul class="levels" id="level-list">
+              {LEVELS.map((l) => (
+                <li>
+                  <input type="radio" name="band" id={`band-${l.band}`} value={l.band} />
+                  <label for={`band-${l.band}`}><b>{l.band}</b><span>{l.name}</span><small>{l.means}</small></label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" id="details">
+        <h2>Details</h2>
+        <form class="form" id="details-form" novalidate>
+          <div class="form__row form__row--2">
+            <label class="field"><span>First name</span><input type="text" name="first_name" maxlength="60" autocomplete="given-name" />
+              <span class="err" data-error-for="first_name" hidden></span></label>
+            <label class="field"><span>Last name</span><input type="text" name="last_name" maxlength="60" autocomplete="family-name" /></label>
+          </div>
+          <label class="field"><span>Phone</span><input type="tel" name="phone" maxlength="32" autocomplete="tel" /></label>
+          <label class="field"><span>Instagram</span><input type="text" name="instagram" maxlength="60" placeholder="@yourhandle" autocapitalize="off" /></label>
+          <label class="field"><span>A line about you</span><textarea name="bio" maxlength="280" placeholder="Riding since 2019, chasing my first backside 360."></textarea>
+            <small id="bio-count"></small></label>
+          <div class="actions"><button class="btn" type="submit">Save</button></div>
+        </form>
+      </section>
+    </div>
+  </div>
+</App>
+
+<script>
+  import { $, $$, busy, fieldErrors, requireMe, toast } from '../../members/ui';
+  import { levelChip, LEVEL_NOTE } from '../../members/level';
+  import { sb } from '../../members/sb';
+
+  const me = await requireMe();
+  await sb.rpc('ensure_my_rider');
+  const { data: r } = await sb.from('my_rider').select('*').maybeSingle();
+
+  // ---------------------------------------------------------------- photo
+  const av = $('#avatar');
+  const paintAvatar = (url: string | null) => {
+    av.style.backgroundImage = url ? `url("${url}")` : '';
+    av.textContent = url ? '' : (me.firstName ?? me.email).slice(0, 1);
+  };
+  paintAvatar(me.photoUrl);
+
+  /** square crop, 512px, WebP: small enough for every card, same shape everywhere */
+  async function squash(file: File): Promise<Blob> {
+    const img = await createImageBitmap(file);
+    const s = Math.min(img.width, img.height);
+    const c = document.createElement('canvas');
+    c.width = c.height = 512;
+    c.getContext('2d')!.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 512, 512);
+    return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), 'image/webp', 0.85));
+  }
+
+  $<HTMLInputElement>('#photo-input').addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    try {
+      const blob = await squash(file);
+      const path = `${me.id}/avatar-${Date.now()}.webp`;
+      const up = await sb.storage.from('avatars').upload(path, blob, { contentType: 'image/webp', upsert: true });
+      if (up.error) throw up.error;
+      const url = sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      const { error } = await sb.from('profiles').update({ photo_url: url }).eq('id', me.id);
+      if (error) throw error;
+      paintAvatar(url);
+      toast('Photo saved.');
+    } catch {
+      toast('That photo did not upload. Try a JPG or PNG under 3 MB.', 'bad');
+    }
+  });
+
+  // ---------------------------------------------------------------- level
+  const paintLevel = (row: typeof r) => {
+    $('#level-chip').innerHTML = levelChip(row, { long: true }) || 'No level yet. Pick the one that sounds like you.';
+    const verified = Boolean(row?.band);
+    $('#level-note').textContent = verified
+      ? 'Your coach confirmed this, so it is theirs to move now. Ask at your next session if you think it should change.'
+      : LEVEL_NOTE;
+    $('#level-edit').hidden = verified;
+    const own = $$<HTMLInputElement>('input[name=band]').find((i) => Number(i.value) === row?.self_band);
+    if (own) own.checked = true;
+  };
+  paintLevel(r);
+
+  $('#level-list').addEventListener('change', async (e) => {
+    const band = Number((e.target as HTMLInputElement).value);
+    const { data, error } = await sb.rpc('set_self_level', { p_band: band });
+    if (error || data !== 'ok') {
+      toast(data === 'coach_verified' ? 'Your coach has confirmed your level, so we kept it.' : 'That did not save. Tap it again?', 'bad');
+      const { data: fresh } = await sb.from('my_rider').select('*').maybeSingle();
+      return paintLevel(fresh);
+    }
+    paintLevel({ ...(r ?? {}), band: null, self_band: band } as typeof r);
+    toast('Saved to your profile.');
+  });
+
+  // ---------------------------------------------------------------- details
+  const form = $<HTMLFormElement>('#details-form');
+  const set = (n: string, v: string | null) => ((form.elements.namedItem(n) as HTMLInputElement).value = v ?? '');
+  set('first_name', me.firstName); set('last_name', me.lastName); set('phone', me.phone);
+  set('instagram', me.instagram ? `@${me.instagram}` : ''); set('bio', me.bio);
+  const bio = form.elements.namedItem('bio') as HTMLTextAreaElement;
+  const count = () => ($('#bio-count').textContent = `${bio.value.length} of 280`);
+  bio.addEventListener('input', count); count();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const v = (n: string) => String(f.get(n) ?? '').trim() || null;
+    if (fieldErrors(form, { first_name: v('first_name') ? undefined : 'Add your first name.' })) return;
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    busy(btn, true, 'Saving…');
+    const { error } = await sb.from('profiles').update({
+      first_name: v('first_name'), last_name: v('last_name'), phone: v('phone'),
+      instagram: v('instagram')?.replace(/^@+/, '') ?? null, bio: v('bio'),
+    }).eq('id', me.id);
+    busy(btn, false);
+    toast(error ? 'Could not save. Try again.' : 'Saved.', error ? 'bad' : 'ok');
+  });
+
+  $('#profile').hidden = false;
+  if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+</script>

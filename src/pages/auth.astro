@@ -1,0 +1,75 @@
+---
+// Where every email link lands: /auth?token_hash=…&type=signup|magiclink|recovery&next=/me
+// Verifies the token in the browser (so no redirect URLs need configuring in Supabase), then moves on. A
+// recovery link stops here to ask for the new password.
+import App from '../layouts/App.astro';
+---
+<App title="Signing you in" path="/auth" narrow>
+  <section data-state="working">
+    <h1>One moment</h1>
+    <p class="lede">Opening your profile…</p>
+  </section>
+
+  <section data-state="password" hidden>
+    <h1>New password</h1>
+    <p class="lede">Choose a new password for your BAS account.</p>
+    <form class="form" id="pw-form" novalidate>
+      <label class="field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="72" required />
+        <small>8 characters or more.</small>
+        <span class="err" data-error-for="password" hidden></span></label>
+      <label class="field"><span>Repeat it</span><input type="password" name="repeat" autocomplete="new-password" required />
+        <span class="err" data-error-for="repeat" hidden></span></label>
+      <button class="btn btn--block" type="submit">Save password</button>
+    </form>
+  </section>
+
+  <section data-state="failed" hidden>
+    <h1>That link did not work</h1>
+    <p class="lede">It may have expired or been used already. Sign in, or ask for a new link from the sign-in page.</p>
+    <a class="btn" href="/signin?expired=1">Go to sign in</a>
+  </section>
+</App>
+
+<script>
+  import { $, busy, fieldErrors, state, toast } from '../members/ui';
+  import { safeNext } from '../lib/members/rules';
+  import { configured, sb } from '../members/sb';
+  import type { EmailOtpType } from '@supabase/supabase-js';
+
+  const q = new URLSearchParams(location.search);
+  const tokenHash = q.get('token_hash');
+  const type = (q.get('type') ?? 'email') as EmailOtpType;
+  const next = safeNext(q.get('next'));
+  // keep the token out of the address bar and history once read
+  history.replaceState(null, '', '/auth');
+
+  if (!configured || !tokenHash) state('failed');
+  else {
+    const { error } = await sb.auth.verifyOtp({ token_hash: tokenHash, type });
+    if (error) state('failed');
+    else if (type === 'recovery') state('password');
+    else location.replace(next);
+  }
+
+  $<HTMLFormElement>('#pw-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement;
+    const password = String(new FormData(f).get('password') ?? '');
+    const repeat = String(new FormData(f).get('repeat') ?? '');
+    if (fieldErrors(f, {
+      password: password.length < 8 ? 'Use 8 characters or more.' : undefined,
+      repeat: password.length >= 8 && password !== repeat ? 'The two do not match.' : undefined,
+    })) return;
+    const btn = f.querySelector('button') as HTMLButtonElement;
+    busy(btn, true, 'Saving…');
+    const { error } = await sb.auth.updateUser({ password });
+    busy(btn, false);
+    if (error) {
+      const weak = /weak|pwned|leak/i.test(error.message);
+      const same = /different from the old|same/i.test(error.message);
+      return fieldErrors(f, { password: weak ? 'That password is too easy to guess. Pick another one.' : same ? 'That is your current password.' : 'Could not save. Try again.' });
+    }
+    toast('Password saved.');
+    location.replace('/me');
+  });
+</script>

@@ -10,8 +10,10 @@ interface Props {
   path: string;
   jsonLd?: object[];
   bodyClass?: string;
+  /** rider-area pages: kept out of search engines */
+  noindex?: boolean;
 }
-const { title, description, path, jsonLd = [], bodyClass } = Astro.props;
+const { title, description, path, jsonLd = [], bodyClass, noindex = false } = Astro.props;
 const canonical = new URL(path, Astro.site).href;
 const og = new URL('/og.jpg', Astro.site).href;
 ---
@@ -22,6 +24,7 @@ const og = new URL('/og.jpg', Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#101314" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

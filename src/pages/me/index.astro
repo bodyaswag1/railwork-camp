@@ -1,0 +1,94 @@
+---
+// Rider home: one greeting, who you are at BAS, one nudge, the ways to ride with us. Modules with nothing real
+// to say are not drawn (no zeroes, no "coming soon" boxes); sessions and progress arrive with booking.
+import App from '../../layouts/App.astro';
+import { train } from '../../content/site';
+---
+<App title="You" path="/me" nav>
+  <div id="home" hidden>
+    <p class="kicker" id="founding-kicker" hidden>Founding rider</p>
+    <h1 id="hi">Hi</h1>
+
+    <div class="grid grid--side">
+      <section class="card card--tape" aria-labelledby="you-h">
+        <h2 id="you-h" class="sr-only">Your profile</h2>
+        <div class="who">
+          <div class="avatar" id="avatar" aria-hidden="true"></div>
+          <div>
+            <p style="margin:0 0 8px;font-weight:700" id="fullname"></p>
+            <p style="margin:0" id="level"></p>
+            <p class="small muted" style="margin:8px 0 0" id="coach" hidden></p>
+          </div>
+        </div>
+        <div id="founding" style="margin-top:16px" hidden><span class="stamp">Founding rider</span>
+          <p class="small muted" style="margin:10px 0 0">You were riding with BAS before the app existed. This stays on your profile.</p></div>
+      </section>
+
+      <div>
+        <section class="card" id="nudge" hidden>
+          <p style="margin:0 0 12px" id="nudge-text"></p>
+          <div class="actions"><a class="btn btn--small" id="nudge-cta" href="/me/profile"></a>
+            <button class="link small" type="button" id="nudge-later">Later</button></div>
+        </section>
+
+        <section class="card card--dark">
+          <p class="kicker">Ride with Ilia</p>
+          <h2>Book a session</h2>
+          <p>Personal coaching on the slope: {train.coaching.price} an hour or {train.coaching.day}. Online booking is coming to this page. Until then, message Ilia and he sorts the day with you.</p>
+          <a class="btn" href="https://instagram.com/baskakov74" rel="noopener">Message on Instagram</a>
+        </section>
+
+        <section class="card">
+          <p class="kicker">23–27 Dec 2026 · Livigno</p>
+          <h2>BAS CAMP Italy</h2>
+          <p>Five days of coaching, filming and video analysis with Ilia and Aleksey. 15 spots.</p>
+          <a class="btn btn--ghost" href="/camp">See the camp</a>
+        </section>
+      </div>
+    </div>
+  </div>
+</App>
+
+<script>
+  import { $, requireMe } from '../../members/ui';
+  import { levelChip } from '../../members/level';
+  import { sb } from '../../members/sb';
+
+  const me = await requireMe();
+  // a pending invite (opened before signing in) is finished on the claim page
+  if (sessionStorage.getItem('bas-invite')) location.replace('/claim');
+
+  await sb.rpc('ensure_my_rider');
+  const { data: r } = await sb.from('my_rider').select('*').maybeSingle();
+
+  $('#hi').textContent = me.firstName ? `Hi ${me.firstName}` : 'Hi there';
+  $('#fullname').textContent = [me.firstName, me.lastName].filter(Boolean).join(' ') || me.email;
+  const av = $('#avatar');
+  if (me.photoUrl) av.style.backgroundImage = `url("${me.photoUrl}")`;
+  else av.textContent = (me.firstName ?? me.email).slice(0, 1);
+
+  const chip = levelChip(r);
+  $('#level').innerHTML = chip || '<a href="/me/profile#level">Set your level</a>';
+  if (r?.coach_name) { $('#coach').textContent = `Your coach: ${r.coach_name}`; $('#coach').hidden = false; }
+  if (r?.founding_at) { $('#founding').hidden = false; $('#founding-kicker').hidden = false; }
+
+  // one nudge at most, in priority order; "Later" hides it for a week
+  const later = Number(localStorage.getItem('bas-nudge-later') ?? 0);
+  const nudges: [boolean, string, string, string][] = [
+    [!me.photoUrl, 'Add a photo so your coach and crew know who to look for on the slope.', 'Add a photo', '/me/profile#photo'],
+    [!r?.band && !r?.self_band, 'Tell us roughly how you ride, so the first session starts at the right place.', 'Set my level', '/me/profile#level'],
+    [!me.instagram, 'Add your Instagram so we can tag you in clips from your sessions.', 'Add Instagram', '/me/profile#details'],
+  ];
+  const n = nudges.find(([on]) => on);
+  if (n && Date.now() - later > 7 * 864e5) {
+    $('#nudge-text').textContent = n[1];
+    $('#nudge-cta').textContent = n[2];
+    $<HTMLAnchorElement>('#nudge-cta').href = n[3];
+    $('#nudge').hidden = false;
+  }
+  $('#nudge-later').addEventListener('click', () => {
+    try { localStorage.setItem('bas-nudge-later', String(Date.now())); } catch {}
+    $('#nudge').hidden = true;
+  });
+  $('#home').hidden = false;
+</script>

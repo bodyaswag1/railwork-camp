@@ -1,0 +1,26 @@
+---
+// Plain-language privacy notice for the rider area. Draft written 2026-11-06 for Ilia to review.
+import App from '../../layouts/App.astro';
+import { rider } from '../../content/site';
+---
+<App title="Privacy" path="/legal/privacy">
+  <article class="card" style="max-width:720px">
+    <h1>Privacy</h1>
+    <p class="muted small">Last updated 6 November 2026</p>
+    <p>BAS CAMP and bascamp.world are run by Ilia Baskakov. This page says what the rider area keeps about you, why, and who sees it.</p>
+    <h2>What we keep</h2>
+    <ul>
+      <li>Your name, email, phone number and, if you add them, your Instagram handle, a photo and a line about yourself.</li>
+      <li>Your riding level: the one you pick, and the one your coach confirms.</li>
+      <li>What your coach recorded about riding with you, for example how many sessions you have had together.</li>
+      <li>A record of when you agreed to these terms and confirmed you are 18 or over.</li>
+    </ul>
+    <h2>Why</h2>
+    <p>To run your coaching: so your coach knows who you are and where you ride, can reach you if a session moves, and can keep track of your progress. Nothing is used for advertising and nothing is sold.</p>
+    <h2>Who sees it</h2>
+    <p>You and the BAS coaches. Other riders see nothing about you. When community features arrive, appearing to other riders will be a switch you turn on yourself, off by default.</p>
+    <p>The data is stored with Supabase (database and login) and emails are sent with Resend. Both process it only to provide that service.</p>
+    <h2>Your rights</h2>
+    <p>You can see and change your details on your profile at any time. To get a copy of everything, or to have your account deleted, write to <a href={`mailto:${rider.email}`}>{rider.email}</a>. We answer within a week.</p>
+  </article>
+</App>

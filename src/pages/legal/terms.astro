@@ -1,0 +1,24 @@
+---
+// Plain-language terms for the rider area. Draft written 2026-11-06 for Ilia to review.
+import App from '../../layouts/App.astro';
+import { rider } from '../../content/site';
+---
+<App title="Terms" path="/legal/terms">
+  <article class="card" style="max-width:720px">
+    <h1>Terms</h1>
+    <p class="muted small">Last updated 6 November 2026</p>
+    <p>These terms cover your BAS rider account on bascamp.world, run by Ilia Baskakov.</p>
+    <h2>Your account</h2>
+    <ul>
+      <li>Accounts are for people aged 18 or over. A parent or guardian arranges coaching for younger riders.</li>
+      <li>Keep your password to yourself. One account per person.</li>
+      <li>Your level is confirmed by your coach. You can suggest one, but only a coach changes a confirmed level.</li>
+    </ul>
+    <h2>Coaching and camps</h2>
+    <p>Prices, dates and payment for personal sessions are agreed with your coach. BAS CAMP has its own terms (reservation fee, balance, cancellation), set out on the <a href="/camp">camp page</a>.</p>
+    <p>Snowboarding carries a risk of injury. You ride at your own risk and need your own insurance that covers winter sports.</p>
+    <h2>Ending your account</h2>
+    <p>You can ask us to delete your account at any time. We may close an account that is used to harm others.</p>
+    <p>Questions: <a href={`mailto:${rider.email}`}>{rider.email}</a>. See also <a href="/legal/privacy">privacy</a>.</p>
+  </article>
+</App>

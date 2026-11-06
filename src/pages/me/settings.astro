@@ -1,0 +1,60 @@
+---
+// Account switches. Phase 1: email, password, sign out. Privacy switches and emails arrive with the community.
+import App from '../../layouts/App.astro';
+---
+<App title="Settings" path="/me/settings" nav>
+  <div id="settings" hidden>
+    <h1>Settings</h1>
+    <div class="grid grid--2">
+      <section class="card">
+        <h2>Account</h2>
+        <dl class="facts"><dt>Email</dt><dd id="email"></dd></dl>
+        <button class="btn btn--ghost" type="button" data-signout>Sign out</button>
+      </section>
+
+      <section class="card" id="password">
+        <h2>Password</h2>
+        <form class="form" id="pw-form" novalidate>
+          <label class="field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="72" />
+            <small>8 characters or more.</small>
+            <span class="err" data-error-for="password" hidden></span></label>
+          <label class="field"><span>Repeat it</span><input type="password" name="repeat" autocomplete="new-password" />
+            <span class="err" data-error-for="repeat" hidden></span></label>
+          <div class="actions"><button class="btn" type="submit">Save password</button></div>
+        </form>
+      </section>
+    </div>
+    <p class="small muted">Want your account and everything on it deleted? Write to Ilia on <a href="https://instagram.com/baskakov74">Instagram</a> and it is gone within a week.</p>
+  </div>
+</App>
+
+<script>
+  import { $, busy, fieldErrors, requireMe, toast } from '../../members/ui';
+  import { sb } from '../../members/sb';
+
+  const me = await requireMe();
+  $('#email').textContent = me.email;
+
+  $<HTMLFormElement>('#pw-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.currentTarget as HTMLFormElement;
+    const password = String(new FormData(f).get('password') ?? '');
+    const repeat = String(new FormData(f).get('repeat') ?? '');
+    if (fieldErrors(f, {
+      password: password.length < 8 ? 'Use 8 characters or more.' : undefined,
+      repeat: password.length >= 8 && password !== repeat ? 'The two do not match.' : undefined,
+    })) return;
+    const btn = f.querySelector('button') as HTMLButtonElement;
+    busy(btn, true, 'Saving…');
+    const { error } = await sb.auth.updateUser({ password });
+    busy(btn, false);
+    if (error) {
+      const reauth = /reauth|recent/i.test(error.message);
+      return fieldErrors(f, { password: reauth ? 'For safety, sign out and back in, then set it.' : /same|different/i.test(error.message) ? 'That is your current password.' : 'Could not save. Try again.' });
+    }
+    f.reset();
+    toast('Password saved.');
+  });
+  $('#settings').hidden = false;
+  if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+</script>

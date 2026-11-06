@@ -1,0 +1,41 @@
+---
+// Shell for the rider area (/join, /signin, /me/*, /coach). Plain information layer on the ice paper, with a
+// little of the zine (tape, stamps) where it marks something real: a verified level, a founding rider.
+// Pages are static; each one's script loads the signed-in person from Supabase in the browser.
+import Base from './Base.astro';
+import Logo from '../components/Logo.astro';
+import '../styles/app.css';
+
+interface Props {
+  title: string;
+  path: string;
+  /** show the You / Profile / Coach / Settings tabs (signed-in pages) */
+  nav?: boolean;
+  narrow?: boolean;
+}
+const { title, path, nav = false, narrow = false } = Astro.props;
+---
+<Base title={`${title} · BAS CAMP`} description="Your BAS CAMP rider profile." path={path} noindex bodyClass="app">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="appbar">
+    <a class="appbar__logo" href="/" aria-label="BAS CAMP home"><Logo tone="dark" eager sizes="96px" /></a>
+    {nav && (
+      <nav class="appnav" aria-label="Rider area">
+        <a href="/me">You</a>
+        <a href="/me/profile">Profile</a>
+        <a href="/coach" data-staff-only hidden>Coach</a>
+        <a href="/me/settings">Settings</a>
+      </nav>
+    )}
+  </header>
+  <main id="main" class:list={['appmain', { 'appmain--narrow': narrow }]}>
+    <div class="unconfigured" role="alert">
+      The rider area is not connected to its database yet. If you are setting it up: add the Supabase keys to
+      <code>.env.local</code> and restart.
+    </div>
+    <slot />
+  </main>
+  <footer class="appfoot">
+    <a href="/">bascamp.world</a> · <a href="/camp">BAS CAMP Italy</a> · <a href="https://instagram.com/baskakov74">@baskakov74</a>
+  </footer>
+</Base>
