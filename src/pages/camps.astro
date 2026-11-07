@@ -1,0 +1,73 @@
+---
+// Camps: apply in the app, see your status, and (once accepted) the camp space: the plan and who is going.
+import App from '../layouts/App.astro';
+---
+<App title="Camps" path="/camps" nav>
+  <h1>Camps</h1>
+  <p class="lede">Training days for a group in one place, coached by Ilia and the BAS crew.</p>
+  <div id="camps"></div>
+</App>
+
+<script>
+  import { $, esc, fmtDate, paintHeader, toast } from '../members/ui';
+  import { CAMP_STATUS, euro } from '../members/labels';
+  import { configured, loadMe, sb } from '../members/sb';
+
+  type Camp = { id: string; slug: string; title: string; place: string; starts_on: string; ends_on: string; spots: number; spots_left: number;
+    price_eur: number; deposit_eur: number | null; balance_due_on: string | null; description: string | null; plan: { day: string; title: string; body: string }[];
+    status: string; my_entry: string | null; my_status: string | null };
+  if (!configured) document.body.dataset.unconfigured = '';
+  const me = await loadMe();
+  paintHeader(me);
+  const HOLDS = ['accepted', 'deposit_paid', 'paid', 'attended'];
+
+  async function load() {
+    const { data } = await sb.rpc('camp_list');
+    const camps = (data ?? []) as Camp[];
+    const html = await Promise.all(camps.map(async (c) => {
+      const inCamp = c.my_status && HOLDS.includes(c.my_status);
+      let crew = '';
+      if (inCamp) {
+        const { data: cr } = await sb.rpc('camp_crew', { p_camp: c.id });
+        const named = (cr ?? []).filter((x: { name: string | null }) => x.name);
+        const hidden = (cr ?? []).find((x: { hidden_count: number | null }) => x.hidden_count)?.hidden_count ?? 0;
+        crew = `<h3 style="margin-top:16px">Who is going</h3><p>${named.map((x: { name: string }) => esc(x.name)).join(', ') || '—'}${hidden ? ` <span class="muted">and ${hidden} more</span>` : ''}</p>
+          <p class="small muted">Riders show here when they turn on “Show me in the rider directory” in settings.</p>`;
+      }
+      const pay = inCamp ? `<p class="small"><b>Payment:</b> ${c.my_status === 'paid' || c.my_status === 'attended' ? 'all paid' : c.my_status === 'deposit_paid'
+        ? `deposit paid · balance ${esc(euro(c.price_eur - (c.deposit_eur ?? 0)))} by ${esc(fmtDate(c.balance_due_on))}`
+        : `deposit ${esc(euro(c.deposit_eur))} to lock your spot · Ilia sends the details`}</p>` : '';
+      const action = !me ? `<a class="btn" href="/signin?next=/camps">Sign in to apply</a>`
+        : c.my_status && !['cancelled', 'declined'].includes(c.my_status)
+          ? `<p><span class="chip chip--verified">${esc(CAMP_STATUS[c.my_status])}</span></p>${['applied', 'waitlist', 'accepted'].includes(c.my_status) ? `<button class="link small" data-withdraw="${c.my_entry}">Withdraw</button>` : ''}`
+          : c.status !== 'open' ? '<p class="muted">Applications closed.</p>'
+          : `<form class="form" data-apply="${c.id}" style="max-width:420px"><label class="field"><span>Anything Ilia should know?</span><textarea name="note" maxlength="500" placeholder="Level, goals, who you are coming with"></textarea></label>
+             <label class="field"><span>Promo code</span><input type="text" name="promo" maxlength="40" /></label><button class="btn" type="submit">Apply for this camp</button></form>`;
+      return `<section class="card card--tape"><p class="kicker">${esc(fmtDate(c.starts_on, { day: 'numeric', month: 'short' }))}–${esc(fmtDate(c.ends_on))} · ${esc(c.place)}</p>
+        <h2>${esc(c.title)}</h2><p>${esc(c.description ?? '')}</p>
+        <p class="small"><b>${esc(euro(c.price_eur))}</b>${c.deposit_eur ? ` · ${esc(euro(c.deposit_eur))} deposit` : ''} · ${c.spots_left > 0 ? `${c.spots_left} of ${c.spots} spots left` : 'full: apply for the waitlist'} · <a href="/camp">camp page</a></p>
+        ${pay}${action}
+        ${c.plan?.length ? `<details style="margin-top:12px"${inCamp ? ' open' : ''}><summary><b>The plan</b></summary><ol class="small">${c.plan.map((d) => `<li><b>${esc(d.day)} · ${esc(d.title)}</b> ${esc(d.body)}</li>`).join('')}</ol></details>` : ''}
+        ${crew}</section>`;
+    }));
+    $('#camps').innerHTML = html.join('') || '<p class="empty">No camps open right now.</p>';
+  }
+
+  document.addEventListener('submit', async (e) => {
+    const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-apply]');
+    if (!form) return;
+    e.preventDefault();
+    const f = new FormData(form);
+    const { data } = await sb.rpc('apply_camp', { p_camp: form.dataset.apply, p_note: f.get('note'), p_promo: f.get('promo') });
+    toast(data === 'ok' ? 'Applied. Ilia gets back to you.' : data === 'already' ? 'You have already applied.' : 'Applications are closed.', data === 'ok' ? 'ok' : 'bad');
+    load();
+  });
+  document.addEventListener('click', async (e) => {
+    const id = (e.target as HTMLElement).closest<HTMLElement>('[data-withdraw]')?.dataset.withdraw;
+    if (!id || !confirm('Withdraw your application?')) return;
+    const { data } = await sb.rpc('withdraw_camp', { p_entry: id });
+    toast(data === 'ok' ? 'Withdrawn.' : 'Paid entries are cancelled through Ilia (see the cancellation terms).', data === 'ok' ? 'ok' : 'bad');
+    load();
+  });
+  await load();
+</script>

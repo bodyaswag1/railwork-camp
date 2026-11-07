@@ -22,9 +22,16 @@ const { title, path, nav = false, narrow = false } = Astro.props;
     {nav && (
       <nav class="appnav" aria-label="Rider area">
         <a href="/me">You</a>
+        <a href="/book">Book</a>
+        <a href="/me/sessions">Sessions</a>
+        <a href="/me/progress">Progress</a>
+        <a href="/community">Community</a>
+        <a href="/camps">Camps</a>
         <a href="/me/profile">Profile</a>
-        <a href="/coach" data-staff-only hidden>Coach</a>
         <a href="/me/settings">Settings</a>
+        <a href="/coach" data-staff-only hidden>Coach</a>
+        <a href="/coach/schedule" data-staff-only hidden>Schedule</a>
+        <a href="/coach/camps" data-staff-only hidden>Camp roster</a>
       </nav>
     )}
   </header>

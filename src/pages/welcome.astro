@@ -1,0 +1,91 @@
+---
+// The questionnaire after sign-up. Two answers are required (what you ride, since when); the rest helps your coach
+// and the crew. Riders land here from /me until it is done; every answer can be changed later on the profile.
+import App from '../layouts/App.astro';
+import { LEVELS } from '../lib/members/rules';
+---
+<App title="Welcome" path="/welcome" narrow>
+  <div id="welcome" hidden>
+    <p class="kicker">Welcome to BAS</p>
+    <h1 id="hi">Tell us how you ride</h1>
+    <p class="lede">Two minutes. Your coach reads this before your first session.</p>
+    <form class="form" id="w-form" novalidate>
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend style="font-weight:700;font-size:14px">What do you ride? *</legend>
+        <label class="check"><input type="checkbox" name="disciplines" value="snowboard" /> Snowboard</label>
+        <label class="check"><input type="checkbox" name="disciplines" value="ski" /> Ski</label>
+        <span class="err" data-error-for="disciplines" hidden></span>
+      </fieldset>
+      <label class="field"><span>Riding since (year) *</span>
+        <input type="number" name="riding_since" min="1950" max="2100" inputmode="numeric" placeholder="2019" />
+        <span class="err" data-error-for="riding_since" hidden></span></label>
+      <label class="field" id="stance-row"><span>Stance (snowboard)</span>
+        <select name="stance"><option value="">Not sure</option><option value="regular">Regular (left foot forward)</option><option value="goofy">Goofy (right foot forward)</option></select></label>
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend style="font-weight:700;font-size:14px">Where do you like to ride?</legend>
+        <label class="check"><input type="checkbox" name="terrain" value="piste" /> Piste</label>
+        <label class="check"><input type="checkbox" name="terrain" value="park" /> Park</label>
+        <label class="check"><input type="checkbox" name="terrain" value="freeride" /> Freeride</label>
+        <label class="check"><input type="checkbox" name="terrain" value="backcountry" /> Backcountry</label>
+      </fieldset>
+      <label class="field"><span>Your level</span>
+        <select name="band"><option value="">Not sure yet</option>{LEVELS.map((l) => <option value={l.band}>{l.band} · {l.name}: {l.means}</option>)}</select>
+        <small>Your own guess. Your coach confirms it after riding with you.</small></label>
+      <label class="field"><span>Favourite trick</span><input type="text" name="favorite_trick" maxlength="80" placeholder="Backside 180" /></label>
+      <label class="field"><span>Home resort</span><input type="text" name="home_resort" maxlength="80" placeholder="Livigno" /></label>
+      <label class="field"><span>Favourite brand</span><input type="text" name="favorite_brand" maxlength="60" /></label>
+      <label class="field"><span>Your setup (board or skis)</span><input type="text" name="gear" maxlength="120" placeholder="157 Pro Model, Union bindings" /></label>
+      <label class="field"><span>What do you want to learn next?</span><textarea name="goals" maxlength="280" placeholder="First backside 360, riding switch"></textarea></label>
+      <p class="err" id="w-error" role="alert" hidden></p>
+      <button class="btn btn--block" type="submit">Done: open my profile</button>
+    </form>
+  </div>
+</App>
+
+<script>
+  import { $, $$, busy, fieldErrors, requireMe } from '../members/ui';
+  import { sb } from '../members/sb';
+
+  const me = await requireMe();
+  const form = $<HTMLFormElement>('#w-form');
+  const { data: p } = await sb.from('profiles').select('*').eq('id', me.id).single();
+  if (me.firstName) $('#hi').textContent = `${me.firstName}, how do you ride?`;
+
+  // prefill (the page doubles as "edit my answers")
+  for (const el of $$<HTMLInputElement>('input[type=checkbox]', form)) el.checked = (p?.[el.name] ?? []).includes(el.value);
+  for (const n of ['riding_since', 'stance', 'favorite_trick', 'home_resort', 'favorite_brand', 'gear', 'goals'])
+    (form.elements.namedItem(n) as HTMLInputElement).value = p?.[n] ?? '';
+  const { data: lv } = await sb.from('my_rider').select('band, self_band').maybeSingle();
+  const bandSel = form.elements.namedItem('band') as HTMLSelectElement;
+  bandSel.value = lv?.self_band ? String(lv.self_band) : '';
+  if (lv?.band) bandSel.closest('label')!.hidden = true;     // coach-confirmed: not the rider's to change
+
+  const snow = () => $$<HTMLInputElement>('input[name=disciplines]', form).some((i) => i.checked && i.value === 'snowboard');
+  const syncStance = () => ($('#stance-row').hidden = !snow());
+  form.addEventListener('change', syncStance); syncStance();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const v = (n: string) => String(f.get(n) ?? '').trim() || null;
+    const disciplines = f.getAll('disciplines').map(String);
+    const year = Number(v('riding_since'));
+    const thisYear = new Date().getFullYear();
+    if (fieldErrors(form, {
+      disciplines: disciplines.length ? undefined : 'Pick at least one.',
+      riding_since: year >= 1950 && year <= thisYear ? undefined : `A year between 1950 and ${thisYear}.`,
+    })) return;
+    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+    busy(btn, true, 'Saving…');
+    const { error } = await sb.from('profiles').update({
+      disciplines, riding_since: year, stance: snow() ? v('stance') : null, terrain: f.getAll('terrain').map(String),
+      favorite_trick: v('favorite_trick'), home_resort: v('home_resort'), favorite_brand: v('favorite_brand'), gear: v('gear'), goals: v('goals'),
+    }).eq('id', me.id);
+    if (!error && v('band') && !lv?.band) await sb.rpc('set_self_level', { p_band: Number(v('band')) });
+    const done = error ? null : (await sb.rpc('finish_onboarding')).data;
+    busy(btn, false);
+    if (done !== 'ok') { $('#w-error').textContent = 'That did not save. Try again.'; $('#w-error').hidden = false; return; }
+    location.replace(new URLSearchParams(location.search).get('next') ?? '/me');
+  });
+  $('#welcome').hidden = false;
+</script>

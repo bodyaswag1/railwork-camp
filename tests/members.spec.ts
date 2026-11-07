@@ -60,19 +60,33 @@ test.beforeAll(async () => {
 
 let inviteLink = '';
 
+/** the questionnaire every new rider gets: required answers first, then a few optional ones */
+async function welcome(page: Page, who: typeof COACH) {
+  await expect(page).toHaveURL(/\/welcome$/);
+  await page.getByRole('button', { name: /Done: open my profile/ }).click();
+  await expect(page.getByText('Pick at least one.')).toBeVisible();              // required
+  await page.getByRole('checkbox', { name: 'Snowboard' }).check();
+  await page.getByLabel(/Riding since/).fill('2019');
+  await page.getByLabel(/Stance/).selectOption('goofy');
+  await page.getByRole('checkbox', { name: 'Park' }).check();
+  await page.getByLabel('Favourite trick').fill('Backside 180');
+  await page.getByLabel('Favourite brand').fill('Burton');
+  await page.getByRole('button', { name: /Done: open my profile/ }).click();
+  await expect(page.getByRole('heading', { name: `Hi ${who.first}` })).toBeVisible();
+}
+
 test('a coach signs up, confirms by email and gets the coach role', async ({ page }) => {
   await page.goto('/join');
   const t = await join(page, COACH);
-  // the wrong-address path and back
   await page.goto(await mailLink(COACH.email, t));
-  await expect(page.getByRole('heading', { name: `Hi ${COACH.first}` })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Coach' })).toBeHidden();
+  await welcome(page, COACH);
+  await expect(page.getByRole('link', { name: 'Coach', exact: true })).toBeHidden();
 
   const sql = db();
   await sql`update public.profiles p set role = 'coach' from auth.users u where u.id = p.id and u.email = ${COACH.email}`;
   await sql.end();
   await page.reload();
-  await expect(page.getByRole('link', { name: 'Coach' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Coach', exact: true })).toBeVisible();
 });
 
 test('the same email cannot sign up twice', async ({ page }) => {
@@ -134,7 +148,7 @@ test('the rider opens the invite, signs up, and their coach record comes with th
   await expect(page.locator('#sent-claim')).toContainText('attached');
 
   await page.goto(await mailLink(RIDER.email, t));
-  await expect(page.getByRole('heading', { name: `Hi ${RIDER.first}` })).toBeVisible();
+  await welcome(page, RIDER);
   await expect(page.locator('.chip--verified')).toContainText('Cruising');
   await expect(page.locator('#founding')).toBeVisible();
   await expect(page.locator('#coach')).toContainText(COACH.first);
@@ -158,6 +172,103 @@ test('the rider opens the invite, signs up, and their coach record comes with th
 test('a used invite cannot be claimed again', async ({ page }) => {
   await page.goto(inviteLink.replace(/^https?:\/\/[^/]+/, ''));
   await expect(page.getByRole('heading', { name: /already (used|connected)/ })).toBeVisible();
+});
+
+async function signIn(page: Page, email: string, password: string, next = '/me') {
+  await page.goto(`/signin?next=${encodeURIComponent(next)}`);
+  await page.locator('#signin-form').getByLabel('Email').fill(email);
+  await page.locator('#signin-form').getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: 'Sign in' }).click();
+}
+
+test('booking, weekly slot, progress, community and camps through the pages', async ({ browser }) => {
+  const errors: string[] = [];
+  const coach = await browser.newPage();
+  const rider = await browser.newPage();
+  for (const p of [coach, rider]) p.on('pageerror', (e) => errors.push(e.message));
+
+  // coach publishes a trampoline session 5 days out
+  await signIn(coach, COACH.email, COACH.password, '/coach/schedule');
+  await expect(coach.getByRole('heading', { name: 'Schedule' })).toBeVisible();
+  const d = new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10);
+  const pub = coach.locator('#pub');
+  await pub.getByLabel('Title').fill('E2E trampoline');
+  await pub.getByLabel(/Start/).fill(`${d}T18:00`);
+  await pub.getByLabel('Places').fill('4');
+  await pub.getByLabel(/Price/).fill('30');
+  await pub.getByRole('button', { name: 'Publish' }).click();
+  await expect(coach.locator('#sessions')).toContainText('E2E trampoline');
+
+  // rider books it, asks for it weekly
+  await signIn(rider, RIDER.email, RIDER.password, '/book');
+  const row = rider.locator('.card', { hasText: 'E2E trampoline' });
+  await row.getByRole('button', { name: 'Book' }).click();
+  await expect(rider.locator('#toast')).toContainText('Booked');
+  await expect(row).toContainText('You are booked');
+  await rider.goto('/me/sessions');
+  const mine = rider.locator('#upcoming .card', { hasText: 'E2E trampoline' });
+  await mine.getByRole('button', { name: 'Keep this time every week' }).click();
+  await expect(rider.locator('#loops')).toContainText('Waiting for your coach');
+
+  // coach approves, marks attended
+  await coach.reload();
+  await coach.locator('#inbox').getByRole('button', { name: 'Approve' }).click();
+  await expect(coach.locator('#inbox-wrap')).toBeHidden();
+  const s = coach.locator('#sessions .card', { hasText: 'E2E trampoline' });
+  await expect(s).toContainText(RIDER.first);
+  await s.getByRole('button', { name: 'attended' }).click();
+  await expect(s).toContainText('Attended');
+
+  // rider: progress counts it (12 before the app + 1), ticks a trick
+  await rider.goto('/me/progress');
+  await expect(rider.locator('#n-sessions')).toHaveText('13');
+  await rider.getByRole('checkbox', { name: 'Ollie', exact: true }).check();
+  await expect(rider.locator('#tricks')).toContainText('working on it');
+
+  // coach marks it landed from the rider card
+  await coach.goto('/coach');
+  await coach.locator('#roster button', { hasText: RIDER.first }).click();
+  const landed = coach.locator('form[data-landed]');
+  await landed.locator('select').selectOption({ label: 'basics · Ollie' });
+  await landed.getByRole('button', { name: 'Mark landed' }).click();
+  await expect(coach.locator('#r-more')).toContainText('Ollie');
+
+  // rider: community opt-in, directory, feed, ride post
+  await rider.goto('/community');
+  await rider.getByRole('button', { name: 'Show me in the rider directory' }).click();
+  await expect(rider.locator('#riders')).toContainText(`${RIDER.first} T.`);
+  await rider.getByRole('button', { name: 'Feed' }).click();
+  await expect(rider.locator('#feed')).toContainText('landed a Ollie');
+  await rider.getByRole('button', { name: 'Ride together' }).click();
+  await rider.locator('#post-form').getByLabel('Where').fill('Livigno, Mottolino park');
+  await rider.locator('#post-form').getByLabel('When').fill(d);
+  await rider.locator('#post-form').getByRole('button', { name: 'Post' }).click();
+  await expect(rider.locator('#board')).toContainText('Mottolino');
+
+  // rider applies for the camp; coach sees the application
+  await rider.goto('/camps');
+  const camp = rider.locator('section', { hasText: 'BAS CAMP Italy 2026' });
+  await camp.getByLabel(/Anything Ilia should know/).fill('E2E test application, please ignore');
+  await camp.getByRole('button', { name: 'Apply for this camp' }).click();
+  await expect(camp).toContainText('Applied');
+  await coach.goto('/coach/camps');
+  await expect(coach.locator('#camps')).toContainText('E2E test application');
+
+  expect(errors).toEqual([]);
+  await coach.close();
+  await rider.close();
+});
+
+test.afterAll(async () => {
+  // keep the live data clean: the camp application, the session and the ride post made above
+  const sql = db();
+  await sql`delete from public.camp_entries e using public.riders r join auth.users u on u.id = r.profile_id
+            where e.rider_id = r.id and u.email in (${COACH.email}, ${RIDER.email})`;
+  await sql`delete from public.sessions where title like 'E2E%'`;
+  await sql`delete from public.ride_posts p using public.riders r join auth.users u on u.id = r.profile_id
+            where p.rider_id = r.id and u.email = ${RIDER.email}`;
+  await sql`update public.profiles p set listed = false, ask_to_ride = false from auth.users u where u.id = p.id and u.email = ${RIDER.email}`;
+  await sql.end();
 });
 
 test('row-level security holds for a signed-in rider', async () => {

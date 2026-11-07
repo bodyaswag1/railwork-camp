@@ -1,0 +1,87 @@
+---
+// Open sessions for the next 8 weeks. Browsing works signed out; booking needs an account.
+import App from '../layouts/App.astro';
+---
+<App title="Book" path="/book" nav>
+  <h1>Book a session</h1>
+  <p class="lede">Pay your coach on the day. Free changes until 48 hours before.</p>
+  <div class="toolbar" role="tablist" aria-label="Kind of session">
+    <button class="btn btn--small" type="button" data-kind="">All</button>
+    <button class="btn btn--small btn--ghost" type="button" data-kind="personal">Personal</button>
+    <button class="btn btn--small btn--ghost" type="button" data-kind="trampoline">Trampoline</button>
+  </div>
+  <p class="card small" id="pack-note" hidden></p>
+  <div id="list"></div>
+  <p class="empty" id="empty" hidden>Nothing open in the next 8 weeks yet. <a href="https://instagram.com/baskakov74">Message Ilia</a> and he sets a day up with you.</p>
+</App>
+
+<script>
+  import { $, $$, esc, paintHeader, toast } from '../members/ui';
+  import { BOOK_RESULT, KIND, dayLabel, euro, time } from '../members/labels';
+  import { levelName } from '../lib/members/rules';
+  import { configured, loadMe, sb } from '../members/sb';
+
+  type S = { id: string; kind: string; title: string; starts_at: string; ends_at: string; venue: string | null; coach: string | null;
+    capacity: number; seats_left: number; price_eur: number | null; level_min: number | null; level_max: number | null; notes: string | null;
+    my_booking: string | null; my_status: string | null };
+
+  if (!configured) document.body.dataset.unconfigured = '';
+  const me = await loadMe();
+  paintHeader(me);
+  let kind = new URLSearchParams(location.search).get('kind') ?? '';
+  let rows: S[] = [];
+
+  async function load() {
+    const { data } = await sb.rpc('open_sessions', { p_kind: kind || null });
+    rows = (data ?? []) as S[];
+    paint();
+  }
+
+  function paint() {
+    for (const b of $$<HTMLButtonElement>('[data-kind]')) b.classList.toggle('btn--ghost', b.dataset.kind !== kind);
+    const byDay = new Map<string, S[]>();
+    for (const s of rows) {
+      const d = dayLabel(s.starts_at);
+      byDay.set(d, [...(byDay.get(d) ?? []), s]);
+    }
+    $('#list').innerHTML = [...byDay].map(([d, list]) => `
+      <h3 style="margin-top:24px">${esc(d)}</h3>
+      ${list.map((s) => {
+        const lvl = s.level_min ? `Level ${esc(levelName(s.level_min))}${s.level_max ? ` – ${esc(levelName(s.level_max))}` : ' and up'}` : '';
+        const seats = s.kind === 'trampoline' ? `${s.seats_left} of ${s.capacity} left` : s.seats_left > 0 ? 'Free' : 'Taken';
+        const action = s.my_booking ? `<span class="chip chip--verified">You are booked</span>`
+          : s.seats_left <= 0 ? `<span class="chip">Full</span>`
+          : me ? `<button class="btn btn--small" type="button" data-book="${s.id}">Book</button>`
+          : `<a class="btn btn--small" href="/signin?next=${encodeURIComponent('/book')}">Sign in to book</a>`;
+        return `<div class="card" style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <div><b>${esc(time(s.starts_at))}–${esc(time(s.ends_at))} · ${esc(s.title)}</b>
+            <div class="small muted">${esc([KIND[s.kind], s.venue, s.coach && `with ${s.coach}`, euro(s.price_eur), lvl, seats].filter(Boolean).join(' · '))}</div>
+            ${s.notes ? `<div class="small">${esc(s.notes)}</div>` : ''}</div>
+          <div>${action}</div></div>`;
+      }).join('')}`).join('');
+    $('#empty').hidden = rows.length > 0;
+  }
+
+  $('#list').addEventListener('click', async (e) => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('[data-book]');
+    if (!btn) return;
+    btn.disabled = true;
+    const { data, error } = await sb.rpc('book_session', { p_session: btn.dataset.book });
+    const status = error ? 'error' : data.status;
+    toast(BOOK_RESULT[status] ?? 'That did not go through. Try again.', status === 'ok' ? 'ok' : 'bad');
+    if (status === 'ok' && data.pack) toast('Booked with a credit from your pack.');
+    await load();
+  });
+
+  for (const b of $$<HTMLButtonElement>('[data-kind]')) b.addEventListener('click', () => { kind = b.dataset.kind!; load(); });
+
+  if (me) {
+    const { data: packs } = await sb.from('packs').select('kind, sessions_total, sessions_used, valid_until');
+    const live = (packs ?? []).filter((p) => p.sessions_used < p.sessions_total);
+    if (live.length) {
+      $('#pack-note').textContent = 'Your packs: ' + live.map((p) => `${p.sessions_total - p.sessions_used} ${KIND[p.kind].toLowerCase()} credits left`).join(', ') + '. Booking uses a credit automatically.';
+      $('#pack-note').hidden = false;
+    }
+  }
+  await load();
+</script>

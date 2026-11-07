@@ -1,0 +1,167 @@
+---
+// Community: riders who chose to be visible, the club feed, "ride together" posts, and what the club noticed.
+// Everything is off by default; turning it on is one switch here or in settings.
+import App from '../layouts/App.astro';
+import { LEVELS } from '../lib/members/rules';
+---
+<App title="Community" path="/community" nav>
+  <h1>Community</h1>
+  <section class="card card--tape" id="optin" hidden>
+    <p><b>You are invisible right now.</b> Other riders cannot see you, and you cannot post a ride. Turn on listing and riders at your level can find you. Your contact details stay private until you both say yes.</p>
+    <div class="actions"><button class="btn btn--small" type="button" id="go-listed">Show me in the rider directory</button><a class="link small" href="/me/settings#privacy">Privacy settings</a></div>
+  </section>
+  <div class="toolbar">
+    <button class="btn btn--small" data-tab="riders">Riders</button>
+    <button class="btn btn--small btn--ghost" data-tab="feed">Feed</button>
+    <button class="btn btn--small btn--ghost" data-tab="ride">Ride together</button>
+    <button class="btn btn--small btn--ghost" data-tab="highlights">Highlights</button>
+  </div>
+
+  <section data-pane="riders">
+    <div class="toolbar">
+      <select id="f-disc" style="width:auto"><option value="">Snowboard + ski</option><option value="snowboard">Snowboard</option><option value="ski">Ski</option></select>
+      <select id="f-band" style="width:auto"><option value="">Any level</option>{LEVELS.map((l) => <option value={l.band}>Near {l.name}</option>)}</select>
+      <input type="search" id="f-q" placeholder="Resort or name" style="flex:1 1 160px" />
+    </div>
+    <div id="riders" class="grid grid--2"></div>
+    <p class="empty" id="riders-empty" hidden>Nobody listed yet. Turn on listing and you give the next rider someone to find.</p>
+  </section>
+
+  <section data-pane="feed" hidden><p class="small muted">New riders, coach-confirmed levels, landed tricks and camps. Nothing else.</p><div id="feed"></div></section>
+
+  <section data-pane="ride" hidden>
+    <form class="card form" id="post-form">
+      <h3>Riding somewhere soon?</h3>
+      <div class="form__row form__row--2">
+        <label class="field"><span>Where</span><input type="text" name="place" maxlength="80" placeholder="Livigno, Mottolino park" required /></label>
+        <label class="field"><span>When</span><input type="date" name="date" required /></label>
+      </div>
+      <label class="field"><span>Note</span><input type="text" name="note" maxlength="280" placeholder="Park laps from 10:00" /></label>
+      <button class="btn btn--small" type="submit">Post</button>
+    </form>
+    <div id="board"></div>
+    <div id="requests"></div>
+    <div id="contacts"></div>
+  </section>
+
+  <section data-pane="highlights" hidden><div id="highlights"></div></section>
+
+  <dialog id="card" class="card" style="max-width:520px;width:calc(100vw - 32px)"><div id="card-body"></div><button class="link" type="button" id="card-close">Close</button></dialog>
+</App>
+
+<script>
+  import { $, $$, esc, fmtDate, requireMe, toast } from '../members/ui';
+  import { DISCIPLINE, TERRAIN } from '../members/labels';
+  import { levelName } from '../lib/members/rules';
+  import { sb } from '../members/sb';
+
+  const me = await requireMe();
+  await sb.rpc('ensure_my_rider');
+  const { data: prof } = await sb.from('profiles').select('listed, ask_to_ride').eq('id', me.id).single();
+  $('#optin').hidden = !!prof?.listed;
+  const lvl = (band: number | null, verified?: boolean) => band ? `${esc(levelName(band))}${verified === false ? ' <span class="muted">(self-rated)</span>' : ''}` : '';
+
+  const tabs = { riders: loadRiders, feed: loadFeed, ride: loadRide, highlights: loadHighlights } as Record<string, () => Promise<void>>;
+  async function show(tab: string) {
+    for (const b of $$<HTMLButtonElement>('[data-tab]')) b.classList.toggle('btn--ghost', b.dataset.tab !== tab);
+    for (const p of $$('[data-pane]')) p.hidden = p.dataset.pane !== tab;
+    await tabs[tab]();
+  }
+  for (const b of $$<HTMLButtonElement>('[data-tab]')) b.addEventListener('click', () => show(b.dataset.tab!));
+
+  async function loadRiders() {
+    const { data } = await sb.rpc('community_directory', { p_discipline: $<HTMLSelectElement>('#f-disc').value || null,
+      p_band: Number($<HTMLSelectElement>('#f-band').value) || null, p_q: $<HTMLInputElement>('#f-q').value.trim() || null });
+    $('#riders').innerHTML = (data ?? []).map((r: Record<string, never>) => `<button class="card" style="text-align:left;cursor:pointer;font:inherit" data-card="${r.rider_id}">
+      <b>${esc(r.name)}</b> <span class="small">${(r.disciplines as string[]).map((d) => DISCIPLINE[d]).join(' + ')}</span>
+      <div class="small">${lvl(r.band, r.verified)}${r.home_resort ? ` · ${esc(r.home_resort)}` : ''}${r.riding_since ? ` · since ${r.riding_since}` : ''}</div>
+      ${r.favorite_trick ? `<div class="small muted">Favourite trick: ${esc(r.favorite_trick)}</div>` : ''}
+      ${r.tricks_landed ? `<div class="small muted">${r.tricks_landed} tricks landed</div>` : ''}</button>`).join('');
+    $('#riders-empty').hidden = (data ?? []).length > 0;
+  }
+  for (const id of ['#f-disc', '#f-band']) $(id).addEventListener('change', loadRiders);
+  $('#f-q').addEventListener('input', () => { clearTimeout((window as never as { _t: number })._t); (window as never as { _t: number })._t = window.setTimeout(loadRiders, 300); });
+
+  async function loadFeed() {
+    const { data } = await sb.rpc('community_feed');
+    const line = (f: { kind: string; name: string; payload: Record<string, string> }) => ({
+      joined: `${esc(f.name)} joined${f.payload.band ? ` at ${esc(levelName(Number(f.payload.band)))}` : ''}`,
+      level: `${esc(f.name)} is now ${esc(levelName(Number(f.payload.band)))}, confirmed by a coach`,
+      trick: `${esc(f.name)} landed a ${esc(f.payload.trick)}, signed off by a coach`,
+      camp: `New camp: ${esc(f.payload.title)} · ${esc(f.payload.place)} · <a href="/camps">apply</a>`,
+      event: esc(f.payload.text ?? ''),
+    } as Record<string, string>)[f.kind];
+    $('#feed').innerHTML = (data ?? []).map((f: never) => `<div class="card small">${line(f)} <span class="muted">· ${esc(fmtDate((f as { created_at: string }).created_at))}</span></div>`).join('')
+      || '<p class="empty">Quiet so far.</p>';
+  }
+
+  async function loadRide() {
+    const [{ data: board }, { data: reqs }, { data: contacts }] = await Promise.all([sb.rpc('ride_board'), sb.rpc('my_ride_requests'), sb.rpc('my_ride_contacts')]);
+    $('#board').innerHTML = '<h3 style="margin-top:20px">Who is riding where</h3>' + ((board ?? []).map((p: Record<string, never>) => `<div class="card">
+      <b>${esc(fmtDate(p.ride_date, { weekday: 'short', day: 'numeric', month: 'short' }))} · ${esc(p.place)}</b>
+      <div class="small">${esc(p.name)} · ${lvl(p.band)}${p.note ? ` · ${esc(p.note)}` : ''}</div>
+      <div class="actions" style="margin-top:8px">${p.mine ? `<span class="small muted">Your post${p.pending_for_me ? ` · ${p.pending_for_me} asking to join` : ''}</span><button class="link small" data-del="${p.id}">Remove</button>`
+        : p.my_request ? `<span class="chip">${p.my_request === 'pending' ? 'Asked' : p.my_request === 'accepted' ? 'They said yes' : 'Not this time'}</span>`
+        : p.can_ask ? `<button class="btn btn--small" data-ask="${p.id}">Ask to ride along</button>` : '<span class="small muted">Not taking requests</span>'}</div></div>`).join('') || '<p class="empty">No rides posted.</p>');
+    const pending = (reqs ?? []).filter((r: { status: string }) => r.status === 'pending');
+    $('#requests').innerHTML = pending.length ? '<h3 style="margin-top:20px">Asking to ride with you</h3>' + pending.map((r: Record<string, never>) => `<div class="card small">
+      <b>${esc(r.name)}</b> (${lvl(r.band)}) for ${esc(r.place)} on ${esc(fmtDate(r.ride_date))}${r.message ? `: “${esc(r.message)}”` : ''}
+      <div class="actions" style="margin-top:8px"><button class="btn btn--small" data-yes="${r.id}">Yes, share contacts</button><button class="link small" data-no="${r.id}">No thanks</button></div></div>`).join('') : '';
+    $('#contacts').innerHTML = (contacts ?? []).length ? '<h3 style="margin-top:20px">Riding together</h3>' + (contacts ?? []).map((c: Record<string, string>) => `<div class="card small">
+      <b>${esc(c.name)}</b> · ${esc(c.place)} · ${esc(fmtDate(c.ride_date))}<br>${[c.phone, c.instagram && '@' + c.instagram, c.email].filter(Boolean).map(esc).join(' · ')}</div>`).join('') : '';
+  }
+
+  async function loadHighlights() {
+    const { data: h } = await sb.rpc('community_highlights');
+    const block = (t: string, items: string[]) => items.length ? `<section class="card"><h3>${t}</h3><ul class="small">${items.join('')}</ul></section>` : '';
+    $('#highlights').innerHTML = (block('Levels confirmed this month', (h?.levels ?? []).map((x: Record<string, never>) => `<li>${esc(x.name)} · ${esc(levelName(x.band))}</li>`))
+      + block('Tricks landed this month', (h?.tricks ?? []).map((x: Record<string, never>) => `<li>${esc(x.name)} · ${esc(x.trick)}</li>`))
+      + block('Showing up this month', (h?.active ?? []).map((x: Record<string, never>) => `<li>${esc(x.name)} · ${x.sessions} sessions</li>`)))
+      || '<p class="empty">Once coaches start confirming levels and tricks, this fills up on its own. No ladders, no rankings.</p>';
+  }
+
+  document.addEventListener('click', async (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-card],[data-ask],[data-yes],[data-no],[data-del]');
+    if (!el) return;
+    const d = el.dataset;
+    if (d.card) {
+      const { data: c } = await sb.rpc('rider_card', { p_rider: d.card });
+      if (!c) return;
+      $('#card-body').innerHTML = `<h2>${esc(c.name)}</h2><p>${lvl(c.band, c.verified)} · ${(c.disciplines ?? []).map((x: string) => DISCIPLINE[x]).join(' + ')}</p>
+        <dl class="facts">${[['Riding since', c.riding_since], ['Home resort', c.home_resort], ['Likes', (c.terrain ?? []).map((t: string) => TERRAIN[t]).join(', ')],
+          ['Favourite trick', c.favorite_trick], ['Favourite brand', c.favorite_brand]].filter(([, v]) => v).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+        ${c.bio ? `<p>${esc(c.bio)}</p>` : ''}
+        ${c.badges.length ? `<p class="small"><b>Badges:</b> ${c.badges.map((b: { title: string }) => esc(b.title)).join(', ')}</p>` : ''}
+        ${c.tricks.length ? `<p class="small"><b>Tricks landed:</b> ${c.tricks.map(esc).join(', ')}</p>` : ''}`;
+      ($('#card') as HTMLDialogElement).showModal();
+    } else if (d.ask) {
+      const message = prompt('A line for them (optional)') ?? '';
+      const { data } = await sb.rpc('ask_to_ride', { p_post: d.ask, p_message: message });
+      toast(({ ok: 'Asked. If they say yes you both see each other’s contacts.', not_listed: 'Turn on listing first, so they can see who is asking.', already: 'Already asked.', closed: 'They are not taking requests.' } as Record<string, string>)[data] ?? 'Could not ask.', data === 'ok' ? 'ok' : 'bad');
+      loadRide();
+    } else if (d.yes || d.no) {
+      await sb.rpc('respond_ride_request', { p_request: d.yes ?? d.no, p_accept: !!d.yes });
+      loadRide();
+    } else if (d.del) {
+      await sb.rpc('delete_ride', { p_post: d.del });
+      loadRide();
+    }
+  });
+  $('#card-close').addEventListener('click', () => ($('#card') as HTMLDialogElement).close());
+
+  $<HTMLFormElement>('#post-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget as HTMLFormElement);
+    const { data } = await sb.rpc('post_ride', { p_place: f.get('place'), p_date: f.get('date'), p_note: f.get('note') });
+    toast(data === 'ok' ? 'Posted.' : data === 'not_listed' ? 'Turn on listing first (top of the page).' : 'Pick today or later.', data === 'ok' ? 'ok' : 'bad');
+    if (data === 'ok') (e.target as HTMLFormElement).reset();
+    loadRide();
+  });
+  $('#go-listed').addEventListener('click', async () => {
+    await sb.from('profiles').update({ listed: true, ask_to_ride: true }).eq('id', me.id);
+    $('#optin').hidden = true;
+    toast('You are visible to other riders now.');
+    loadRiders();
+  });
+  await show('riders');
+</script>

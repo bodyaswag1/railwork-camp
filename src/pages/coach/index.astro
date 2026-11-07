@@ -86,6 +86,8 @@ import { LEVELS } from '../../lib/members/rules';
             <select id="r-band" aria-label="Confirmed level"><option value="">Not confirmed yet</option>{LEVELS.map((l) => <option value={l.band}>{l.band} · {l.name}</option>)}</select>
           </div>
 
+          <div id="r-more"></div>
+
           <details class="card" id="r-edit-wrap">
             <summary style="cursor:pointer;font-weight:700">Edit details</summary>
             <form class="form" id="r-edit" novalidate style="margin-top:16px">
@@ -117,6 +119,7 @@ import { LEVELS } from '../../lib/members/rules';
   import { levelChip } from '../../members/level';
   import { levelName } from '../../lib/members/rules';
   import { sb } from '../../members/sb';
+  import { paintMore } from '../../members/coach-rider';
 
   type Row = {
     id: string; profile_id: string | null; first_name: string; last_name: string | null; phone: string | null;
@@ -201,6 +204,7 @@ import { LEVELS } from '../../lib/members/rules';
     set('email', r.email); set('sessions_before', r.sessions_before); set('member_since', r.member_since);
     $('#r-edit-note').hidden = !r.profile_id;
     panel('rider');
+    void paintMore($('#r-more'), r as never);
     if (matchMedia('(max-width: 759px)').matches) $('#panel').scrollIntoView({ behavior: 'smooth' });
   }
 

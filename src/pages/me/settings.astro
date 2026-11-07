@@ -24,6 +24,29 @@ import App from '../../layouts/App.astro';
         </form>
       </section>
     </div>
+    <div class="grid grid--2">
+      <section class="card" id="privacy">
+        <h2>What other riders see</h2>
+        <p class="small muted">Nothing about you is visible to other riders until you turn it on.</p>
+        <label class="check"><input type="checkbox" id="p-listed" /> <span><b>Show me in the rider directory</b><br><span class="small muted">Riders can find you by discipline and level, see your level confirmations and landed tricks in the feed, and see you in your camp crew. Name shows as first name + initial.</span></span></label>
+        <label class="check" style="margin-top:12px"><input type="checkbox" id="p-ask" /> <span><b>Let riders ask to ride with me</b><br><span class="small muted">Contact details are shared only after you both say yes.</span></span></label>
+      </section>
+
+      <section class="card" id="trips">
+        <h2>Away for a while?</h2>
+        <p class="small muted">Add a trip and your streak pauses instead of breaking. Your weekly slot opens up for someone else while you are gone.</p>
+        <form class="form" id="trip-form">
+          <div class="form__row form__row--2">
+            <label class="field"><span>From</span><input type="date" name="from" required /></label>
+            <label class="field"><span>To</span><input type="date" name="to" required /></label>
+          </div>
+          <label class="field"><span>Note</span><input type="text" name="note" maxlength="280" placeholder="Holiday, injury…" /></label>
+          <button class="btn btn--small" type="submit">Add trip</button>
+        </form>
+        <div id="trip-list" style="margin-top:12px"></div>
+      </section>
+    </div>
+    <p class="small muted"><a href="/welcome">Edit your riding answers</a> (what you ride, since when, favourite trick…)</p>
     <p class="small muted">Want your account and everything on it deleted? Write to Ilia on <a href="https://instagram.com/baskakov74">Instagram</a> and it is gone within a week.</p>
   </div>
 </App>
@@ -55,6 +78,41 @@ import App from '../../layouts/App.astro';
     f.reset();
     toast('Password saved.');
   });
+  // privacy switches save on change
+  const { data: pv } = await sb.from('profiles').select('listed, ask_to_ride').eq('id', me.id).single();
+  const listed = $<HTMLInputElement>('#p-listed'), ask = $<HTMLInputElement>('#p-ask');
+  listed.checked = !!pv?.listed; ask.checked = !!pv?.ask_to_ride;
+  for (const [box, col] of [[listed, 'listed'], [ask, 'ask_to_ride']] as const) {
+    box.addEventListener('change', async () => {
+      const { error } = await sb.from('profiles').update({ [col]: box.checked }).eq('id', me.id);
+      toast(error ? 'Did not save.' : 'Saved.', error ? 'bad' : 'ok');
+      if (error) box.checked = !box.checked;
+    });
+  }
+
+  // trips
+  const rid = (await sb.rpc('ensure_my_rider')).data as string;
+  async function trips() {
+    const { data } = await sb.from('absences').select('*').order('from_date');
+    $('#trip-list').innerHTML = (data ?? []).map((a) => `<span class="chip" style="margin:0 6px 6px 0">${a.from_date} → ${a.to_date}${a.note ? ` · ${a.note.replace(/[<>&]/g, '')}` : ''}
+      <button class="link small" data-trip="${a.id}" aria-label="Remove trip">×</button></span>`).join('');
+  }
+  $<HTMLFormElement>('#trip-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const f = new FormData(form);
+    if (String(f.get('to')) < String(f.get('from'))) return toast('The end is before the start.', 'bad');
+    const { error } = await sb.from('absences').insert({ rider_id: rid, from_date: f.get('from'), to_date: f.get('to'), note: String(f.get('note') ?? '').trim() || null });
+    toast(error ? 'Did not save.' : 'Trip added.', error ? 'bad' : 'ok');
+    form.reset(); trips();
+  });
+  $('#trip-list').addEventListener('click', async (e) => {
+    const id = (e.target as HTMLElement).dataset.trip;
+    if (!id) return;
+    await sb.from('absences').delete().eq('id', id);
+    trips();
+  });
+  await trips();
   $('#settings').hidden = false;
   if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
 </script>

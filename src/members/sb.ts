@@ -22,6 +22,7 @@ export type Me = {
   bio: string | null;
   photoUrl: string | null;
   role: Role;
+  onboarded: boolean;
 };
 
 export async function getSession(): Promise<Session | null> {
@@ -46,6 +47,7 @@ export async function loadMe(): Promise<Me | null> {
     bio: p?.bio ?? null,
     photoUrl: p?.photo_url ?? null,
     role: (p?.role as Role) ?? 'rider',
+    onboarded: Boolean(p?.onboarded_at),
   };
 }
 

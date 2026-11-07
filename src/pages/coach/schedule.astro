@@ -1,0 +1,144 @@
+---
+// Coach schedule: publish sessions (one-off or weekly), see who is booked, mark attendance and payment, book a
+// rider in, and answer weekly-slot requests.
+import App from '../../layouts/App.astro';
+import { LEVELS } from '../../lib/members/rules';
+---
+<App title="Schedule" path="/coach/schedule" nav>
+  <p class="kicker">Coach</p>
+  <h1>Schedule</h1>
+
+  <section class="card" id="inbox-wrap" hidden><h2>Weekly slot requests</h2><div id="inbox"></div></section>
+
+  <div class="grid grid--side">
+    <div>
+      <div class="toolbar">
+        <button class="btn btn--small" data-range="up">Coming up</button>
+        <button class="btn btn--small btn--ghost" data-range="past">Last 30 days</button>
+      </div>
+      <div id="sessions"></div>
+    </div>
+    <div>
+      <form class="card form" id="pub">
+        <h2>Publish sessions</h2>
+        <div class="form__row form__row--2">
+          <label class="field"><span>Kind</span><select name="kind"><option value="trampoline">Trampoline (group)</option><option value="personal">Personal</option></select></label>
+          <label class="field"><span>Title</span><input type="text" name="title" maxlength="80" value="Trampoline: air awareness" required /></label>
+        </div>
+        <label class="field"><span>Venue</span><select name="venue" id="venue-sel"></select>
+          <small><button class="link small" type="button" id="add-venue">+ add a venue</button></small></label>
+        <div class="form__row form__row--2">
+          <label class="field"><span>Start (local time)</span><input type="datetime-local" name="start" required /></label>
+          <label class="field"><span>Minutes</span><input type="number" name="minutes" min="15" max="720" value="90" required /></label>
+        </div>
+        <div class="form__row form__row--2">
+          <label class="field"><span>Places</span><input type="number" name="capacity" min="1" max="40" value="8" required /></label>
+          <label class="field"><span>Price €</span><input type="number" name="price" min="0" step="1" /></label>
+        </div>
+        <div class="form__row form__row--2">
+          <label class="field"><span>Lowest level</span><select name="level_min"><option value="">Open to all</option>{LEVELS.map((l) => <option value={l.band}>{l.band} · {l.name}</option>)}</select></label>
+          <label class="field"><span>Repeat weekly for</span><select name="weeks"><option value="1">Just once</option>{[2, 4, 6, 8, 12, 16].map((n) => <option value={n}>{n} weeks</option>)}</select></label>
+        </div>
+        <label class="field"><span>Note for riders</span><input type="text" name="notes" maxlength="500" placeholder="Bring indoor shoes" /></label>
+        <button class="btn" type="submit">Publish</button>
+      </form>
+    </div>
+  </div>
+</App>
+
+<script>
+  import { $, $$, esc, requireMe, toast } from '../../members/ui';
+  import { BOOKING_STATUS, KIND, WEEKDAY, euro, when } from '../../members/labels';
+  import { sb } from '../../members/sb';
+
+  await requireMe({ staff: true });
+  let range = 'up';
+  let riders: { id: string; first_name: string; last_name: string | null }[] = [];
+
+  async function venues() {
+    const { data } = await sb.from('venues').select('id, name, kind').order('name');
+    $('#venue-sel').innerHTML = '<option value="">—</option>' + (data ?? []).map((v) => `<option value="${v.id}">${esc(v.name)} (${v.kind})</option>`).join('');
+  }
+
+  async function load() {
+    for (const b of $$<HTMLButtonElement>('[data-range]')) b.classList.toggle('btn--ghost', b.dataset.range !== range);
+    const now = new Date().toISOString();
+    let q = sb.from('sessions').select('*, venues(name), bookings(id, status, paid_at, source, pack_id, rider_id)').eq('status', 'open');
+    q = range === 'up' ? q.gte('starts_at', now).order('starts_at').limit(60)
+      : q.lt('starts_at', now).gte('starts_at', new Date(Date.now() - 30 * 864e5).toISOString()).order('starts_at', { ascending: false });
+    const [{ data: ss }, { data: rs }] = await Promise.all([q, sb.from('coach_riders').select('id, first_name, last_name').order('first_name')]);
+    riders = rs ?? [];
+    const name = (id: string) => { const r = riders.find((x) => x.id === id); return r ? `${r.first_name} ${r.last_name ?? ''}`.trim() : 'Rider'; };
+    $('#sessions').innerHTML = (ss ?? []).map((s) => {
+      const live = (s.bookings as { id: string; status: string; paid_at: string | null; source: string; pack_id: string | null; rider_id: string }[]).filter((b) => b.status !== 'cancelled');
+      return `<div class="card"><b>${esc(when(s.starts_at))} · ${esc(s.title)}</b>
+        <div class="small muted">${esc([KIND[s.kind], s.venues?.name, euro(s.price_eur), `${live.length}/${s.capacity} booked`].filter(Boolean).join(' · '))}</div>
+        <ul class="small" style="padding-left:18px;margin:8px 0">${live.map((b) => `<li>${esc(name(b.rider_id))} · ${esc(BOOKING_STATUS[b.status])}${b.pack_id ? ' · pack' : b.paid_at ? '' : ' · <i>to pay</i>'}${b.source === 'loop' ? ' · weekly' : ''}
+          <button class="link small" data-att="${b.id}">attended</button> <button class="link small" data-noshow="${b.id}">missed</button>
+          ${b.pack_id ? '' : `<button class="link small" data-paid="${b.id}" data-v="${b.paid_at ? '' : '1'}">${b.paid_at ? 'unpaid' : 'paid'}</button>`}
+          <button class="link small" data-cxl="${b.id}">cancel</button></li>`).join('') || '<li class="muted">Nobody yet</li>'}</ul>
+        <div class="actions"><select data-addfor="${s.id}" style="width:auto;min-height:38px"><option value="">+ book a rider…</option>${riders.map((r) => `<option value="${r.id}">${esc(r.first_name)} ${esc(r.last_name ?? '')}</option>`).join('')}</select>
+          <button class="link small" data-cancelsession="${s.id}">Cancel session</button></div></div>`;
+    }).join('') || '<p class="empty">Nothing here. Publish a session on the right.</p>';
+
+    const { data: loops } = await sb.from('loops').select('*').or('status.eq.requested,change_request.not.is.null').in('status', ['requested', 'active']);
+    $('#inbox').innerHTML = (loops ?? []).map((l) => `<div class="small" style="padding:8px 0;border-bottom:1px solid var(--slush-concrete)">
+      <b>${esc(name(l.rider_id))}</b>: ${esc(WEEKDAY[l.weekday])}s ${esc(String(l.start_time).slice(0, 5))}, ${esc(l.title)} (${esc(KIND[l.kind])})
+      ${l.status === 'requested' ? `<button class="btn btn--small" data-approve="${l.id}">Approve</button> <button class="link small" data-decline="${l.id}">Decline</button>`
+        : `<br>Change asked: “${esc(l.change_request)}” <button class="link small" data-clear="${l.id}">Done, clear it</button>`}</div>`).join('');
+    $('#inbox-wrap').hidden = !(loops ?? []).length;
+  }
+
+  document.addEventListener('click', async (e) => {
+    const d = (e.target as HTMLElement).closest<HTMLElement>('button')?.dataset;
+    if (!d) return;
+    let res: { error: unknown; data?: unknown } | null = null;
+    if (d.range) { range = d.range; return load(); }
+    if (d.att) res = await sb.rpc('mark_attendance', { p_booking: d.att, p_status: 'attended' });
+    if (d.noshow) res = await sb.rpc('mark_attendance', { p_booking: d.noshow, p_status: 'no_show' });
+    if (d.paid) res = await sb.rpc('mark_paid', { p_booking: d.paid, p_paid: d.v === '1' });
+    if (d.cxl && confirm('Cancel this booking? A pack credit goes back to the rider.')) res = await sb.rpc('coach_cancel_booking', { p_booking: d.cxl });
+    if (d.cancelsession && confirm('Cancel the whole session? Every booking on it is cancelled.')) res = await sb.rpc('cancel_session', { p_session: d.cancelsession });
+    if (d.approve) res = await sb.rpc('decide_loop', { p_loop: d.approve, p_approve: true });
+    if (d.decline) res = await sb.rpc('decide_loop', { p_loop: d.decline, p_approve: false });
+    if (d.clear) res = await sb.rpc('decide_loop', { p_loop: d.clear, p_approve: true, p_clear_change: true });
+    if (res) { toast(res.error ? 'That did not save.' : 'Saved.', res.error ? 'bad' : 'ok'); load(); }
+  });
+  document.addEventListener('change', async (e) => {
+    const sel = e.target as HTMLSelectElement;
+    if (!sel.dataset.addfor || !sel.value) return;
+    const { data, error } = await sb.rpc('coach_book', { p_session: sel.dataset.addfor, p_rider: sel.value });
+    toast(error ? 'That did not save.' : data.status === 'ok' ? 'Booked.' : data.status === 'full' ? 'Session is full.' : data.status === 'already' ? 'Already booked.' : data.status, data?.status === 'ok' ? 'ok' : 'bad');
+    load();
+  });
+
+  $<HTMLFormElement>('#pub').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget as HTMLFormElement);
+    const n = (k: string) => (f.get(k) ? Number(f.get(k)) : null);
+    const { data, error } = await sb.rpc('publish_sessions', {
+      p_kind: f.get('kind'), p_title: f.get('title'), p_venue: f.get('venue') || null, p_start: String(f.get('start')).replace('T', ' ') + ':00',
+      p_minutes: n('minutes'), p_capacity: n('capacity'), p_price: n('price'), p_level_min: n('level_min'), p_level_max: null, p_weeks: n('weeks') ?? 1,
+      p_notes: f.get('notes') || null,
+    });
+    toast(error ? 'Could not publish: check the fields.' : `Published ${data} session${data === 1 ? '' : 's'}.`, error ? 'bad' : 'ok');
+    range = 'up'; load();
+  });
+  $<HTMLSelectElement>('#pub [name=kind]').addEventListener('change', (e) => {
+    const personal = (e.target as HTMLSelectElement).value === 'personal';
+    const form = $<HTMLFormElement>('#pub');
+    (form.elements.namedItem('capacity') as HTMLInputElement).value = personal ? '1' : '8';
+    (form.elements.namedItem('title') as HTMLInputElement).value = personal ? 'Personal session' : 'Trampoline: air awareness';
+    (form.elements.namedItem('minutes') as HTMLInputElement).value = personal ? '120' : '90';
+  });
+  $('#add-venue').addEventListener('click', async () => {
+    const name = prompt('Venue name (e.g. "Jump Arena Innsbruck")');
+    if (!name) return;
+    const kind = confirm('Is it a trampoline hall? OK = trampoline, Cancel = ski resort') ? 'trampoline' : 'resort';
+    const { error } = await sb.from('venues').insert({ name: name.trim(), kind });
+    toast(error ? 'Could not add.' : 'Venue added.', error ? 'bad' : 'ok');
+    venues();
+  });
+  await venues();
+  await load();
+</script>

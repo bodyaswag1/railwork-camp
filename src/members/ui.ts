@@ -23,8 +23,10 @@ export function fieldErrors(form: HTMLFormElement, errors: Record<string, string
     const msg = errors[el.dataset.errorFor!];
     el.textContent = msg ?? '';
     el.hidden = !msg;
-    const input = form.elements.namedItem(el.dataset.errorFor!) as HTMLInputElement | null;
-    input?.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    // a group of checkboxes sharing a name comes back as a RadioNodeList: mark and focus its first box
+    const named = form.elements.namedItem(el.dataset.errorFor!);
+    const input = (named instanceof RadioNodeList ? named[0] : named) as HTMLInputElement | null;
+    if (input instanceof Element) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
     if (msg && !first) first = input;
   }
   first?.focus();

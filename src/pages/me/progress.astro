@@ -1,0 +1,99 @@
+---
+// Progress: numbers you keep (sessions, hours, streak), month by month, milestones, badges, the trick book and
+// what your coach wants you to work on. Nothing compares you with anyone.
+import App from '../../layouts/App.astro';
+---
+<App title="Progress" path="/me/progress" nav>
+  <h1>Progress</h1>
+  <p class="card" id="invite" hidden>This fills up after your first session: sessions, hours and milestones land here as you ride. <a href="/book">Book one</a></p>
+  <div class="grid grid--2" id="numbers" hidden>
+    <section class="card"><h2 id="n-sessions"></h2><p class="muted">sessions</p><h2 id="n-hours"></h2><p class="muted">hours</p></section>
+    <section class="card"><h2 id="n-streak"></h2><p class="muted" id="n-streak-note"></p>
+      <p class="small muted">Any session counts. A trip pauses your streak instead of breaking it.</p></section>
+  </div>
+  <section class="card" id="months-wrap" hidden><h3>Month by month</h3><div id="months" style="display:flex;gap:4px;align-items:flex-end;height:120px"></div></section>
+  <section class="card" id="miles-wrap" hidden><h3>Milestones</h3><ul id="miles" class="small"></ul></section>
+
+  <section class="card" id="focus-wrap" hidden><h3>What your coach wants you to work on</h3><ul id="focus"></ul></section>
+
+  <section class="card"><h3>Badges</h3><div id="badges" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div></section>
+
+  <section class="card"><h3>Trick book</h3>
+    <p class="small muted">Tick what you are working on. Your coach marks a trick landed when they have seen it.</p>
+    <div id="tricks"></div></section>
+</App>
+
+<script>
+  import { $, esc, fmtDate, requireMe, toast } from '../../members/ui';
+  import { hours } from '../../members/labels';
+  import { sb } from '../../members/sb';
+
+  const me = await requireMe();
+  const rid = (await sb.rpc('ensure_my_rider')).data;
+  const [{ data: st }, { data: badges }, { data: awards }, { data: tricks }, { data: tp }, { data: focus }, { data: prof }] = await Promise.all([
+    sb.rpc('rider_stats'), sb.from('badges').select('*').order('sort'), sb.from('badge_awards').select('*'),
+    sb.from('tricks').select('*').eq('active', true).order('category').order('sort'), sb.from('trick_progress').select('*'),
+    sb.from('focus_areas').select('text, status, created_at, profiles:coach_id(first_name)').order('created_at', { ascending: false }),
+    sb.from('profiles').select('disciplines').eq('id', me.id).single(),
+  ]);
+  void rid;
+
+  if (!st || st.sessions_total === 0) $('#invite').hidden = false;
+  else {
+    $('#n-sessions').textContent = String(st.sessions_total);
+    $('#n-hours').textContent = hours(st.minutes);
+    $('#n-streak').textContent = st.streak_weeks > 0 ? `${st.streak_weeks} weeks` : 'No streak running';
+    $('#n-streak-note').textContent = st.longest_streak_weeks > 0 ? `Longest run: ${st.longest_streak_weeks} weeks` : '';
+    $('#numbers').hidden = false;
+    const max = Math.max(1, ...st.months.map((m: { sessions: number }) => m.sessions));
+    $('#months').innerHTML = st.months.map((m: { month: string; sessions: number }) =>
+      `<div title="${esc(m.month)}: ${m.sessions}" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%">
+        <div style="width:100%;background:var(--park-signal);height:${(m.sessions / max) * 90}%;min-height:${m.sessions ? 4 : 0}px"></div>
+        <small style="font-size:10px">${esc(m.month.slice(5))}</small></div>`).join('');
+    $('#months-wrap').hidden = false;
+    if (st.milestones.length) {
+      $('#miles').innerHTML = st.milestones.map((m: { label: string; at: string }) => `<li>${esc(m.label.replace(/^1 sessions$/, 'First session'))} · ${esc(fmtDate(m.at, { month: 'short', year: 'numeric' }))}</li>`).join('');
+      $('#miles-wrap').hidden = false;
+    }
+  }
+
+  const open = (focus ?? []).filter((f) => f.status === 'open');
+  if (open.length) {
+    $('#focus').innerHTML = open.map((f) => `<li>${esc(f.text)} <span class="small muted">· ${esc((f.profiles as unknown as { first_name: string } | null)?.first_name ?? 'coach')}</span></li>`).join('');
+    $('#focus-wrap').hidden = false;
+  }
+
+  const got = new Map((awards ?? []).map((a) => [a.badge_key, a.awarded_at]));
+  $('#badges').innerHTML = (badges ?? []).map((b) => {
+    const at = got.get(b.key);
+    return `<div style="padding:10px;border:1.5px ${at ? 'solid var(--night-run)' : 'dashed var(--slush-concrete)'};${at ? '' : 'opacity:.65'}">
+      <b>${esc(b.title)}</b><div class="small muted">${esc(b.description)}</div>${at ? `<div class="small">${esc(fmtDate(at))}</div>` : ''}</div>`;
+  }).join('');
+
+  // trick book, filtered to what they ride
+  const disc: string[] = prof?.disciplines ?? [];
+  const mine = new Map((tp ?? []).map((t) => [t.trick_id, t]));
+  const CAT: Record<string, string> = { basics: 'Basics', jumps: 'Jumps', spins: 'Spins', rails: 'Rails & boxes', butters: 'Butters', trampoline: 'Trampoline' };
+  const list = (tricks ?? []).filter((t) => t.discipline === 'both' || !disc.length || disc.includes(t.discipline));
+  const paintTricks = () => {
+    $('#tricks').innerHTML = Object.keys(CAT).map((cat) => {
+      const ts = list.filter((t) => t.category === cat);
+      if (!ts.length) return '';
+      return `<h4 style="margin:16px 0 6px">${CAT[cat]}</h4>` + ts.map((t) => {
+        const p = mine.get(t.id);
+        return p?.status === 'landed'
+          ? `<div class="small" style="padding:4px 0"><span class="chip chip--verified">Landed</span> ${esc(t.name)} <span class="muted">· ${esc(fmtDate(p.landed_at))}</span></div>`
+          : `<label class="check small" style="padding:4px 0"><input type="checkbox" data-trick="${t.id}" ${p ? 'checked' : ''}/> ${esc(t.name)} ${p ? '<span class="muted">· working on it</span>' : ''}</label>`;
+      }).join('');
+    }).join('');
+  };
+  paintTricks();
+  $('#tricks').addEventListener('change', async (e) => {
+    const box = e.target as HTMLInputElement;
+    const id = Number(box.dataset.trick);
+    const { data, error } = await sb.rpc('set_trick_working', { p_trick: id, p_on: box.checked });
+    if (error || data !== 'ok') { toast('That did not save.', 'bad'); box.checked = !box.checked; return; }
+    if (box.checked) mine.set(id, { trick_id: id, status: 'working' } as never); else mine.delete(id);
+    paintTricks();
+  });
+</script>

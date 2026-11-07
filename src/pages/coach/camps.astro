@@ -1,0 +1,88 @@
+---
+// Camp roster: applications and statuses per camp, plus a minimal "new camp" form.
+import App from '../../layouts/App.astro';
+---
+<App title="Camp roster" path="/coach/camps" nav>
+  <p class="kicker">Coach</p>
+  <h1>Camp roster</h1>
+  <div id="camps"></div>
+  <details class="card"><summary><b>New camp</b></summary>
+    <form class="form" id="new-camp" style="margin-top:12px">
+      <div class="form__row form__row--2">
+        <label class="field"><span>Title</span><input type="text" name="title" required /></label>
+        <label class="field"><span>Place</span><input type="text" name="place" required /></label>
+      </div>
+      <div class="form__row form__row--2">
+        <label class="field"><span>Starts</span><input type="date" name="starts_on" required /></label>
+        <label class="field"><span>Ends</span><input type="date" name="ends_on" required /></label>
+      </div>
+      <div class="form__row form__row--2">
+        <label class="field"><span>Spots</span><input type="number" name="spots" min="1" max="200" value="15" required /></label>
+        <label class="field"><span>Price €</span><input type="number" name="price_eur" min="0" required /></label>
+      </div>
+      <div class="form__row form__row--2">
+        <label class="field"><span>Deposit €</span><input type="number" name="deposit_eur" min="0" /></label>
+        <label class="field"><span>Balance due</span><input type="date" name="balance_due_on" /></label>
+      </div>
+      <label class="field"><span>Description</span><textarea name="description"></textarea></label>
+      <label class="check"><input type="checkbox" name="draft" /> Save as draft (riders do not see it yet)</label>
+      <button class="btn" type="submit">Create camp</button>
+    </form>
+  </details>
+</App>
+
+<script>
+  import { $, esc, fmtDate, requireMe, toast } from '../../members/ui';
+  import { CAMP_STATUS, euro } from '../../members/labels';
+  import { sb } from '../../members/sb';
+
+  await requireMe({ staff: true });
+  const STATUSES = Object.keys(CAMP_STATUS);
+
+  async function load() {
+    const [{ data: camps }, { data: entries }, { data: riders }] = await Promise.all([
+      sb.from('camps').select('*').order('starts_on', { ascending: false }),
+      sb.from('camp_entries').select('*').order('created_at'),
+      sb.from('coach_riders').select('id, first_name, last_name, phone, instagram, band, self_band'),
+    ]);
+    const who = (id: string) => riders?.find((r) => r.id === id);
+    $('#camps').innerHTML = (camps ?? []).map((c) => {
+      const es = (entries ?? []).filter((e) => e.camp_id === c.id);
+      const held = es.filter((e) => ['accepted', 'deposit_paid', 'paid', 'attended'].includes(e.status)).length;
+      return `<section class="card"><h2>${esc(c.title)}</h2>
+        <p class="small">${esc(fmtDate(c.starts_on))}–${esc(fmtDate(c.ends_on))} · ${esc(c.place)} · ${esc(euro(c.price_eur))} · <b>${held}/${c.spots}</b> spots taken · ${esc(c.status)}
+          <select data-campstatus="${c.id}" style="width:auto;min-height:32px">${['draft', 'open', 'closed'].map((s) => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select></p>
+        <table class="small" style="width:100%;border-collapse:collapse">${es.map((e) => {
+          const r = who(e.rider_id);
+          return `<tr style="border-top:1px solid var(--slush-concrete)"><td style="padding:6px 4px"><b>${esc(r ? `${r.first_name} ${r.last_name ?? ''}` : 'Rider')}</b><br>
+            <span class="muted">${esc([r?.phone, r?.instagram && '@' + r.instagram, e.promo_code && `promo ${e.promo_code}`].filter(Boolean).join(' · '))}</span>${e.note ? `<br>“${esc(e.note)}”` : ''}</td>
+            <td style="padding:6px 4px;text-align:right"><select data-entry="${e.id}" style="width:auto;min-height:32px">${STATUSES.map((s) => `<option value="${s}" ${s === e.status ? 'selected' : ''}>${s.replace('_', ' ')}</option>`).join('')}</select></td></tr>`;
+        }).join('') || '<tr><td class="muted">No applications yet.</td></tr>'}</table></section>`;
+    }).join('');
+  }
+
+  document.addEventListener('change', async (e) => {
+    const sel = e.target as HTMLSelectElement;
+    if (sel.dataset.entry) {
+      const { data, error } = await sb.rpc('set_camp_entry', { p_entry: sel.dataset.entry, p_status: sel.value });
+      toast(error ? 'Did not save.' : data === 'full_waitlisted' ? 'The camp is full: they went on the waitlist.' : 'Saved.', error || data !== 'ok' ? 'bad' : 'ok');
+      load();
+    } else if (sel.dataset.campstatus) {
+      const { error } = await sb.from('camps').update({ status: sel.value }).eq('id', sel.dataset.campstatus);
+      toast(error ? 'Did not save.' : 'Saved.', error ? 'bad' : 'ok');
+    }
+  });
+  $<HTMLFormElement>('#new-camp').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget as HTMLFormElement);
+    const v = (k: string) => String(f.get(k) ?? '').trim() || null;
+    const slug = `${v('title')}-${v('starts_on')}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const { error } = await sb.from('camps').insert({ slug, title: v('title'), place: v('place'), starts_on: v('starts_on'), ends_on: v('ends_on'),
+      spots: Number(v('spots')), price_eur: Number(v('price_eur')), deposit_eur: v('deposit_eur') ? Number(v('deposit_eur')) : null,
+      balance_due_on: v('balance_due_on'), description: v('description'), status: f.get('draft') === 'on' ? 'draft' : 'open' });
+    toast(error ? 'Could not create: check the dates.' : 'Camp created.', error ? 'bad' : 'ok');
+    if (!error) (e.target as HTMLFormElement).reset();
+    load();
+  });
+  await load();
+</script>

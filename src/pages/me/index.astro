@@ -25,6 +25,14 @@ import { train } from '../../content/site';
       </section>
 
       <div>
+        <section class="card card--tape" id="next" hidden>
+          <p class="kicker">Next up</p>
+          <h2 id="next-title"></h2>
+          <p id="next-when"></p>
+          <a class="link small" href="/me/sessions">All my sessions</a>
+        </section>
+        <a class="card" id="stats" href="/me/progress" style="display:block;text-decoration:none" hidden></a>
+
         <section class="card" id="nudge" hidden>
           <p style="margin:0 0 12px" id="nudge-text"></p>
           <div class="actions"><a class="btn btn--small" id="nudge-cta" href="/me/profile"></a>
@@ -34,8 +42,9 @@ import { train } from '../../content/site';
         <section class="card card--dark">
           <p class="kicker">Ride with Ilia</p>
           <h2>Book a session</h2>
-          <p>Personal coaching on the slope: {train.coaching.price} an hour or {train.coaching.day}. Online booking is coming to this page. Until then, message Ilia and he sorts the day with you.</p>
-          <a class="btn" href="https://instagram.com/baskakov74" rel="noopener">Message on Instagram</a>
+          <p>Personal coaching on the slope ({train.coaching.price} an hour or {train.coaching.day}) and trampoline sessions to prepare your tricks.</p>
+          <div class="actions"><a class="btn" href="/book">See open sessions</a>
+            <a class="link" href="https://instagram.com/baskakov74" rel="noopener" style="color:var(--airbag-ice)">Or message Ilia</a></div>
         </section>
 
         <section class="card">
@@ -52,13 +61,35 @@ import { train } from '../../content/site';
 <script>
   import { $, requireMe } from '../../members/ui';
   import { levelChip } from '../../members/level';
+  import { hours, when } from '../../members/labels';
   import { sb } from '../../members/sb';
 
   const me = await requireMe();
   // a pending invite (opened before signing in) is finished on the claim page
   if (sessionStorage.getItem('bas-invite')) location.replace('/claim');
+  // riders answer the questionnaire first
+  else if (me.role === 'rider' && !me.onboarded) location.replace('/welcome');
 
   await sb.rpc('ensure_my_rider');
+
+  // next session + stats strip (each hides itself when there is nothing real to show)
+  const [{ data: up }, { data: st }] = await Promise.all([
+    sb.from('bookings').select('id, status, sessions!inner(title, kind, starts_at, venues(name))')
+      .in('status', ['reserved', 'paid']).gt('sessions.starts_at', new Date().toISOString())
+      .order('starts_at', { referencedTable: 'sessions' }).limit(20),
+    sb.rpc('rider_stats'),
+  ]);
+  const next = (up ?? []).map((b) => b.sessions as unknown as { title: string; starts_at: string; venues: { name: string } | null })
+    .sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
+  if (next) {
+    $('#next-title').textContent = next.title;
+    $('#next-when').textContent = [when(next.starts_at), next.venues?.name].filter(Boolean).join(' · ');
+    $('#next').hidden = false;
+  }
+  if (st && st.sessions_total > 0) {
+    $('#stats').innerHTML = `<b>${st.sessions_total}</b> sessions · <b>${hours(st.minutes)}</b> h${st.streak_weeks > 0 ? ` · <b>${st.streak_weeks}</b>-week streak` : ''} <span class="muted small">→ progress</span>`;
+    $('#stats').hidden = false;
+  }
   const { data: r } = await sb.from('my_rider').select('*').maybeSingle();
 
   $('#hi').textContent = me.firstName ? `Hi ${me.firstName}` : 'Hi there';
