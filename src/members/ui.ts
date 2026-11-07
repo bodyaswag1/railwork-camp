@@ -101,7 +101,9 @@ export function paintHeader(me: Me | null) {
     const href = a.getAttribute('href') ?? '';
     const exact = a.hasAttribute('data-exact');
     // the coach tab covers every /coach page; the menu's Riders link only /coach itself
-    const on = href === here || (!exact && href !== '/' && here.startsWith(href + '/'));
+    const also = (a.dataset.also ?? '').split(' ').filter(Boolean);
+    const on = href === here || (!exact && href !== '/' && here.startsWith(href + '/'))
+      || also.some((p) => here === p || here.startsWith(p + '/'));
     if (on) a.setAttribute('aria-current', 'page');
   }
   if (me) {

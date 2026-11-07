@@ -164,6 +164,12 @@ test('the rider opens the invite, signs up, and their coach record comes with th
   await page.locator('#details-form').getByLabel('A line about you').fill('Chasing my first backside 360.');
   await page.locator('#details-form').getByRole('button', { name: 'Save' }).click();
   await expect(page.locator('#toast')).toHaveText('Saved.');
+  // You is a hub: progress, your crew card, camps, settings; no coach links for a rider
+  await expect(page.getByRole('navigation', { name: 'Your area' }).getByRole('link', { name: /Settings/ })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Coach' })).toBeHidden();
+  await page.getByRole('button', { name: /Your crew card/ }).click();
+  await expect(page.locator('#rider')).toContainText('Nobody but your coach sees this yet');
+  await page.keyboard.press('Escape');
 
   // riders never see the coach panel
   await page.goto('/coach');
@@ -241,10 +247,14 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   // rider: community opt-in, directory, feed, ride post
   await rider.goto('/community');
   await rider.getByRole('button', { name: 'Show me in the crew' }).click();
+  // the overview puts you first among the faces, and the feed already shows the landed trick
+  await expect(rider.locator('#ov-faces .face--me')).toContainText('You');
+  await expect(rider.locator('#ov-feed')).toContainText('landed a Ollie');
+  await rider.getByRole('tab', { name: 'Riders' }).click();
   await expect(rider.locator('#riders')).toContainText(`${RIDER.first} T.`);
-  await rider.getByRole('tab', { name: 'Around the crew' }).click();
+  await rider.getByRole('tab', { name: 'Feed' }).click();
   await expect(rider.locator('#feed')).toContainText('landed a Ollie');
-  await rider.getByRole('tab', { name: 'Ride together' }).click();
+  await rider.getByRole('tab', { name: 'Rides' }).click();
   await rider.getByRole('button', { name: 'Post a ride' }).click();
   await rider.locator('#post-form').getByLabel('Where').fill('Livigno, Mottolino park');
   await rider.locator('#post-form').getByLabel('When').fill(d);

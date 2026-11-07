@@ -166,6 +166,10 @@ body.app {
 .tabbar a[aria-current='page'] { color: var(--text); font-weight: 600; }
 .tabbar a[aria-current='page'] .ico { color: var(--accent); }
 .tabbar a:active .ico { transform: scale(.9); }
+/* the You tab carries your own face: the one tab that is unmistakably yours */
+.tabbar .tabbar__me { width: 26px; height: 26px; font-size: 11px; box-shadow: 0 0 0 1.5px var(--surface), 0 0 0 2.5px transparent; transition: transform .1s; }
+.tabbar a[aria-current='page'] .tabbar__me { box-shadow: 0 0 0 1.5px var(--surface), 0 0 0 3px var(--accent); }
+.tabbar a:active .tabbar__me { transform: scale(.9); }
 body.app.has-tabbar { padding-bottom: calc(var(--tabbar) + env(safe-area-inset-bottom)); }
 @media (min-width: 760px) {
   .tabbar { display: none; }

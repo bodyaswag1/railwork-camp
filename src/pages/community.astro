@@ -1,5 +1,6 @@
 ---
-// Crew: riders who chose to be visible, what happened around the crew, "ride together" posts, and what the crew
+// Crew: an overview first (faces, rides, feed, your own card), then the full lists: riders who chose to be visible,
+// "ride together" posts, what happened around the crew, and what the crew
 // noticed this month. Everything is off by default; turning it on is one switch here or in settings.
 // No results, no standings, no rankings.
 import App from '../layouts/App.astro';
@@ -20,12 +21,49 @@ import { ICON } from '../members/icons';
     <div class="actions"><button class="btn btn--small" type="button" id="go-listed">Show me in the crew</button><a class="link small" href="/me/settings#privacy">Privacy</a></div>
   </section>
 
-  <div class="seg" role="tablist" aria-label="Crew" style="margin-bottom:16px">
-    <button type="button" role="tab" data-tab="riders" aria-selected="true">Riders</button>
-    <button type="button" role="tab" data-tab="feed" aria-selected="false">Around the crew</button>
-    <button type="button" role="tab" data-tab="ride" aria-selected="false">Ride together</button>
-    <button type="button" role="tab" data-tab="highlights" aria-selected="false">Highlights</button>
-  </div>
+  <nav class="utabs" role="tablist" aria-label="Crew">
+    <a href="#" role="tab" data-tab="home" aria-selected="true">Overview</a>
+    <a href="#riders" role="tab" data-tab="riders" aria-selected="false">Riders</a>
+    <a href="#ride" role="tab" data-tab="ride" aria-selected="false">Rides</a>
+    <a href="#feed" role="tab" data-tab="feed" aria-selected="false">Feed</a>
+    <a href="#highlights" role="tab" data-tab="highlights" aria-selected="false">Highlights</a>
+  </nav>
+
+  <section data-pane="home" aria-label="Overview">
+    <div class="card card--tint asks" id="ov-asks" hidden></div>
+    <div class="crewgrid">
+      <div class="stack">
+        <section class="card">
+          <div class="card__head"><h2>Riders</h2><a href="#riders" data-go="riders">See all</a></div>
+          <div class="faces" id="ov-faces"></div>
+          <p class="small faint" id="ov-faces-empty" hidden>Nobody listed yet. Join the crew and you give the next rider someone to find.</p>
+        </section>
+        <section class="card card--flush">
+          <div class="card__head"><h2>Ride together</h2><button class="btn btn--small" type="button" data-post>Post a ride</button></div>
+          <ul class="rows" id="ov-board"></ul>
+          <p class="card__more"><a href="#ride" data-go="ride">All rides</a></p>
+        </section>
+        <section class="card card--flush">
+          <div class="card__head"><h2>Around the crew</h2><a href="#feed" data-go="feed">See all</a></div>
+          <ul class="rows" id="ov-feed"></ul>
+        </section>
+      </div>
+      <div class="stack">
+        <section class="card mecard" id="ov-me" aria-label="You in the crew"></section>
+        <section class="card">
+          <div class="card__head"><h2>From the slope</h2></div>
+          <div class="wall">
+            {[0, 1, 2, 3, 4, 5].map(() => <div class="photo photo--square photo--empty"><span><Fragment set:html={ICON.camera} /></span></div>)}
+          </div>
+          <p class="small faint" style="margin-top:12px">Session and camp photos from your coach land here.</p>
+        </section>
+        <section class="card" id="ov-month">
+          <div class="card__head"><h2>This month</h2><a href="#highlights" data-go="highlights">Highlights</a></div>
+          <div class="figs" style="--cols:3" id="ov-figs"></div>
+        </section>
+      </div>
+    </div>
+  </section>
 
   <section data-pane="riders" aria-label="Riders">
     <div class="toolbar">
@@ -38,18 +76,9 @@ import { ICON } from '../members/icons';
   </section>
 
   <section data-pane="feed" hidden aria-label="Around the crew">
-    <div class="grid grid--main">
-      <div class="card card--flush">
-        <div class="card__head"><h2>Around the crew</h2><span class="meta">New riders, confirmed levels, landed tricks, camps</span></div>
-        <ul class="rows" id="feed"></ul>
-      </div>
-      <div class="card">
-        <div class="card__head"><h2>From the slope</h2></div>
-        <div class="wall">
-          {[0, 1, 2, 3].map(() => <div class="photo photo--square photo--empty"><span><Fragment set:html={ICON.camera} /></span></div>)}
-        </div>
-        <p class="small faint" style="margin-top:12px">Session and camp photos from your coach land here.</p>
-      </div>
+    <div class="card card--flush">
+      <div class="card__head"><h2>Around the crew</h2><span class="meta">New riders, confirmed levels, landed tricks, camps</span></div>
+      <ul class="rows" id="feed"></ul>
     </div>
   </section>
 
@@ -57,7 +86,7 @@ import { ICON } from '../members/icons';
     <div class="grid grid--main">
       <div class="stack">
         <div class="card card--flush">
-          <div class="card__head"><h2>Who is riding where</h2><button class="btn btn--small" type="button" id="post-open">Post a ride</button></div>
+          <div class="card__head"><h2>Who is riding where</h2><button class="btn btn--small" type="button" data-post>Post a ride</button></div>
           <ul class="rows" id="board"></ul>
         </div>
       </div>
@@ -84,29 +113,43 @@ import { ICON } from '../members/icons';
   .rcard__main { min-width: 0; flex: 1; display: grid; gap: 4px; }
   .rcard__main b { font-weight: 600; }
   .rcard .chip { align-self: start; }
-  .wall { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .crewgrid { display: grid; gap: var(--gap); }
+  @media (min-width: 960px) { .crewgrid { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: start; } }
+  .faces { display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); gap: 14px 8px; }
+  .face { display: grid; justify-items: center; gap: 6px; padding: 0; font: inherit; font-size: 13px; color: inherit; background: none; border: 0; cursor: pointer; min-width: 0; }
+  .face .avatar { width: 56px; height: 56px; font-size: 20px; transition: transform .12s; }
+  .face:hover .avatar { transform: scale(1.04); }
+  .face span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .face--me .avatar { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--accent); }
+  .card__more { padding: 12px var(--pad); border-top: 1px solid var(--line); font-size: 14px; }
+  .mecard { display: grid; gap: 14px; }
+  .mecard__who { display: flex; gap: 12px; align-items: center; }
+  .mecard__who b { display: block; font-weight: 600; }
+  .asks { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: var(--gap); }
+  .utabs a { cursor: pointer; }
+  .utabs a[aria-selected='true'] { color: var(--text); font-weight: 600; }
+  .utabs a[aria-selected='true']::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--text); }
   .wall .photo > span { padding: 6px; }
   .toolbar input[type='search'] { min-height: 34px; padding-top: 5px; padding-bottom: 5px; font-size: 14px; }
 </style>
 
 <script>
-  import { $, $$, esc, fmtDate, paintAvatar, requireMe, sheet, toast } from '../members/ui';
-  import { DISCIPLINE, TERRAIN } from '../members/labels';
+  import { $, $$, esc, fmtDate, requireMe, sheet, toast } from '../members/ui';
+  import { DISCIPLINE } from '../members/labels';
   import { levelName } from '../lib/members/rules';
+  import { avatarHtml as av, levelPill as lvl, openRiderCard } from '../members/ridercard';
   import { sb } from '../members/sb';
 
   const me = await requireMe();
   await sb.rpc('ensure_my_rider');
-  const { data: prof } = await sb.from('profiles').select('listed, ask_to_ride').eq('id', me.id).single();
-  $('#optin').hidden = !!prof?.listed;
-  const lvl = (band: number | null, verified?: boolean) => band
-    ? (verified === false ? `<span class="chip">${esc(levelName(band))} <small>· self-rated</small></span>` : `<span class="chip chip--verified">${esc(levelName(band))}</span>`) : '';
-  const av = (photo: string | null, name: string, cls = 'avatar--sm') => {
-    const s = document.createElement('span');
-    s.className = `avatar ${cls}`;
-    paintAvatar(s, photo, name);
-    return s.outerHTML;
-  };
+  const [{ data: prof }, { data: mine }] = await Promise.all([
+    sb.from('profiles').select('listed, ask_to_ride').eq('id', me.id).single(),
+    sb.from('my_rider').select('id').maybeSingle(),
+  ]);
+  let listed = !!prof?.listed;
+  const myRider = mine?.id as string | undefined;
+  $('#optin').hidden = listed;
   const ago = (iso: string) => {
     const m = (Date.now() - new Date(iso).getTime()) / 6e4;
     if (m < 60) return 'now';
@@ -115,14 +158,72 @@ import { ICON } from '../members/icons';
     return fmtDate(iso, { day: 'numeric', month: 'short' });
   };
 
-  const tabs = { riders: loadRiders, feed: loadFeed, ride: loadRide, highlights: loadHighlights } as Record<string, () => Promise<void>>;
+  // ------------------------------------------------ shared rows (the overview and the full tabs draw the same)
+  type Post = Record<string, never>;
+  const boardRow = (p: Post) => `<li class="row--wrap">
+      <span class="daystub"><small>${esc(fmtDate(p.ride_date, { weekday: 'short' }))}</small><b>${esc(fmtDate(p.ride_date, { day: 'numeric' }))}</b></span>
+      <span class="row__main"><b>${esc(p.place)}</b><span class="row__sub">${esc(p.name)}${p.band ? ` · ${esc(levelName(p.band))}` : ''}${p.note ? ` · ${esc(p.note)}` : ''}</span></span>
+      <span class="row__end">${p.mine ? `<span class="small faint">Your post${p.pending_for_me ? ` · ${p.pending_for_me} asking` : ''}</span><button class="link small" data-del="${p.id}">Remove</button>`
+        : p.my_request ? `<span class="pill${p.my_request === 'accepted' ? ' pill--pos' : ''}">${p.my_request === 'pending' ? 'Asked' : p.my_request === 'accepted' ? 'They said yes' : 'Not this time'}</span>`
+        : p.can_ask ? `<button class="btn btn--small btn--ghost" data-ask="${p.id}">Ask to join</button>` : '<span class="small faint">Not taking requests</span>'}</span></li>`;
+  const noRides = '<li class="small faint">No rides posted. Post where and when you ride, and riders at your level can join.</li>';
+
+  type F = { kind: string; name: string; photo_url: string | null; created_at: string; payload: Record<string, string> };
+  const feedLine = (f: F) => ({
+    joined: `<b>${esc(f.name)}</b> joined the crew${f.payload.band ? ` at ${esc(levelName(Number(f.payload.band)))}` : ''}`,
+    level: `<b>${esc(f.name)}</b> is now ${esc(levelName(Number(f.payload.band)))}, confirmed by a coach`,
+    trick: `<b>${esc(f.name)}</b> landed a ${esc(f.payload.trick)}, signed off by a coach`,
+    camp: `New camp: <b>${esc(f.payload.title)}</b> · ${esc(f.payload.place)} · <a href="/camps">apply</a>`,
+    event: esc(f.payload.text ?? ''),
+  } as Record<string, string>)[f.kind];
+  const feedRow = (f: F) => `<li>${f.kind === 'camp' || f.kind === 'event' ? '<span class="avatar avatar--sm">B</span>' : av(f.photo_url, f.name)}
+      <span class="row__main small"><span>${feedLine(f)}</span></span><span class="row__end meta">${esc(ago(f.created_at))}</span></li>`;
+  const noFeed = '<li class="small faint">Nothing has happened yet. When someone joins or a coach confirms a level, it shows up here.</li>';
+
+  // ------------------------------------------------ tabs
+  const tabs = { home: loadHome, riders: loadRiders, feed: loadFeed, ride: loadRide, highlights: loadHighlights } as Record<string, () => Promise<void>>;
+  let current = 'home';
   async function show(tab: string) {
-    for (const b of $$<HTMLButtonElement>('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === tab));
+    current = tab;
+    for (const b of $$('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === tab));
     for (const p of $$('[data-pane]')) p.hidden = p.dataset.pane !== tab;
-    history.replaceState(null, '', tab === 'riders' ? location.pathname : `#${tab}`);
+    history.replaceState(null, '', tab === 'home' ? location.pathname : `#${tab}`);
     await tabs[tab]();
   }
-  for (const b of $$<HTMLButtonElement>('[data-tab]')) b.addEventListener('click', () => show(b.dataset.tab!));
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLElement>('[data-tab],[data-go]');
+    if (!a) return;
+    e.preventDefault();
+    show(a.dataset.tab ?? a.dataset.go!);
+    if (a.dataset.go) document.querySelector('.utabs')?.scrollIntoView({ block: 'nearest' });
+  });
+
+  // ------------------------------------------------ overview: people first, then what is happening
+  async function loadHome() {
+    const [{ data: people }, { data: board }, { data: feed }, { data: h }, { data: reqs }] = await Promise.all([
+      sb.rpc('community_directory', { p_discipline: null, p_band: null, p_q: null }),
+      sb.rpc('ride_board'), sb.rpc('community_feed'), sb.rpc('community_highlights'), sb.rpc('my_ride_requests'),
+    ]);
+    const ppl = (people ?? []) as Record<string, never>[];
+    const meFirst = [...ppl.filter((r) => r.rider_id === myRider), ...ppl.filter((r) => r.rider_id !== myRider)];
+    $('#ov-faces').innerHTML = meFirst.slice(0, 12).map((r) => `<button class="face${r.rider_id === myRider ? ' face--me' : ''}" type="button" data-card="${r.rider_id}">
+      ${av(r.photo_url, r.name, '')}<span>${r.rider_id === myRider ? 'You' : esc(String(r.name).split(' ')[0])}</span></button>`).join('');
+    $('#ov-faces-empty').hidden = ppl.length > 0;
+    $('#ov-board').innerHTML = (board ?? []).slice(0, 3).map(boardRow).join('') || noRides;
+    $('#ov-feed').innerHTML = ((feed ?? []) as F[]).slice(0, 5).map(feedRow).join('') || noFeed;
+    $('#ov-figs').innerHTML = [[(h?.levels ?? []).length, 'levels confirmed'], [(h?.tricks ?? []).length, 'tricks landed'], [(h?.active ?? []).length, 'riders out riding']]
+      .map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join('');
+
+    const pending = (reqs ?? []).filter((r: { status: string }) => r.status === 'pending');
+    $('#ov-asks').hidden = !pending.length;
+    $('#ov-asks').innerHTML = `<b>${pending.length} rider${pending.length === 1 ? ' is' : 's are'} asking to ride with you</b><a class="btn btn--small" href="#ride" data-go="ride">Answer</a>`;
+
+    const meRow = ppl.find((r) => r.rider_id === myRider);
+    $('#ov-me').innerHTML = `<div class="mecard__who">${av(me.photoUrl, me.firstName ?? me.email, '')}<div><b>${esc([me.firstName, me.lastName].filter(Boolean).join(' ') || me.email)}</b>
+        <span class="small faint">${listed ? 'In the crew: riders can find you and ask to ride.' : 'Private: only your coach sees you.'}</span></div></div>
+      ${listed && meRow?.band ? `<div class="actions">${lvl(meRow.band, meRow.verified)}</div>` : ''}
+      <div class="actions"><button class="btn btn--small btn--ghost" type="button" data-mycard>See your card</button><a class="btn btn--small btn--ghost" href="/me/profile">Your profile</a></div>`;
+  }
 
   // ------------------------------------------------ riders
   async function loadRiders() {
@@ -130,7 +231,7 @@ import { ICON } from '../members/icons';
       p_band: Number($<HTMLSelectElement>('#f-band').value) || null, p_q: $<HTMLInputElement>('#f-q').value.trim() || null });
     $('#riders').innerHTML = (data ?? []).map((r: Record<string, never>) => `<button class="rcard" type="button" data-card="${r.rider_id}">
       ${av(r.photo_url, r.name, 'avatar--sm')}
-      <span class="rcard__main"><b>${esc(r.name)}</b>
+      <span class="rcard__main"><b>${esc(r.name)}${r.rider_id === myRider ? ' <span class="small faint">(you)</span>' : ''}</b>
         <span class="small faint">${esc([(r.disciplines as string[]).map((d) => DISCIPLINE[d]).join(' + '), r.home_resort, r.riding_since && `since ${r.riding_since}`].filter(Boolean).join(' · '))}</span>
         ${r.favorite_trick ? `<span class="small">Favourite: ${esc(r.favorite_trick)}</span>` : ''}
         ${r.tricks_landed ? `<span class="meta">${r.tricks_landed} tricks landed</span>` : ''}</span>
@@ -144,29 +245,13 @@ import { ICON } from '../members/icons';
   // ------------------------------------------------ feed
   async function loadFeed() {
     const { data } = await sb.rpc('community_feed');
-    const line = (f: { kind: string; name: string; payload: Record<string, string> }) => ({
-      joined: `<b>${esc(f.name)}</b> joined the crew${f.payload.band ? ` at ${esc(levelName(Number(f.payload.band)))}` : ''}`,
-      level: `<b>${esc(f.name)}</b> is now ${esc(levelName(Number(f.payload.band)))}, confirmed by a coach`,
-      trick: `<b>${esc(f.name)}</b> landed a ${esc(f.payload.trick)}, signed off by a coach`,
-      camp: `New camp: <b>${esc(f.payload.title)}</b> · ${esc(f.payload.place)} · <a href="/camps">apply</a>`,
-      event: esc(f.payload.text ?? ''),
-    } as Record<string, string>)[f.kind];
-    type F = { kind: string; name: string; photo_url: string | null; created_at: string; payload: Record<string, string> };
-    $('#feed').innerHTML = ((data ?? []) as F[]).map((f) => `<li>${f.kind === 'camp' || f.kind === 'event' ? '<span class="avatar avatar--sm">B</span>' : av(f.photo_url, f.name)}
-      <span class="row__main small"><span>${line(f)}</span></span><span class="row__end meta">${esc(ago(f.created_at))}</span></li>`).join('')
-      || '<li class="small faint">Nothing has happened yet. When someone joins or a coach confirms a level, it shows up here.</li>';
+    $('#feed').innerHTML = ((data ?? []) as F[]).map(feedRow).join('') || noFeed;
   }
 
   // ------------------------------------------------ ride together
   async function loadRide() {
     const [{ data: board }, { data: reqs }, { data: contacts }] = await Promise.all([sb.rpc('ride_board'), sb.rpc('my_ride_requests'), sb.rpc('my_ride_contacts')]);
-    $('#board').innerHTML = (board ?? []).map((p: Record<string, never>) => `<li class="row--wrap">
-      <span class="daystub"><small>${esc(fmtDate(p.ride_date, { weekday: 'short' }))}</small><b>${esc(fmtDate(p.ride_date, { day: 'numeric' }))}</b></span>
-      <span class="row__main"><b>${esc(p.place)}</b><span class="row__sub">${esc(p.name)}${p.band ? ` · ${esc(levelName(p.band))}` : ''}${p.note ? ` · ${esc(p.note)}` : ''}</span></span>
-      <span class="row__end">${p.mine ? `<span class="small faint">Your post${p.pending_for_me ? ` · ${p.pending_for_me} asking` : ''}</span><button class="link small" data-del="${p.id}">Remove</button>`
-        : p.my_request ? `<span class="pill${p.my_request === 'accepted' ? ' pill--pos' : ''}">${p.my_request === 'pending' ? 'Asked' : p.my_request === 'accepted' ? 'They said yes' : 'Not this time'}</span>`
-        : p.can_ask ? `<button class="btn btn--small btn--ghost" data-ask="${p.id}">Ask to join</button>` : '<span class="small faint">Not taking requests</span>'}</span></li>`).join('')
-      || '<li class="small faint">No rides posted. Post yours and riders at your level can join.</li>';
+    $('#board').innerHTML = (board ?? []).map(boardRow).join('') || noRides;
     const pending = (reqs ?? []).filter((r: { status: string }) => r.status === 'pending');
     $('#requests').innerHTML = pending.map((r: Record<string, never>) => `<li class="row--wrap"><span class="row__main"><b>${esc(r.name)}</b>
       <span class="row__sub">${r.band ? `${esc(levelName(r.band))} · ` : ''}${esc(r.place)}, ${esc(fmtDate(r.ride_date, { day: 'numeric', month: 'short' }))}${r.message ? ` · “${esc(r.message)}”` : ''}</span></span>
@@ -177,23 +262,25 @@ import { ICON } from '../members/icons';
       <span class="row__sub">${[c.phone, c.instagram && '@' + c.instagram, c.email].filter(Boolean).map(esc).join(' · ')}</span></span></li>`).join('');
     $('#contacts-wrap').hidden = !(contacts ?? []).length;
   }
-  $('#post-open').addEventListener('click', () => {
+  function openPost() {
     const sh = sheet('post', 'Post a ride');
     sh.body.innerHTML = `<form class="form" id="post-form">
       <div class="form__row form__row--2"><label class="field"><span>Where</span><input type="text" name="place" maxlength="80" placeholder="Livigno, Mottolino park" required /></label>
         <label class="field"><span>When</span><input type="date" name="date" required /></label></div>
       <label class="field"><span>Note</span><input type="text" name="note" maxlength="280" placeholder="Park laps from 10:00" /></label>
+      ${listed ? '' : '<p class="small faint">Posting a ride puts you in the crew, so riders can see who posted.</p>'}
       <div class="actions"><button class="btn" type="submit">Post</button><button class="link" type="button" data-close>Cancel</button></div></form>`;
     sh.open();
     $<HTMLFormElement>('#post-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = new FormData(e.currentTarget as HTMLFormElement);
+      if (!listed) await joinCrew(false);
       const { data } = await sb.rpc('post_ride', { p_place: f.get('place'), p_date: f.get('date'), p_note: f.get('note') });
       toast(data === 'ok' ? 'Posted.' : data === 'not_listed' ? 'Join the crew first (top of the page).' : 'Pick today or later.', data === 'ok' ? 'ok' : 'bad');
       if (data === 'ok') sh.close();
-      loadRide();
+      tabs[current]();
     });
-  });
+  }
 
   // ------------------------------------------------ highlights
   async function loadHighlights() {
@@ -207,21 +294,15 @@ import { ICON } from '../members/icons';
 
   // ------------------------------------------------ actions
   document.addEventListener('click', async (e) => {
-    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-card],[data-ask],[data-yes],[data-no],[data-del]');
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-card],[data-ask],[data-yes],[data-no],[data-del],[data-post],[data-mycard]');
     if (!el) return;
     const d = el.dataset;
     if (d.card) {
-      const { data: c } = await sb.rpc('rider_card', { p_rider: d.card });
-      if (!c) return;
-      const sh = sheet('rider', c.name);
-      sh.body.innerHTML = `<div class="who" style="margin-bottom:16px">${av(c.photo_url, c.name, '')}<div><div class="actions">${lvl(c.band, c.verified)}</div>
-          <p class="small faint" style="margin-top:6px">${esc((c.disciplines ?? []).map((x: string) => DISCIPLINE[x]).join(' + '))}</p></div></div>
-        <dl class="facts">${[['Riding since', c.riding_since], ['Home resort', c.home_resort], ['Likes', (c.terrain ?? []).map((t: string) => TERRAIN[t]).join(', ')],
-          ['Favourite trick', c.favorite_trick], ['Favourite brand', c.favorite_brand]].filter(([, v]) => v).map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
-        ${c.bio ? `<p>${esc(c.bio)}</p>` : ''}
-        ${c.badges.length ? `<h3 style="margin:16px 0 8px">Badges</h3><div class="actions">${c.badges.map((b: { title: string }) => `<span class="pill pill--accent">${esc(b.title)}</span>`).join('')}</div>` : ''}
-        ${c.tricks.length ? `<h3 style="margin:16px 0 8px">Tricks landed</h3><p class="small">${c.tricks.map(esc).join(', ')}</p>` : ''}`;
-      sh.open();
+      await openRiderCard(d.card, d.card === myRider ? { own: { listed } } : {});
+    } else if (el.hasAttribute('data-mycard')) {
+      if (myRider) await openRiderCard(myRider, { own: { listed } });
+    } else if (el.hasAttribute('data-post')) {
+      openPost();
     } else if (d.ask) {
       const sh = sheet('ask', 'Ask to ride along');
       sh.body.innerHTML = `<form class="form" id="ask-form"><label class="field"><span>A line for them (optional)</span><input type="text" name="message" maxlength="280" placeholder="Hi! I ride park, about your level." /></label>
@@ -234,23 +315,24 @@ import { ICON } from '../members/icons';
         const { data } = await sb.rpc('ask_to_ride', { p_post: d.ask, p_message: message });
         sh.close();
         toast(({ ok: 'Asked. If they say yes you both see each other’s contacts.', not_listed: 'Join the crew first, so they can see who is asking.', already: 'Already asked.', closed: 'They are not taking requests.' } as Record<string, string>)[data] ?? 'Could not ask.', data === 'ok' ? 'ok' : 'bad');
-        loadRide();
+        tabs[current]();
       });
     } else if (d.yes || d.no) {
       await sb.rpc('respond_ride_request', { p_request: d.yes ?? d.no, p_accept: !!d.yes });
-      loadRide();
+      tabs[current]();
     } else if (d.del) {
       await sb.rpc('delete_ride', { p_post: d.del });
-      loadRide();
+      tabs[current]();
     }
   });
 
-  $('#go-listed').addEventListener('click', async () => {
+  async function joinCrew(say = true) {
     await sb.from('profiles').update({ listed: true, ask_to_ride: true }).eq('id', me.id);
+    listed = true;
     $('#optin').hidden = true;
-    toast('You are in the crew now.');
-    loadRiders();
-  });
+    if (say) toast('You are in the crew now.');
+  }
+  $('#go-listed').addEventListener('click', async () => { await joinCrew(); tabs[current](); });
   const start = location.hash.slice(1);
-  await show(tabs[start] ? start : 'riders');
+  await show(tabs[start] ? start : 'home');
 </script>

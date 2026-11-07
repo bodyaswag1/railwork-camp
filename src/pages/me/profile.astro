@@ -1,11 +1,12 @@
 ---
-// Profile: who you are at BAS and what you have earned. Identity only, read first; editing opens on demand
+// You: who you are at BAS and what you have earned, and the door to everything else that is yours (progress,
+// your crew card, camps, settings; the coach pages for staff). Identity is read first; editing opens on demand
 // (a sheet for details, an inline picker for the level). Every switch lives on Settings.
 import App from '../../layouts/App.astro';
 import { LEVELS } from '../../lib/members/rules';
 import { ICON } from '../../members/icons';
 ---
-<App title="Profile" path="/me/profile" nav>
+<App title="You" path="/me/profile" nav>
   <div id="profile" hidden>
     <section class="card idcard" id="photo" aria-label="You">
       <label class="idcard__photo" for="photo-input" title="Change photo">
@@ -20,6 +21,20 @@ import { ICON } from '../../members/icons';
       </div>
       <div class="idcard__end"><button class="btn btn--small btn--ghost" type="button" id="edit-details">Edit details</button></div>
     </section>
+
+    <nav class="card card--flush hub" aria-label="Your area">
+      <a class="hub__item" href="/me/progress"><Fragment set:html={ICON.progress} /><span class="hub__main"><b>Progress</b><small id="hub-progress">Season pass, hours, trick book</small></span><Fragment set:html={ICON.chevronR} /></a>
+      <button class="hub__item" type="button" id="hub-card"><Fragment set:html={ICON.crew} /><span class="hub__main"><b>Your crew card</b><small id="hub-card-sub">What other riders see</small></span><Fragment set:html={ICON.chevronR} /></button>
+      <a class="hub__item" href="/camps"><Fragment set:html={ICON.camps} /><span class="hub__main"><b>Camps</b><small>Trips with Ilia, your applications</small></span><Fragment set:html={ICON.chevronR} /></a>
+      <a class="hub__item" href="/me/settings"><Fragment set:html={ICON.settings} /><span class="hub__main"><b>Settings</b><small>Password, privacy, trips away</small></span><Fragment set:html={ICON.chevronR} /></a>
+    </nav>
+
+    <nav class="card card--flush hub hub--coach" aria-label="Coach" data-staff-only hidden>
+      <p class="hub__group">Coach</p>
+      <a class="hub__item" href="/coach"><Fragment set:html={ICON.coach} /><span class="hub__main"><b>Riders</b><small>Levels, focus, tricks, invites</small></span><Fragment set:html={ICON.chevronR} /></a>
+      <a class="hub__item" href="/coach/schedule"><Fragment set:html={ICON.sessions} /><span class="hub__main"><b>Schedule</b><small>Publish sessions, rosters, weekly slots</small></span><Fragment set:html={ICON.chevronR} /></a>
+      <a class="hub__item" href="/coach/camps"><Fragment set:html={ICON.camps} /><span class="hub__main"><b>Camp roster</b><small>Applications and places</small></span><Fragment set:html={ICON.chevronR} /></a>
+    </nav>
 
     <div class="grid grid--2">
       <section class="card" id="level" aria-labelledby="level-h">
@@ -52,6 +67,7 @@ import { ICON } from '../../members/icons';
     </section>
 
     <p class="small faint" id="visibility"></p>
+    <div class="actions" style="margin-top:24px"><button class="btn btn--ghost btn--small" type="button" data-signout><Fragment set:html={ICON.signout} />Sign out</button></div>
   </div>
 </App>
 
@@ -65,6 +81,25 @@ import { ICON } from '../../members/icons';
   .idcard__end { grid-column: 1 / -1; }
   @media (min-width: 640px) { .idcard { grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px; } .idcard__end { grid-column: auto; align-self: start; } }
   .idcard input#photo-input:focus-visible + .idcard__main { outline: none; }
+  /* one hairline above every item, clipped away on the first row by the card's overflow */
+  .hub { display: grid; overflow: hidden; }
+  .hub__group { padding: 14px var(--pad) 2px; font-size: 13px; font-weight: 600; color: var(--faint); }
+  .hub__item { display: flex; align-items: center; gap: 14px; width: 100%; padding: 13px var(--pad); min-height: 60px; text-align: left;
+    font: inherit; color: inherit; text-decoration: none; background: none; border: 0; box-shadow: 0 -1px 0 var(--line); cursor: pointer; }
+  .hub__group + .hub__item { box-shadow: none; }
+  .hub__item:hover { background: var(--hover); }
+  .hub__item > .ico { width: 22px; height: 22px; flex: none; color: var(--muted); }
+  .hub__item > .ico:last-child { width: 18px; height: 18px; color: var(--faint); margin-left: auto; }
+  .hub__main { display: grid; gap: 2px; min-width: 0; }
+  .hub__main b { font-weight: 600; }
+  .hub__main small { font-size: 13px; color: var(--faint); }
+  @media (min-width: 760px) {
+    .hub:not(.hub--coach) { grid-template-columns: 1fr 1fr; }
+    .hub:not(.hub--coach) .hub__item:nth-child(odd) { box-shadow: 0 -1px 0 var(--line), 1px 0 0 var(--line); }
+    .hub--coach { grid-template-columns: repeat(3, 1fr); }
+    .hub--coach .hub__group { grid-column: 1 / -1; }
+    .hub--coach .hub__item { box-shadow: -1px 0 0 var(--line); }
+  }
 </style>
 
 <script>
@@ -72,6 +107,7 @@ import { ICON } from '../../members/icons';
   import { levelChip, LEVEL_NOTE } from '../../members/level';
   import { DISCIPLINE, TERRAIN } from '../../members/labels';
   import { sb } from '../../members/sb';
+  import { openRiderCard } from '../../members/ridercard';
 
   const me = await requireMe();
   await sb.rpc('ensure_my_rider');
@@ -222,6 +258,12 @@ import { ICON } from '../../members/icons';
   $('#visibility').innerHTML = p?.listed
     ? 'The crew can see your card: first name and initial, level, what you ride and tricks landed. <a href="/me/settings#privacy">Privacy</a>'
     : 'Only you and your coach see this profile. <a href="/me/settings#privacy">Show me to the crew</a>';
+
+  // ---------------------------------------------------------------- hub lines
+  const streak = st?.streak_weeks ?? 0;
+  if (st?.sessions_total) $('#hub-progress').textContent = `${streak ? `${streak} week${streak === 1 ? '' : 's'} running · ` : ''}${st.sessions_total} session${st.sessions_total === 1 ? '' : 's'}`;
+  $('#hub-card-sub').textContent = p?.listed ? 'Visible to the crew' : 'Only you and your coach see it';
+  $('#hub-card').addEventListener('click', () => r?.id && openRiderCard(r.id, { own: { listed: !!p?.listed } }));
 
   $('#profile').hidden = false;
   if (location.hash) document.querySelector(location.hash)?.scrollIntoView();

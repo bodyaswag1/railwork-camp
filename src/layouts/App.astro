@@ -1,7 +1,7 @@
 ---
-// Shell for the rider area. One slim Night Run bar with a small logo; on a wide screen the four main tabs sit in
-// it, on a phone they move to a tab bar at the bottom (thumb reach). Everything else (progress, profile, camps,
-// settings, the coach pages, sign out) lives in the avatar menu, the same list at every width.
+// Shell for the rider area. One slim Night Run bar with a small logo; on a wide screen the five main tabs sit in
+// it, on a phone they move to a tab bar at the bottom (thumb reach). "You" is your profile and the door to
+// progress, camps, settings and (for staff) the coach pages; the avatar menu repeats the same list as a shortcut.
 // Pages are static; each one's script loads the signed-in person from Supabase in the browser.
 import Base from './Base.astro';
 import Logo from '../components/Logo.astro';
@@ -25,6 +25,8 @@ const TABS = [
   { href: '/me/sessions', label: 'Sessions', icon: ICON.sessions },
   { href: '/community', label: 'Crew', icon: ICON.crew },
 ];
+/** pages that light up the You tab besides the profile itself */
+const YOU_ALSO = '/me/progress /me/settings /camps';
 const MENU = [
   { href: '/me/progress', label: 'Progress', icon: ICON.progress },
   { href: '/me/profile', label: 'Profile', icon: ICON.profile },
@@ -45,6 +47,7 @@ const COACH = [
       <>
         <nav class="toptabs" aria-label="Main">
           {TABS.map((t) => <a href={t.href} data-exact={t.exact ? '' : undefined}>{t.label}</a>)}
+          <a href="/me/profile" data-also={YOU_ALSO}>You</a>
           <a href="/coach" data-staff-only hidden>Coach</a>
         </nav>
         <p class="topbar__title">{title}</p>
@@ -85,7 +88,8 @@ const COACH = [
   {nav && (
     <nav class="tabbar" aria-label="Main">
       {TABS.map((t) => <a href={t.href} data-exact={t.exact ? '' : undefined}><Fragment set:html={t.icon} />{t.label}</a>)}
-      <a href="/coach" data-staff-only hidden><Fragment set:html={ICON.coach} />Coach</a>
+      {/* on a phone the coach pages hang off You too: five tabs is the most a thumb bar holds */}
+      <a href="/me/profile" data-also={`${YOU_ALSO} /coach`}><span class="avatar tabbar__me" data-me-avatar aria-hidden="true"></span>You</a>
     </nav>
   )}
   <footer class="appfoot">
