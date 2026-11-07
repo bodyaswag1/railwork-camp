@@ -149,19 +149,20 @@ test('the rider opens the invite, signs up, and their coach record comes with th
 
   await page.goto(await mailLink(RIDER.email, t));
   await welcome(page, RIDER);
-  await expect(page.locator('.chip--verified')).toContainText('Cruising');
-  await expect(page.locator('#founding')).toBeVisible();
-  await expect(page.locator('#coach')).toContainText(COACH.first);
 
-  // the level is the coach's now: no picker on the profile
+  // the profile: the coach's verified level, the founding stamp, the coach; no level picker
   await page.goto('/me/profile');
+  await expect(page.locator('#chips .chip--verified')).toContainText('Cruising');
+  await expect(page.locator('#chips .stamp')).toHaveText('Founding rider');
+  await expect(page.locator('#idline')).toContainText(COACH.first);
   await expect(page.locator('#level-note')).toContainText('Your coach confirmed this');
   await expect(page.locator('#level-edit')).toBeHidden();
   await page.locator('#photo-input').setInputFiles('public/apple-touch-icon.png');
   await expect(page.locator('#toast')).toHaveText('Photo saved.');
   await expect(page.locator('#avatar')).toHaveCSS('background-image', /avatars\/.+\.webp/);
-  await page.getByLabel('A line about you').fill('Chasing my first backside 360.');
-  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Edit details' }).click();
+  await page.locator('#details-form').getByLabel('A line about you').fill('Chasing my first backside 360.');
+  await page.locator('#details-form').getByRole('button', { name: 'Save' }).click();
   await expect(page.locator('#toast')).toHaveText('Saved.');
 
   // riders never see the coach panel
@@ -190,6 +191,7 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   // coach publishes a trampoline session 5 days out
   await signIn(coach, COACH.email, COACH.password, '/coach/schedule');
   await expect(coach.getByRole('heading', { name: 'Schedule' })).toBeVisible();
+  await expect(coach.locator('#sessions')).not.toBeEmpty(); // the page script is ready
   const d = new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10);
   const pub = coach.locator('#pub');
   await pub.getByLabel('Title').fill('E2E trampoline');
@@ -197,17 +199,20 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   await pub.getByLabel('Places').fill('4');
   await pub.getByLabel(/Price/).fill('30');
   await pub.getByRole('button', { name: 'Publish' }).click();
+  await expect(coach.locator('#toast')).toContainText('Published 1 session');
   await expect(coach.locator('#sessions')).toContainText('E2E trampoline');
 
   // rider books it, asks for it weekly
-  await signIn(rider, RIDER.email, RIDER.password, '/book');
-  const row = rider.locator('.card', { hasText: 'E2E trampoline' });
-  await row.getByRole('button', { name: 'Book' }).click();
-  await expect(rider.locator('#toast')).toContainText('Booked');
+  await signIn(rider, RIDER.email, RIDER.password, `/book?kind=trampoline&day=${d}`);
+  const row = rider.locator('#slots li', { hasText: 'E2E trampoline' });
+  await row.getByRole('button', { name: 'Reserve' }).click();
+  await rider.locator('#do-book').click();
+  await expect(rider.getByRole('heading', { name: 'You are booked' })).toBeVisible();
+  await rider.keyboard.press('Escape');
   await expect(row).toContainText('You are booked');
   await rider.goto('/me/sessions');
-  const mine = rider.locator('#upcoming .card', { hasText: 'E2E trampoline' });
-  await mine.getByRole('button', { name: 'Keep this time every week' }).click();
+  const mine = rider.locator('#upcoming li', { hasText: 'E2E trampoline' });
+  await mine.getByRole('button', { name: 'Every week' }).click();
   await expect(rider.locator('#loops')).toContainText('Waiting for your coach');
 
   // coach approves, marks attended
@@ -216,14 +221,14 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   await expect(coach.locator('#inbox-wrap')).toBeHidden();
   const s = coach.locator('#sessions .card', { hasText: 'E2E trampoline' });
   await expect(s).toContainText(RIDER.first);
-  await s.getByRole('button', { name: 'attended' }).click();
+  await s.getByRole('button', { name: 'Attended' }).click();
   await expect(s).toContainText('Attended');
 
   // rider: progress counts it (12 before the app + 1), ticks a trick
   await rider.goto('/me/progress');
-  await expect(rider.locator('#n-sessions')).toHaveText('13');
+  await expect(rider.locator('[data-fig=sessions] b')).toHaveText('13');
   await rider.getByRole('checkbox', { name: 'Ollie', exact: true }).check();
-  await expect(rider.locator('#tricks')).toContainText('working on it');
+  await expect(rider.locator('#tricks')).toContainText('Working on it');
 
   // coach marks it landed from the rider card
   await coach.goto('/coach');
@@ -235,11 +240,12 @@ test('booking, weekly slot, progress, community and camps through the pages', as
 
   // rider: community opt-in, directory, feed, ride post
   await rider.goto('/community');
-  await rider.getByRole('button', { name: 'Show me in the rider directory' }).click();
+  await rider.getByRole('button', { name: 'Show me in the crew' }).click();
   await expect(rider.locator('#riders')).toContainText(`${RIDER.first} T.`);
-  await rider.getByRole('button', { name: 'Feed' }).click();
+  await rider.getByRole('tab', { name: 'Around the crew' }).click();
   await expect(rider.locator('#feed')).toContainText('landed a Ollie');
-  await rider.getByRole('button', { name: 'Ride together' }).click();
+  await rider.getByRole('tab', { name: 'Ride together' }).click();
+  await rider.getByRole('button', { name: 'Post a ride' }).click();
   await rider.locator('#post-form').getByLabel('Where').fill('Livigno, Mottolino park');
   await rider.locator('#post-form').getByLabel('When').fill(d);
   await rider.locator('#post-form').getByRole('button', { name: 'Post' }).click();
@@ -248,8 +254,9 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   // rider applies for the camp; coach sees the application
   await rider.goto('/camps');
   const camp = rider.locator('section', { hasText: 'BAS CAMP Italy 2026' });
-  await camp.getByLabel(/Anything Ilia should know/).fill('E2E test application, please ignore');
   await camp.getByRole('button', { name: 'Apply for this camp' }).click();
+  await rider.locator('#apply-form').getByLabel(/Anything Ilia should know/).fill('E2E test application, please ignore');
+  await rider.locator('#apply-form').getByRole('button', { name: 'Send application' }).click();
   await expect(camp).toContainText('Applied');
   await coach.goto('/coach/camps');
   await expect(coach.locator('#camps')).toContainText('E2E test application');

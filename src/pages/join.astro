@@ -3,7 +3,7 @@ import App from '../layouts/App.astro';
 ---
 <App title="Join" path="/join" narrow>
   <section data-state="form">
-    <p class="kicker" id="invite-kicker" hidden>Personal invite</p>
+    <p id="invite-kicker" hidden style="margin:0 0 10px"><span class="pill pill--accent">Personal invite</span></p>
     <h1>Join BAS</h1>
     <p class="lede" id="join-lede">One screen and you are in. Book sessions, see your level, track your tricks.</p>
     <p class="card card--tape small" id="invite-banner" hidden>
@@ -38,7 +38,6 @@ import App from '../layouts/App.astro';
   </section>
 
   <section data-state="sent" hidden>
-    <p class="kicker">Almost there</p>
     <h1>Check your inbox</h1>
     <p class="lede">We sent a link to <b id="sent-email"></b>. Open it and you are in.</p>
     <p class="card small" id="sent-claim" hidden></p>

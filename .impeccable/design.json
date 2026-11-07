@@ -1,0 +1,19 @@
+{
+  "surface": "rider-area",
+  "mode": "operate",
+  "theme": "light",
+  "style": { "source": "taste-skill accent-ladder", "seed": 147664875 },
+  "tokens": {
+    "color": {
+      "ground": "#f3f7fa", "surface": "#ffffff", "raised": "#eaf1f6", "hover": "#f5f8fa",
+      "border": "#dde4e9", "line": "#edf1f4", "control": "#c4cdd3",
+      "text": "#101314", "muted": "#474C48", "faint": "#5e6562", "primary": "#101314",
+      "accent": "#BA1422", "accentInk": "#8f0f1a", "accent50": "#fdf2f3", "accent100": "#f9e0e3", "accent200": "#f1bcc2",
+      "positive": "#1f7a4a", "positiveBg": "#e0f4e7", "negativeBg": "#fde9eb", "warnBg": "#fff6dc", "warnInk": "#7a4a00"
+    },
+    "radius": { "card": 8, "control": 6, "chip": 4 },
+    "space": { "gap": 16, "cardPad": 20, "bar": 56, "tabbar": 64 },
+    "type": { "text": "Onest", "display": "Archivo 800 108%", "date": "Archivo 900 62%", "body": 15, "small": 13, "meta": 12, "title": 24 }
+  },
+  "signature": "season pass: one punched cell per week ridden; hatch = trip (paused); outline = this week"
+}

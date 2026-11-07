@@ -1,16 +1,36 @@
 ---
-// Camps: apply in the app, see your status, and (once accepted) the camp space: the plan and who is going.
+// Camps: apply in the app, see your status and what is left to pay, and (once accepted) the plan and who is going.
 import App from '../layouts/App.astro';
 ---
-<App title="Camps" path="/camps" nav>
-  <h1>Camps</h1>
-  <p class="lede">Training days for a group in one place, coached by Ilia and the BAS crew.</p>
-  <div id="camps"></div>
+<App title="Camps" path="/camps" nav mid>
+  <div class="pagehead">
+    <div>
+      <h1>Camps</h1>
+      <p class="lede">A group, one place, several days of coaching and filming with Ilia and the BAS crew.</p>
+    </div>
+  </div>
+  <div id="camps" class="stack"><div class="card"><span class="skel skel--lg"></span></div></div>
 </App>
 
+<style is:global>
+  .card.camp { padding: 0; overflow: hidden; }
+  .camp__body { padding: 18px var(--pad) var(--pad); display: grid; gap: 14px; }
+  .camp__top { display: flex; gap: 14px; align-items: flex-start; }
+  .camp__top h2 { font-size: 20px; }
+  .camp__meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .crew { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .camp details summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  .plan { list-style: none; margin: 10px 0 0; padding: 0; }
+  .plan li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .plan li b { display: block; }
+  .plan__day { font: 900 18px/1 var(--font-display); font-stretch: 62%; text-transform: uppercase; color: var(--accent-ink); }
+  @media (max-width: 479px) { .camp__meta { grid-template-columns: 1fr 1fr; } .camp__meta > div:nth-child(3) { grid-column: 1 / -1; border-left: 0; padding-left: 0; margin-top: 10px; } }
+</style>
+
 <script>
-  import { $, esc, fmtDate, paintHeader, toast } from '../members/ui';
+  import { $, esc, fmtDate, paintAvatar, paintHeader, sheet, toast } from '../members/ui';
   import { CAMP_STATUS, euro } from '../members/labels';
+  import { ICON } from '../members/icons';
   import { configured, loadMe, sb } from '../members/sb';
 
   type Camp = { id: string; slug: string; title: string; place: string; starts_on: string; ends_on: string; spots: number; spots_left: number;
@@ -20,54 +40,82 @@ import App from '../layouts/App.astro';
   const me = await loadMe();
   paintHeader(me);
   const HOLDS = ['accepted', 'deposit_paid', 'paid', 'attended'];
+  let camps: Camp[] = [];
 
   async function load() {
     const { data } = await sb.rpc('camp_list');
-    const camps = (data ?? []) as Camp[];
+    camps = (data ?? []) as Camp[];
     const html = await Promise.all(camps.map(async (c) => {
       const inCamp = c.my_status && HOLDS.includes(c.my_status);
+      const live = c.my_status && !['cancelled', 'declined'].includes(c.my_status);
       let crew = '';
       if (inCamp) {
         const { data: cr } = await sb.rpc('camp_crew', { p_camp: c.id });
-        const named = (cr ?? []).filter((x: { name: string | null }) => x.name);
+        const named = (cr ?? []).filter((x: { name: string | null }) => x.name) as { name: string; photo_url?: string | null }[];
         const hidden = (cr ?? []).find((x: { hidden_count: number | null }) => x.hidden_count)?.hidden_count ?? 0;
-        crew = `<h3 style="margin-top:16px">Who is going</h3><p>${named.map((x: { name: string }) => esc(x.name)).join(', ') || '—'}${hidden ? ` <span class="muted">and ${hidden} more</span>` : ''}</p>
-          <p class="small muted">Riders show here when they turn on “Show me in the rider directory” in settings.</p>`;
+        const chip = (x: { name: string; photo_url?: string | null }) => { const s = document.createElement('span'); s.className = 'avatar avatar--xs'; paintAvatar(s, x.photo_url ?? null, x.name); s.title = x.name; return s.outerHTML; };
+        crew = `<div><h3 style="margin-bottom:8px">Who is going</h3><div class="crew">${named.map(chip).join('')}<span class="small faint">${esc(named.map((x) => x.name).join(', ') || 'Nobody listed yet')}${hidden ? ` and ${hidden} more` : ''}</span></div>
+          <p class="meta" style="margin-top:6px">Riders show here when they join the crew in settings.</p></div>`;
       }
-      const pay = inCamp ? `<p class="small"><b>Payment:</b> ${c.my_status === 'paid' || c.my_status === 'attended' ? 'all paid' : c.my_status === 'deposit_paid'
+      const pay = inCamp ? `<p class="small" style="margin:0"><b>Payment:</b> ${c.my_status === 'paid' || c.my_status === 'attended' ? 'all paid' : c.my_status === 'deposit_paid'
         ? `deposit paid · balance ${esc(euro(c.price_eur - (c.deposit_eur ?? 0)))} by ${esc(fmtDate(c.balance_due_on))}`
         : `deposit ${esc(euro(c.deposit_eur))} to lock your spot · Ilia sends the details`}</p>` : '';
       const action = !me ? `<a class="btn" href="/signin?next=/camps">Sign in to apply</a>`
-        : c.my_status && !['cancelled', 'declined'].includes(c.my_status)
-          ? `<p><span class="chip chip--verified">${esc(CAMP_STATUS[c.my_status])}</span></p>${['applied', 'waitlist', 'accepted'].includes(c.my_status) ? `<button class="link small" data-withdraw="${c.my_entry}">Withdraw</button>` : ''}`
-          : c.status !== 'open' ? '<p class="muted">Applications closed.</p>'
-          : `<form class="form" data-apply="${c.id}" style="max-width:420px"><label class="field"><span>Anything Ilia should know?</span><textarea name="note" maxlength="500" placeholder="Level, goals, who you are coming with"></textarea></label>
-             <label class="field"><span>Promo code</span><input type="text" name="promo" maxlength="40" /></label><button class="btn" type="submit">Apply for this camp</button></form>`;
-      return `<section class="card card--tape"><p class="kicker">${esc(fmtDate(c.starts_on, { day: 'numeric', month: 'short' }))}–${esc(fmtDate(c.ends_on))} · ${esc(c.place)}</p>
-        <h2>${esc(c.title)}</h2><p>${esc(c.description ?? '')}</p>
-        <p class="small"><b>${esc(euro(c.price_eur))}</b>${c.deposit_eur ? ` · ${esc(euro(c.deposit_eur))} deposit` : ''} · ${c.spots_left > 0 ? `${c.spots_left} of ${c.spots} spots left` : 'full: apply for the waitlist'} · <a href="/camp">camp page</a></p>
-        ${pay}${action}
-        ${c.plan?.length ? `<details style="margin-top:12px"${inCamp ? ' open' : ''}><summary><b>The plan</b></summary><ol class="small">${c.plan.map((d) => `<li><b>${esc(d.day)} · ${esc(d.title)}</b> ${esc(d.body)}</li>`).join('')}</ol></details>` : ''}
-        ${crew}</section>`;
+        : live ? `<div class="actions"><span class="pill ${inCamp ? 'pill--pos' : 'pill--warn'}">${esc(CAMP_STATUS[c.my_status!])}</span>${['applied', 'waitlist', 'accepted'].includes(c.my_status!) ? `<button class="link small" data-withdraw="${c.my_entry}">Withdraw</button>` : ''}</div>`
+        : c.status !== 'open' ? '<p class="small faint" style="margin:0">Applications closed.</p>'
+        : `<div class="actions"><button class="btn" type="button" data-apply="${c.id}">${c.spots_left > 0 ? 'Apply for this camp' : 'Join the waitlist'}</button><a class="link small" href="/camp">Camp page</a></div>`;
+      const taken = c.spots - c.spots_left;
+      return `<section class="card camp">
+        <div class="photo photo--wide photo--empty" style="border-radius:0"><span>${ICON.camera}Camp photo</span></div>
+        <div class="camp__body">
+          <div class="camp__top"><span class="daystub daystub--mine"><small>${esc(fmtDate(c.starts_on, { month: 'short' }))}</small><b>${esc(fmtDate(c.starts_on, { day: 'numeric' }))}</b></span>
+            <div><h2>${esc(c.title)}</h2><p class="small faint" style="margin:2px 0 0">${esc(fmtDate(c.starts_on, { day: 'numeric', month: 'short' }))}–${esc(fmtDate(c.ends_on))} · ${esc(c.place)}</p></div></div>
+          ${c.description ? `<p style="margin:0">${esc(c.description)}</p>` : ''}
+          <div class="figs camp__meta"><div><b>${esc(euro(c.price_eur))}</b><span>${c.deposit_eur ? `${esc(euro(c.deposit_eur))} deposit` : 'per rider'}</span></div>
+            <div><b class="num">${c.spots_left}</b><span>of ${c.spots} spots left</span></div>
+            <div><div class="progressbar" style="margin-top:10px"><i style="width:${(taken / c.spots) * 100}%"></i></div><span>${taken} going or accepted</span></div></div>
+          ${pay}${action}
+          ${c.plan?.length ? `<details${inCamp ? ' open' : ''}><summary>The plan, day by day</summary><ul class="plan">${c.plan.map((d) => `<li><span class="plan__day">${esc(d.day)}</span><span><b>${esc(d.title)}</b><span class="small faint">${esc(d.body)}</span></span></li>`).join('')}</ul></details>` : ''}
+          ${crew}
+        </div></section>`;
     }));
     $('#camps').innerHTML = html.join('') || '<p class="empty">No camps open right now.</p>';
   }
 
-  document.addEventListener('submit', async (e) => {
-    const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-apply]');
-    if (!form) return;
-    e.preventDefault();
-    const f = new FormData(form);
-    const { data } = await sb.rpc('apply_camp', { p_camp: form.dataset.apply, p_note: f.get('note'), p_promo: f.get('promo') });
-    toast(data === 'ok' ? 'Applied. Ilia gets back to you.' : data === 'already' ? 'You have already applied.' : 'Applications are closed.', data === 'ok' ? 'ok' : 'bad');
-    load();
-  });
   document.addEventListener('click', async (e) => {
-    const id = (e.target as HTMLElement).closest<HTMLElement>('[data-withdraw]')?.dataset.withdraw;
-    if (!id || !confirm('Withdraw your application?')) return;
-    const { data } = await sb.rpc('withdraw_camp', { p_entry: id });
-    toast(data === 'ok' ? 'Withdrawn.' : 'Paid entries are cancelled through Ilia (see the cancellation terms).', data === 'ok' ? 'ok' : 'bad');
-    load();
+    const t = e.target as HTMLElement;
+    const applyId = t.closest<HTMLElement>('[data-apply]')?.dataset.apply;
+    if (applyId) {
+      const c = camps.find((x) => x.id === applyId)!;
+      const sh = sheet('apply', `Apply: ${c.title}`);
+      sh.body.innerHTML = `<form class="form" id="apply-form">
+        <label class="field"><span>Anything Ilia should know?</span><textarea name="note" maxlength="500" placeholder="Level, goals, who you are coming with"></textarea></label>
+        <label class="field"><span>Promo code</span><input type="text" name="promo" maxlength="40" /></label>
+        <p class="small faint">Applying is free. Ilia replies; once accepted, a ${esc(euro(c.deposit_eur))} deposit locks your spot.</p>
+        <div class="actions"><button class="btn" type="submit">Send application</button><button class="link" type="button" data-close>Cancel</button></div></form>`;
+      sh.open();
+      $<HTMLFormElement>('#apply-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const f = new FormData(ev.currentTarget as HTMLFormElement);
+        const { data } = await sb.rpc('apply_camp', { p_camp: c.id, p_note: f.get('note'), p_promo: f.get('promo') });
+        toast(data === 'ok' ? 'Applied. Ilia gets back to you.' : data === 'already' ? 'You have already applied.' : 'Applications are closed.', data === 'ok' ? 'ok' : 'bad');
+        sh.close();
+        load();
+      });
+      return;
+    }
+    const id = t.closest<HTMLElement>('[data-withdraw]')?.dataset.withdraw;
+    if (!id) return;
+    const sh = sheet('withdraw', 'Withdraw your application?');
+    sh.body.innerHTML = `<p class="small faint">Your place goes to the next rider. You can apply again while applications are open.</p>
+      <div class="actions" style="margin-top:16px"><button class="btn btn--danger" type="button" id="do-withdraw">Withdraw</button><button class="link" type="button" data-close>Keep it</button></div>`;
+    sh.open();
+    $('#do-withdraw').addEventListener('click', async () => {
+      const { data } = await sb.rpc('withdraw_camp', { p_entry: id });
+      sh.close();
+      toast(data === 'ok' ? 'Withdrawn.' : 'Paid entries are cancelled through Ilia (see the cancellation terms).', data === 'ok' ? 'ok' : 'bad');
+      load();
+    });
   });
   await load();
 </script>

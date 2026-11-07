@@ -3,14 +3,14 @@
 // confirm a level, and their personal invite link to paste into a DM. Coaches and admins only.
 import App from '../../layouts/App.astro';
 import { LEVELS } from '../../lib/members/rules';
+import CoachTabs from '../../components/CoachTabs.astro';
 ---
 <App title="Coach" path="/coach" nav>
   <div id="coach" hidden>
-    <p class="kicker">Coach</p>
-    <h1>Riders</h1>
+    <CoachTabs title="Riders" current="/coach" lede="Everyone you coach: levels, invite links, tricks and packs." />
     <div class="toolbar">
       <input type="search" id="q" placeholder="Search name, phone, Instagram" aria-label="Search riders" />
-      <select id="filter" aria-label="Filter by invite status" style="width:auto">
+      <select id="filter" aria-label="Filter by invite status" class="sel-inline">
         <option value="">Everyone</option>
         <option value="claimed">Has a login</option>
         <option value="open">No login yet</option>
@@ -31,7 +31,7 @@ import { LEVELS } from '../../lib/members/rules';
           <p class="muted" style="margin:0">Tap a rider to see their level and invite link, or add a new one.</p>
         </section>
 
-        <section class="card card--tape" data-panel="add" hidden>
+        <section class="card" data-panel="add" hidden>
           <h2>Add a rider</h2>
           <p class="small muted">They get a personal link to claim this profile. Everything here is only seen by you and them.</p>
           <form class="form" id="add-form" novalidate>
@@ -58,7 +58,7 @@ import { LEVELS } from '../../lib/members/rules';
         </section>
 
         <section data-panel="rider" hidden>
-          <div class="card card--tape">
+          <div class="card">
             <div class="who" style="margin-bottom:16px">
               <div class="avatar" id="r-avatar" aria-hidden="true"></div>
               <div><h2 id="r-name" style="margin:0 0 6px"></h2><p style="margin:0" id="r-level"></p></div>

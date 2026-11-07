@@ -1,68 +1,89 @@
 ---
-// Rider home: one greeting, who you are at BAS, one nudge, the ways to ride with us. Modules with nothing real
-// to say are not drawn (no zeroes, no "coming soon" boxes); sessions and progress arrive with booking.
+// Rider home: the next session first and biggest, then the season pass (the week streak), this week's
+// timetable, one nudge at most, and the camp. Modules with nothing real to say either hide or keep their frame
+// with one honest sentence; nothing renders a wall of zeroes.
 import App from '../../layouts/App.astro';
-import { train } from '../../content/site';
+import { ICON } from '../../members/icons';
 ---
-<App title="You" path="/me" nav>
-  <div id="home" hidden>
-    <p class="kicker" id="founding-kicker" hidden>Founding rider</p>
-    <h1 id="hi">Hi</h1>
+<App title="Home" path="/me" nav>
+  <div class="pagehead">
+    <div>
+      <h1 id="hi">Hi</h1>
+      <p class="lede" id="finding"><span class="skel" style="width:220px"></span></p>
+    </div>
+    <div class="actions actions--wide"><a class="btn" href="/book">Book a session</a></div>
+  </div>
 
-    <div class="grid grid--side">
-      <section class="card card--tape" aria-labelledby="you-h">
-        <h2 id="you-h" class="sr-only">Your profile</h2>
-        <div class="who">
-          <div class="avatar" id="avatar" aria-hidden="true"></div>
-          <div>
-            <p style="margin:0 0 8px;font-weight:700" id="fullname"></p>
-            <p style="margin:0" id="level"></p>
-            <p class="small muted" style="margin:8px 0 0" id="coach" hidden></p>
-          </div>
+  <div class="home">
+    <section class="home__next" aria-labelledby="next-h">
+      <h2 id="next-h" class="sr-only">Next session</h2>
+      <div class="card ticket" id="next" hidden>
+        <div class="ticket__stub" id="next-stub"></div>
+        <div class="ticket__body">
+          <span class="ticket__in" id="next-in"></span>
+          <span class="ticket__title" id="next-title"></span>
+          <span class="ticket__facts" id="next-facts"></span>
+          <div class="actions" style="margin-top:4px"><a class="btn btn--small btn--ghost" id="next-manage" href="/me/sessions">Move or cancel</a><a class="link small" href="/me/sessions">All sessions</a></div>
         </div>
-        <div id="founding" style="margin-top:16px" hidden><span class="stamp">Founding rider</span>
-          <p class="small muted" style="margin:10px 0 0">You were riding with BAS before the app existed. This stays on your profile.</p></div>
+      </div>
+      <div class="card" id="next-none" hidden>
+        <h3>Nothing booked yet</h3>
+        <p class="muted small" style="margin-top:4px">Trampoline sessions build air awareness before the snow; personal sessions put Ilia next to you on the slope.</p>
+        <div class="actions" style="margin-top:12px"><a class="btn btn--small" href="/book?kind=trampoline">Trampoline</a><a class="btn btn--small btn--ghost" href="/book?kind=personal">Personal session</a></div>
+      </div>
+    </section>
+
+    <section class="card home__pass" aria-labelledby="pass-h">
+      <div class="card__head"><h2 id="pass-h">Season pass</h2><a href="/me/progress">Progress</a></div>
+      <div id="pass"><span class="skel skel--lg"></span></div>
+      <p class="meta" id="pass-note" style="margin-top:12px">Any session counts. A trip in settings pauses your streak instead of breaking it.</p>
+    </section>
+
+    <section class="card home__week" aria-labelledby="week-h">
+      <div class="card__head"><h2 id="week-h">Next 7 days</h2><a href="/me/sessions">Your timetable</a></div>
+      <div id="week"></div>
+      <p class="small faint" id="spots" style="margin-top:12px" hidden></p>
+    </section>
+
+    <div class="stack home__side">
+      <section class="card card--tint" id="nudge" hidden>
+        <p style="margin:0 0 12px" id="nudge-text"></p>
+        <div class="actions"><a class="btn btn--small" id="nudge-cta" href="/me/profile"></a>
+          <button class="link small" type="button" id="nudge-later">Not now</button></div>
       </section>
 
-      <div>
-        <section class="card card--tape" id="next" hidden>
-          <p class="kicker">Next up</p>
-          <h2 id="next-title"></h2>
-          <p id="next-when"></p>
-          <a class="link small" href="/me/sessions">All my sessions</a>
-        </section>
-        <a class="card" id="stats" href="/me/progress" style="display:block;text-decoration:none" hidden></a>
-
-        <section class="card" id="nudge" hidden>
-          <p style="margin:0 0 12px" id="nudge-text"></p>
-          <div class="actions"><a class="btn btn--small" id="nudge-cta" href="/me/profile"></a>
-            <button class="link small" type="button" id="nudge-later">Later</button></div>
-        </section>
-
-        <section class="card card--dark">
-          <p class="kicker">Ride with Ilia</p>
-          <h2>Book a session</h2>
-          <p>Personal coaching on the slope ({train.coaching.price} an hour or {train.coaching.day}) and trampoline sessions to prepare your tricks.</p>
-          <div class="actions"><a class="btn" href="/book">See open sessions</a>
-            <a class="link" href="https://instagram.com/baskakov74" rel="noopener" style="color:var(--airbag-ice)">Or message Ilia</a></div>
-        </section>
-
-        <section class="card">
-          <p class="kicker">23–27 Dec 2026 · Livigno</p>
-          <h2>BAS CAMP Italy</h2>
-          <p>Five days of coaching, filming and video analysis with Ilia and Aleksey. 15 spots.</p>
-          <a class="btn btn--ghost" href="/camp">See the camp</a>
-        </section>
-      </div>
+      <a class="card card--flush" href="/camps" id="camp" hidden>
+        <div class="photo photo--wide photo--empty" style="border-radius:0"><span><Fragment set:html={ICON.camera} />Camp photo</span></div>
+        <div style="padding:14px var(--pad) 16px">
+          <span class="meta" id="camp-when"></span>
+          <h3 id="camp-title" style="margin-top:2px"></h3>
+          <span class="small muted" id="camp-status"></span>
+        </div>
+      </a>
     </div>
   </div>
 </App>
 
+<style is:global>
+  .home { display: grid; gap: var(--gap); grid-template-areas: 'next' 'pass' 'week' 'side'; }
+  .home > * { margin: 0; min-width: 0; }
+  .home__next { grid-area: next; }
+  .home__next .card { margin: 0; }
+  @media (min-width: 900px) { .home__next { align-self: stretch; display: grid; } .home__next .card { height: 100%; } }
+  .home__pass { grid-area: pass; }
+  .home__week { grid-area: week; }
+  .home__side { grid-area: side; }
+  @media (min-width: 900px) {
+    .home { grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr); grid-template-areas: 'next pass' 'week side'; align-items: start; }
+  }
+</style>
+
 <script>
-  import { $, requireMe } from '../../members/ui';
-  import { levelChip } from '../../members/level';
-  import { hours, when } from '../../members/labels';
+  import { $, esc, requireMe } from '../../members/ui';
+  import { CAMP_STATUS, KIND, TZ, hours, time } from '../../members/labels';
+  import { ICON } from '../../members/icons';
   import { sb } from '../../members/sb';
+  import { addDays, loadMine, passWeeks, relDay, renderPass, renderWeek, todayKey, type Open } from '../../members/timeline';
 
   const me = await requireMe();
   // a pending invite (opened before signing in) is finished on the claim page
@@ -71,40 +92,65 @@ import { train } from '../../content/site';
   else if (me.role === 'rider' && !me.onboarded) location.replace('/welcome');
 
   await sb.rpc('ensure_my_rider');
-
-  // next session + stats strip (each hides itself when there is nothing real to show)
-  const [{ data: up }, { data: st }] = await Promise.all([
-    sb.from('bookings').select('id, status, sessions!inner(title, kind, starts_at, venues(name))')
-      .in('status', ['reserved', 'paid']).gt('sessions.starts_at', new Date().toISOString())
-      .order('starts_at', { referencedTable: 'sessions' }).limit(20),
-    sb.rpc('rider_stats'),
-  ]);
-  const next = (up ?? []).map((b) => b.sessions as unknown as { title: string; starts_at: string; venues: { name: string } | null })
-    .sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
-  if (next) {
-    $('#next-title').textContent = next.title;
-    $('#next-when').textContent = [when(next.starts_at), next.venues?.name].filter(Boolean).join(' · ');
-    $('#next').hidden = false;
-  }
-  if (st && st.sessions_total > 0) {
-    $('#stats').innerHTML = `<b>${st.sessions_total}</b> sessions · <b>${hours(st.minutes)}</b> h${st.streak_weeks > 0 ? ` · <b>${st.streak_weeks}</b>-week streak` : ''} <span class="muted small">→ progress</span>`;
-    $('#stats').hidden = false;
-  }
-  const { data: r } = await sb.from('my_rider').select('*').maybeSingle();
-
   $('#hi').textContent = me.firstName ? `Hi ${me.firstName}` : 'Hi there';
-  $('#fullname').textContent = [me.firstName, me.lastName].filter(Boolean).join(' ') || me.email;
-  const av = $('#avatar');
-  if (me.photoUrl) av.style.backgroundImage = `url("${me.photoUrl}")`;
-  else av.textContent = (me.firstName ?? me.email).slice(0, 1);
 
-  const chip = levelChip(r);
-  $('#level').innerHTML = chip || '<a href="/me/profile#level">Set your level</a>';
-  if (r?.coach_name) { $('#coach').textContent = `Your coach: ${r.coach_name}`; $('#coach').hidden = false; }
-  if (r?.founding_at) { $('#founding').hidden = false; $('#founding-kicker').hidden = false; }
+  const [mine, { data: st }, { data: openWeek }, { data: r }, { data: camps }] = await Promise.all([
+    loadMine(),
+    sb.rpc('rider_stats'),
+    sb.rpc('open_sessions', { p_from: new Date().toISOString(), p_to: new Date(Date.now() + 8 * 864e5).toISOString(), p_kind: null }),
+    sb.from('my_rider').select('*').maybeSingle(),
+    sb.rpc('camp_list'),
+  ]);
 
-  // one nudge at most, in priority order; "Later" hides it for a week
-  const later = Number(localStorage.getItem('bas-nudge-later') ?? 0);
+  // ------------------------------------------------ next session
+  const now = Date.now();
+  const upcoming = mine.bookings.filter((b) => ['reserved', 'paid'].includes(b.status) && new Date(b.sessions.starts_at).getTime() > now);
+  const next = upcoming[0];
+  if (next) {
+    const s = next.sessions;
+    const d = new Date(s.starts_at);
+    $('#next-stub').innerHTML = `<small>${esc(d.toLocaleDateString('en-GB', { timeZone: TZ, weekday: 'short' }))}</small><b>${esc(d.toLocaleDateString('en-GB', { timeZone: TZ, day: 'numeric' }))}</b><span>${esc(d.toLocaleDateString('en-GB', { timeZone: TZ, month: 'short' }))}</span>`;
+    $('#next-in').textContent = relDay(s.starts_at) || 'Coming up';
+    $('#next-title').textContent = s.title;
+    $('#next-facts').innerHTML = [
+      `<span>${ICON.clock}${esc(time(s.starts_at))}–${esc(time(s.ends_at))}</span>`,
+      s.venues?.name ? `<span>${ICON.pin}${esc(s.venues.name)}</span>` : '',
+      next.source === 'loop' ? `<span>${ICON.repeat}Weekly</span>` : '',
+      s.title.toLowerCase().includes((KIND[s.kind] ?? '').toLowerCase()) ? '' : `<span>${esc(KIND[s.kind] ?? '')}</span>`,
+    ].filter(Boolean).join('');
+    $<HTMLAnchorElement>('#next-manage').href = `/me/sessions#b-${next.id}`;
+    $('#next').hidden = false;
+    const rel = relDay(s.starts_at);
+    $('#finding').textContent = upcoming.length > 1
+      ? `${upcoming.length} sessions booked. The next one is ${rel ? rel.toLowerCase() : 'below'}.`
+      : `One session booked${rel ? `: ${rel.toLowerCase()}` : ''}.`;
+  } else {
+    $('#next-none').hidden = false;
+    $('#finding').textContent = 'No session booked. Pick a time and your spot is held; pay your coach on the day.';
+  }
+
+  // ------------------------------------------------ season pass
+  const weeks = passWeeks(mine.bookings, mine.absences, 16);
+  renderPass($('#pass'), weeks, {
+    streak: st?.streak_weeks ?? 0, longest: st?.longest_streak_weeks ?? 0,
+    sessions: st?.sessions_total ?? 0, hours: hours(st?.minutes ?? 0),
+  });
+  if (!st || st.sessions_total === 0) $('#pass-note').textContent = 'Your pass gets a punch for every week you ride. It starts with your first session.';
+
+  // ------------------------------------------------ this week
+  const open = (openWeek ?? []) as Open[];
+  const weekEnd = new Date(`${addDays(todayKey(), 7)}T00:00:00`).toISOString();
+  renderWeek($('#week'), todayKey(), mine.bookings, open.filter((s) => s.starts_at < weekEnd), mine.loops);
+  const free = open.filter((s) => !s.my_booking && s.seats_left > 0);
+  if (free.length) {
+    const s = free[0];
+    $('#spots').innerHTML = `${free.length} open ${free.length === 1 ? 'spot' : 'spots'} in the next 8 days · soonest ${esc(new Date(s.starts_at).toLocaleDateString('en-GB', { timeZone: TZ, weekday: 'short' }))} ${esc(time(s.starts_at))}, ${esc(s.title)} · <a href="/book">Book</a>`;
+    $('#spots').hidden = false;
+  }
+
+  // ------------------------------------------------ one nudge at most; "Not now" hides it for a week
+  let later = 0;
+  try { later = Number(localStorage.getItem('bas-nudge-later') ?? 0); } catch {}
   const nudges: [boolean, string, string, string][] = [
     [!me.photoUrl, 'Add a photo so your coach and crew know who to look for on the slope.', 'Add a photo', '/me/profile#photo'],
     [!r?.band && !r?.self_band, 'Tell us roughly how you ride, so the first session starts at the right place.', 'Set my level', '/me/profile#level'],
@@ -121,5 +167,16 @@ import { train } from '../../content/site';
     try { localStorage.setItem('bas-nudge-later', String(Date.now())); } catch {}
     $('#nudge').hidden = true;
   });
-  $('#home').hidden = false;
+
+  // ------------------------------------------------ the camp: yours if you applied, else the next open one
+  type Camp = { title: string; place: string; starts_on: string; ends_on: string; spots: number; spots_left: number; status: string; my_status: string | null };
+  const cs = (camps ?? []) as Camp[];
+  const camp = cs.find((c) => c.my_status && !['cancelled', 'declined'].includes(c.my_status)) ?? cs.find((c) => c.status === 'open');
+  if (camp) {
+    const f = (d: string, o: Intl.DateTimeFormatOptions) => new Date(d).toLocaleDateString('en-GB', o);
+    $('#camp-when').textContent = `${f(camp.starts_on, { day: 'numeric' })}–${f(camp.ends_on, { day: 'numeric', month: 'short', year: 'numeric' })} · ${camp.place}`;
+    $('#camp-title').textContent = camp.title;
+    $('#camp-status').textContent = camp.my_status ? CAMP_STATUS[camp.my_status] : camp.spots_left > 0 ? `${camp.spots_left} of ${camp.spots} spots left · apply in the app` : 'Full: waitlist open';
+    $('#camp').hidden = false;
+  }
 </script>

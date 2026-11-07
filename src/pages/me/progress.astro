@@ -1,90 +1,143 @@
 ---
-// Progress: numbers you keep (sessions, hours, streak), month by month, milestones, badges, the trick book and
-// what your coach wants you to work on. Nothing compares you with anyone.
+// Progress: numbers you keep (the season pass, sessions, hours), month by month, what your coach wants you to
+// work on, the trick book and badges. Nothing compares you with anyone; no session list (that lives on Sessions).
 import App from '../../layouts/App.astro';
 ---
 <App title="Progress" path="/me/progress" nav>
-  <h1>Progress</h1>
-  <p class="card" id="invite" hidden>This fills up after your first session: sessions, hours and milestones land here as you ride. <a href="/book">Book one</a></p>
-  <div class="grid grid--2" id="numbers" hidden>
-    <section class="card"><h2 id="n-sessions"></h2><p class="muted">sessions</p><h2 id="n-hours"></h2><p class="muted">hours</p></section>
-    <section class="card"><h2 id="n-streak"></h2><p class="muted" id="n-streak-note"></p>
-      <p class="small muted">Any session counts. A trip pauses your streak instead of breaking it.</p></section>
+  <div class="pagehead">
+    <div>
+      <h1>Progress</h1>
+      <p class="lede" id="finding">Sessions, streaks and tricks you keep. Nobody else is on this page.</p>
+    </div>
   </div>
-  <section class="card" id="months-wrap" hidden><h3>Month by month</h3><div id="months" style="display:flex;gap:4px;align-items:flex-end;height:120px"></div></section>
-  <section class="card" id="miles-wrap" hidden><h3>Milestones</h3><ul id="miles" class="small"></ul></section>
 
-  <section class="card" id="focus-wrap" hidden><h3>What your coach wants you to work on</h3><ul id="focus"></ul></section>
+  <section class="card" aria-labelledby="pass-h">
+    <div class="card__head"><h2 id="pass-h">Season pass</h2><span class="meta">last 26 weeks</span></div>
+    <div id="pass"><span class="skel skel--lg"></span></div>
+    <p class="meta" style="margin-top:12px">Any session counts: trampoline, personal or camp. A trip pauses your streak instead of breaking it.</p>
+  </section>
 
-  <section class="card"><h3>Badges</h3><div id="badges" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div></section>
+  <div class="grid grid--main">
+    <section class="card" id="months-wrap" aria-labelledby="months-h">
+      <div class="card__head"><h2 id="months-h">Month by month</h2>
+        <div class="seg" role="tablist" aria-label="Measure"><button type="button" role="tab" aria-selected="true" data-measure="sessions">Sessions</button><button type="button" role="tab" aria-selected="false" data-measure="hours">Hours</button></div></div>
+      <div id="months"></div>
+      <p class="small faint" id="months-empty" hidden>The chart fills in from your first session.</p>
+    </section>
 
-  <section class="card"><h3>Trick book</h3>
-    <p class="small muted">Tick what you are working on. Your coach marks a trick landed when they have seen it.</p>
-    <div id="tricks"></div></section>
+    <div class="stack">
+      <section class="card" id="focus-wrap" aria-labelledby="focus-h" hidden>
+        <div class="card__head"><h2 id="focus-h">Your coach's focus</h2></div>
+        <ul class="rows" id="focus"></ul>
+      </section>
+      <section class="card" aria-labelledby="miles-h">
+        <div class="card__head"><h2 id="miles-h">Milestones</h2></div>
+        <ul class="rows" id="miles"></ul>
+        <p class="small faint" id="next-badge" style="margin-top:10px"></p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card" aria-labelledby="tricks-h">
+    <div class="card__head"><h2 id="tricks-h">Trick book</h2><span class="meta num" id="tricks-count"></span></div>
+    <div class="progressbar" style="margin-bottom:6px"><i id="tricks-bar" style="width:0"></i></div>
+    <p class="small faint" style="margin-bottom:16px">Tick what you are working on. Your coach marks a trick landed once they have seen it.</p>
+    <div id="tricks"></div>
+  </section>
+
+  <section class="card" aria-labelledby="badges-h">
+    <div class="card__head"><h2 id="badges-h">Badges</h2><span class="meta num" id="badges-count"></span></div>
+    <div class="badges" id="badges"></div>
+  </section>
 </App>
 
 <script>
-  import { $, esc, fmtDate, requireMe, toast } from '../../members/ui';
+  import { $, $$, esc, fmtDate, requireMe, toast } from '../../members/ui';
   import { hours } from '../../members/labels';
   import { sb } from '../../members/sb';
+  import { loadMine, passWeeks, renderPass } from '../../members/timeline';
 
   const me = await requireMe();
-  const rid = (await sb.rpc('ensure_my_rider')).data;
-  const [{ data: st }, { data: badges }, { data: awards }, { data: tricks }, { data: tp }, { data: focus }, { data: prof }] = await Promise.all([
+  await sb.rpc('ensure_my_rider');
+  const [mine, { data: st }, { data: badges }, { data: awards }, { data: tricks }, { data: tp }, { data: focus }, { data: prof }] = await Promise.all([
+    loadMine(),
     sb.rpc('rider_stats'), sb.from('badges').select('*').order('sort'), sb.from('badge_awards').select('*'),
     sb.from('tricks').select('*').eq('active', true).order('category').order('sort'), sb.from('trick_progress').select('*'),
     sb.from('focus_areas').select('text, status, created_at, profiles:coach_id(first_name)').order('created_at', { ascending: false }),
     sb.from('profiles').select('disciplines').eq('id', me.id).single(),
   ]);
-  void rid;
 
-  if (!st || st.sessions_total === 0) $('#invite').hidden = false;
-  else {
-    $('#n-sessions').textContent = String(st.sessions_total);
-    $('#n-hours').textContent = hours(st.minutes);
-    $('#n-streak').textContent = st.streak_weeks > 0 ? `${st.streak_weeks} weeks` : 'No streak running';
-    $('#n-streak-note').textContent = st.longest_streak_weeks > 0 ? `Longest run: ${st.longest_streak_weeks} weeks` : '';
-    $('#numbers').hidden = false;
-    const max = Math.max(1, ...st.months.map((m: { sessions: number }) => m.sessions));
-    $('#months').innerHTML = st.months.map((m: { month: string; sessions: number }) =>
-      `<div title="${esc(m.month)}: ${m.sessions}" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%">
-        <div style="width:100%;background:var(--park-signal);height:${(m.sessions / max) * 90}%;min-height:${m.sessions ? 4 : 0}px"></div>
-        <small style="font-size:10px">${esc(m.month.slice(5))}</small></div>`).join('');
-    $('#months-wrap').hidden = false;
-    if (st.milestones.length) {
-      $('#miles').innerHTML = st.milestones.map((m: { label: string; at: string }) => `<li>${esc(m.label.replace(/^1 sessions$/, 'First session'))} · ${esc(fmtDate(m.at, { month: 'short', year: 'numeric' }))}</li>`).join('');
-      $('#miles-wrap').hidden = false;
-    }
+  const total = st?.sessions_total ?? 0;
+  const narrow = matchMedia('(max-width: 639px)').matches;
+  renderPass($('#pass'), passWeeks(mine.bookings, mine.absences, narrow ? 16 : 26), {
+    streak: st?.streak_weeks ?? 0, longest: st?.longest_streak_weeks ?? 0, sessions: total, hours: hours(st?.minutes ?? 0),
+  });
+  $('#finding').textContent = !total ? 'This fills up after your first session: the pass, the chart and milestones land here as you ride.'
+    : st.streak_weeks > 0 ? `${st.streak_weeks} ${st.streak_weeks === 1 ? 'week' : 'weeks'} in a row. Ride this week to keep it going.`
+    : `${total} sessions so far. A session this week starts a new run.`;
+
+  // ------------------------------------------------ months: one hue, every month drawn (gaps stay gaps)
+  type M = { month: string; sessions: number; minutes: number };
+  const months = (st?.months ?? []) as M[];
+  let measure: 'sessions' | 'hours' = 'sessions';
+  function paintMonths() {
+    for (const b of $$<HTMLButtonElement>('[data-measure]')) b.setAttribute('aria-selected', String(b.dataset.measure === measure));
+    if (!months.length) { $('#months').innerHTML = ''; $('#months-empty').hidden = false; return; }
+    const v = (m: M) => (measure === 'sessions' ? m.sessions : Math.round((m.minutes / 60) * 10) / 10);
+    const max = Math.max(1, ...months.map(v));
+    $('#months').innerHTML = `<div class="bars" style="--n:${months.length}">${months.map((m) => {
+      const label = new Date(`${m.month}-01T12:00:00`).toLocaleDateString('en-GB', { month: 'short' });
+      return `<div class="bars__col" title="${esc(label)}: ${v(m)} ${measure}">${v(m) ? `<span class="bars__val">${v(m)}</span>` : ''}
+        <div class="bars__bar${v(m) ? '' : ' bars__bar--zero'}" style="height:${(v(m) / max) * 100}%"></div><span class="bars__lbl">${esc(label)}</span></div>`;
+    }).join('')}</div>`;
   }
+  for (const b of $$<HTMLButtonElement>('[data-measure]')) b.addEventListener('click', () => { measure = b.dataset.measure as typeof measure; paintMonths(); });
+  paintMonths();
 
+  // ------------------------------------------------ milestones + the next badge
+  const miles = (st?.milestones ?? []) as { label: string; at: string }[];
+  $('#miles').innerHTML = miles.length ? miles.map((m) => `<li><span class="row__main"><b>${esc(m.label.replace(/^1 sessions$/, 'First session'))}</b></span>
+    <span class="row__end meta">${esc(fmtDate(m.at, { month: 'short', year: 'numeric' }))}</span></li>`).join('')
+    : '<li class="small faint" style="border:0;padding:0">Your first session is the first milestone.</li>';
+
+  const got = new Map((awards ?? []).map((a) => [a.badge_key, a.awarded_at]));
+  const nextBadge = (badges ?? []).find((b) => !got.has(b.key) && b.key !== 'founding_rider');
+  $('#next-badge').innerHTML = nextBadge ? `Next badge: <b>${esc(nextBadge.title)}</b>, ${esc(nextBadge.description.charAt(0).toLowerCase() + nextBadge.description.slice(1))}` : 'You have earned every badge so far.';
+
+  // ------------------------------------------------ coach focus areas
   const open = (focus ?? []).filter((f) => f.status === 'open');
   if (open.length) {
-    $('#focus').innerHTML = open.map((f) => `<li>${esc(f.text)} <span class="small muted">· ${esc((f.profiles as unknown as { first_name: string } | null)?.first_name ?? 'coach')}</span></li>`).join('');
+    $('#focus').innerHTML = open.map((f) => `<li><span class="row__main">${esc(f.text)}<span class="row__sub">from ${esc((f.profiles as unknown as { first_name: string } | null)?.first_name ?? 'your coach')} · ${esc(fmtDate(f.created_at, { day: 'numeric', month: 'short' }))}</span></span></li>`).join('');
     $('#focus-wrap').hidden = false;
   }
 
-  const got = new Map((awards ?? []).map((a) => [a.badge_key, a.awarded_at]));
+  // ------------------------------------------------ badges
+  const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   $('#badges').innerHTML = (badges ?? []).map((b) => {
     const at = got.get(b.key);
-    return `<div style="padding:10px;border:1.5px ${at ? 'solid var(--night-run)' : 'dashed var(--slush-concrete)'};${at ? '' : 'opacity:.65'}">
-      <b>${esc(b.title)}</b><div class="small muted">${esc(b.description)}</div>${at ? `<div class="small">${esc(fmtDate(at))}</div>` : ''}</div>`;
+    return `<div class="badge${at ? ' badge--got' : ''}"><span class="badge__mark">${at ? tick : ''}</span><b>${esc(b.title)}</b><span>${esc(b.description)}</span>
+      ${at ? `<time datetime="${esc(at)}">${esc(fmtDate(at))}</time>` : ''}</div>`;
   }).join('');
+  $('#badges-count').textContent = `${got.size} of ${(badges ?? []).length}`;
 
-  // trick book, filtered to what they ride
+  // ------------------------------------------------ trick book, filtered to what they ride
   const disc: string[] = prof?.disciplines ?? [];
-  const mine = new Map((tp ?? []).map((t) => [t.trick_id, t]));
+  const progress = new Map((tp ?? []).map((t) => [t.trick_id, t]));
   const CAT: Record<string, string> = { basics: 'Basics', jumps: 'Jumps', spins: 'Spins', rails: 'Rails & boxes', butters: 'Butters', trampoline: 'Trampoline' };
   const list = (tricks ?? []).filter((t) => t.discipline === 'both' || !disc.length || disc.includes(t.discipline));
   const paintTricks = () => {
+    const landed = list.filter((t) => progress.get(t.id)?.status === 'landed').length;
+    $('#tricks-count').textContent = `${landed} of ${list.length} landed`;
+    $('#tricks-bar').style.width = `${list.length ? (landed / list.length) * 100 : 0}%`;
     $('#tricks').innerHTML = Object.keys(CAT).map((cat) => {
       const ts = list.filter((t) => t.category === cat);
       if (!ts.length) return '';
-      return `<h4 style="margin:16px 0 6px">${CAT[cat]}</h4>` + ts.map((t) => {
-        const p = mine.get(t.id);
+      return `<h4 class="trickcat">${CAT[cat]}</h4><div class="tricks">${ts.map((t) => {
+        const p = progress.get(t.id);
         return p?.status === 'landed'
-          ? `<div class="small" style="padding:4px 0"><span class="chip chip--verified">Landed</span> ${esc(t.name)} <span class="muted">· ${esc(fmtDate(p.landed_at))}</span></div>`
-          : `<label class="check small" style="padding:4px 0"><input type="checkbox" data-trick="${t.id}" ${p ? 'checked' : ''}/> ${esc(t.name)} ${p ? '<span class="muted">· working on it</span>' : ''}</label>`;
-      }).join('');
+          ? `<div class="trick trick--landed"><span class="trick__tick">${tick}</span><span class="trick__name">${esc(t.name)}</span><span class="meta">${esc(fmtDate(p.landed_at, { day: 'numeric', month: 'short' }))}</span></div>`
+          : `<label class="trick"><input type="checkbox" data-trick="${t.id}" ${p ? 'checked' : ''}/><span class="trick__name">${esc(t.name)}</span>${p ? '<span class="pill">Working on it</span>' : ''}</label>`;
+      }).join('')}</div>`;
     }).join('');
   };
   paintTricks();
@@ -93,7 +146,7 @@ import App from '../../layouts/App.astro';
     const id = Number(box.dataset.trick);
     const { data, error } = await sb.rpc('set_trick_working', { p_trick: id, p_on: box.checked });
     if (error || data !== 'ok') { toast('That did not save.', 'bad'); box.checked = !box.checked; return; }
-    if (box.checked) mine.set(id, { trick_id: id, status: 'working' } as never); else mine.delete(id);
+    if (box.checked) progress.set(id, { trick_id: id, status: 'working' } as never); else progress.delete(id);
     paintTricks();
   });
 </script>

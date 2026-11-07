@@ -1,0 +1,20 @@
+---
+// The coach area's title and its three sub-pages as underline tabs: Riders, Schedule, Camp roster.
+interface Props { title: string; current: '/coach' | '/coach/schedule' | '/coach/camps'; lede?: string }
+const { title, current, lede } = Astro.props;
+const TABS = [
+  { href: '/coach', label: 'Riders' },
+  { href: '/coach/schedule', label: 'Schedule' },
+  { href: '/coach/camps', label: 'Camp roster' },
+];
+---
+<div class="pagehead" style="margin-bottom:12px">
+  <div>
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+  </div>
+  <slot />
+</div>
+<nav class="utabs" aria-label="Coach">
+  {TABS.map((t) => <a href={t.href} aria-current={t.href === current ? 'page' : undefined}>{t.label}</a>)}
+</nav>

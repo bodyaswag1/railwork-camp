@@ -1,115 +1,142 @@
 ---
-// Account switches. Phase 1: email, password, sign out. Privacy switches and emails arrive with the community.
+// Settings: every switch, nothing about identity. One row per area (label on the left, panel on the right; stacked
+// on a phone). Switches save themselves; anything with typing (password, a trip) opens in a sheet on demand.
 import App from '../../layouts/App.astro';
 ---
 <App title="Settings" path="/me/settings" nav>
   <div id="settings" hidden>
-    <h1>Settings</h1>
-    <div class="grid grid--2">
-      <section class="card">
-        <h2>Account</h2>
-        <dl class="facts"><dt>Email</dt><dd id="email"></dd></dl>
-        <button class="btn btn--ghost" type="button" data-signout>Sign out</button>
-      </section>
+    <div class="pagehead"><div><h1>Settings</h1></div></div>
 
-      <section class="card" id="password">
-        <h2>Password</h2>
-        <form class="form" id="pw-form" novalidate>
-          <label class="field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="72" />
-            <small>8 characters or more.</small>
-            <span class="err" data-error-for="password" hidden></span></label>
-          <label class="field"><span>Repeat it</span><input type="password" name="repeat" autocomplete="new-password" />
-            <span class="err" data-error-for="repeat" hidden></span></label>
-          <div class="actions"><button class="btn" type="submit">Save password</button></div>
-        </form>
-      </section>
-    </div>
-    <div class="grid grid--2">
-      <section class="card" id="privacy">
-        <h2>What other riders see</h2>
-        <p class="small muted">Nothing about you is visible to other riders until you turn it on.</p>
-        <label class="check"><input type="checkbox" id="p-listed" /> <span><b>Show me in the rider directory</b><br><span class="small muted">Riders can find you by discipline and level, see your level confirmations and landed tricks in the feed, and see you in your camp crew. Name shows as first name + initial.</span></span></label>
-        <label class="check" style="margin-top:12px"><input type="checkbox" id="p-ask" /> <span><b>Let riders ask to ride with me</b><br><span class="small muted">Contact details are shared only after you both say yes.</span></span></label>
-      </section>
+    <section class="settings-row" aria-labelledby="acc-h">
+      <div class="settings-row__label"><h2 id="acc-h">Account</h2><p>How you sign in.</p></div>
+      <div class="settings-row__panel">
+        <div class="row"><span class="row__main"><span class="row__title">Email</span><span class="row__sub" id="email"></span></span></div>
+        <div class="row" id="password"><span class="row__main"><span class="row__title">Password</span><span class="row__sub">Change it here; you stay signed in.</span></span>
+          <span class="row__end"><button class="btn btn--small btn--ghost" type="button" id="pw-open">Change</button></span></div>
+        <div class="row"><span class="row__main"><span class="row__title">Sign out</span><span class="row__sub">On this device.</span></span>
+          <span class="row__end"><button class="btn btn--small btn--ghost" type="button" data-signout>Sign out</button></span></div>
+      </div>
+    </section>
 
-      <section class="card" id="trips">
-        <h2>Away for a while?</h2>
-        <p class="small muted">Add a trip and your streak pauses instead of breaking. Your weekly slot opens up for someone else while you are gone.</p>
-        <form class="form" id="trip-form">
-          <div class="form__row form__row--2">
-            <label class="field"><span>From</span><input type="date" name="from" required /></label>
-            <label class="field"><span>To</span><input type="date" name="to" required /></label>
-          </div>
-          <label class="field"><span>Note</span><input type="text" name="note" maxlength="280" placeholder="Holiday, injury…" /></label>
-          <button class="btn btn--small" type="submit">Add trip</button>
-        </form>
-        <div id="trip-list" style="margin-top:12px"></div>
-      </section>
-    </div>
-    <p class="small muted"><a href="/welcome">Edit your riding answers</a> (what you ride, since when, favourite trick…)</p>
-    <p class="small muted">Want your account and everything on it deleted? Write to Ilia on <a href="https://instagram.com/baskakov74">Instagram</a> and it is gone within a week.</p>
+    <section class="settings-row" id="privacy" aria-labelledby="priv-h">
+      <div class="settings-row__label"><h2 id="priv-h">What the crew sees</h2><p>Nothing about you is visible to other riders until you turn it on. Your coach always sees your profile.</p></div>
+      <div class="settings-row__panel">
+        <label class="switch"><span><b>Show me in the crew</b><span>Riders can find you by discipline and level, see your coach-confirmed levels and landed tricks in the feed, and see you in your camp crew. Your name shows as first name and initial.</span></span>
+          <input type="checkbox" id="p-listed" role="switch" /></label>
+        <label class="switch"><span><b>Let riders ask to ride with me</b><span>Contact details are shared only after you both say yes.</span></span>
+          <input type="checkbox" id="p-ask" role="switch" /></label>
+      </div>
+    </section>
+
+    <section class="settings-row" id="trips" aria-labelledby="trips-h">
+      <div class="settings-row__label"><h2 id="trips-h">Trips</h2><p>Away for a while? Your streak pauses instead of breaking, and your weekly slot opens up for someone else.</p></div>
+      <div class="settings-row__panel">
+        <ul class="rows" id="trip-list"></ul>
+        <p class="small faint" id="trip-empty">No trips planned.</p>
+        <div class="actions" style="margin-top:12px"><button class="btn btn--small btn--ghost" type="button" id="trip-open">Add a trip</button></div>
+      </div>
+    </section>
+
+    <section class="settings-row" aria-labelledby="ans-h">
+      <div class="settings-row__label"><h2 id="ans-h">Riding answers</h2><p>What you ride, since when, your favourite trick and brand.</p></div>
+      <div class="settings-row__panel">
+        <a class="row" href="/welcome" style="border-top:0;padding:2px 0"><span class="row__main"><span class="row__title">Edit your answers</span><span class="row__sub">They show on your profile and, if you are in the crew, on your card.</span></span>
+          <span class="row__end faint">›</span></a>
+      </div>
+    </section>
+
+    <section class="settings-row" aria-labelledby="del-h">
+      <div class="settings-row__label"><h2 id="del-h">Delete your account</h2><p>Your profile, sessions and everything on them.</p></div>
+      <div class="settings-row__panel">
+        <p class="small" style="margin:0">Write to Ilia on <a href="https://instagram.com/baskakov74">Instagram</a> and your account is deleted within a week. Paid camp entries follow the camp's cancellation terms.</p>
+      </div>
+    </section>
   </div>
 </App>
 
 <script>
-  import { $, busy, fieldErrors, requireMe, toast } from '../../members/ui';
+  import { $, busy, esc, fieldErrors, requireMe, sheet, toast } from '../../members/ui';
   import { sb } from '../../members/sb';
 
   const me = await requireMe();
   $('#email').textContent = me.email;
 
-  $<HTMLFormElement>('#pw-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = e.currentTarget as HTMLFormElement;
-    const password = String(new FormData(f).get('password') ?? '');
-    const repeat = String(new FormData(f).get('repeat') ?? '');
-    if (fieldErrors(f, {
-      password: password.length < 8 ? 'Use 8 characters or more.' : undefined,
-      repeat: password.length >= 8 && password !== repeat ? 'The two do not match.' : undefined,
-    })) return;
-    const btn = f.querySelector('button') as HTMLButtonElement;
-    busy(btn, true, 'Saving…');
-    const { error } = await sb.auth.updateUser({ password });
-    busy(btn, false);
-    if (error) {
-      const reauth = /reauth|recent/i.test(error.message);
-      return fieldErrors(f, { password: reauth ? 'For safety, sign out and back in, then set it.' : /same|different/i.test(error.message) ? 'That is your current password.' : 'Could not save. Try again.' });
-    }
-    f.reset();
-    toast('Password saved.');
+  // ------------------------------------------------ password, in a sheet
+  $('#pw-open').addEventListener('click', () => {
+    const sh = sheet('pw', 'Change your password');
+    sh.body.innerHTML = `<form class="form" id="pw-form" novalidate>
+      <label class="field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" maxlength="72" />
+        <small>8 characters or more.</small><span class="err" data-error-for="password" hidden></span></label>
+      <label class="field"><span>Repeat it</span><input type="password" name="repeat" autocomplete="new-password" /><span class="err" data-error-for="repeat" hidden></span></label>
+      <div class="actions"><button class="btn" type="submit">Save password</button><button class="link" type="button" data-close>Cancel</button></div></form>`;
+    sh.open();
+    const f = $<HTMLFormElement>('#pw-form');
+    (f.elements.namedItem('password') as HTMLInputElement).focus();
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = String(new FormData(f).get('password') ?? '');
+      const repeat = String(new FormData(f).get('repeat') ?? '');
+      if (fieldErrors(f, {
+        password: password.length < 8 ? 'Use 8 characters or more.' : undefined,
+        repeat: password.length >= 8 && password !== repeat ? 'The two do not match.' : undefined,
+      })) return;
+      const btn = f.querySelector('button[type=submit]') as HTMLButtonElement;
+      busy(btn, true, 'Saving…');
+      const { error } = await sb.auth.updateUser({ password });
+      busy(btn, false);
+      if (error) {
+        const reauth = /reauth|recent/i.test(error.message);
+        return fieldErrors(f, { password: reauth ? 'For safety, sign out and back in, then set it.' : /same|different/i.test(error.message) ? 'That is your current password.' : 'Could not save. Try again.' });
+      }
+      sh.close();
+      toast('Password saved.');
+    });
   });
-  // privacy switches save on change
+
+  // ------------------------------------------------ privacy switches save on change
   const { data: pv } = await sb.from('profiles').select('listed, ask_to_ride').eq('id', me.id).single();
   const listed = $<HTMLInputElement>('#p-listed'), ask = $<HTMLInputElement>('#p-ask');
   listed.checked = !!pv?.listed; ask.checked = !!pv?.ask_to_ride;
   for (const [box, col] of [[listed, 'listed'], [ask, 'ask_to_ride']] as const) {
     box.addEventListener('change', async () => {
       const { error } = await sb.from('profiles').update({ [col]: box.checked }).eq('id', me.id);
-      toast(error ? 'Did not save.' : 'Saved.', error ? 'bad' : 'ok');
+      toast(error ? 'Did not save.' : box.checked ? 'Saved: on.' : 'Saved: off.', error ? 'bad' : 'ok');
       if (error) box.checked = !box.checked;
     });
   }
 
-  // trips
+  // ------------------------------------------------ trips
   const rid = (await sb.rpc('ensure_my_rider')).data as string;
+  const fmt = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   async function trips() {
     const { data } = await sb.from('absences').select('*').order('from_date');
-    $('#trip-list').innerHTML = (data ?? []).map((a) => `<span class="chip" style="margin:0 6px 6px 0">${a.from_date} → ${a.to_date}${a.note ? ` · ${a.note.replace(/[<>&]/g, '')}` : ''}
-      <button class="link small" data-trip="${a.id}" aria-label="Remove trip">×</button></span>`).join('');
+    $('#trip-list').innerHTML = (data ?? []).map((a) => `<li><span class="row__main"><span class="row__title">${esc(fmt(a.from_date))} – ${esc(fmt(a.to_date))}</span>${a.note ? `<span class="row__sub">${esc(a.note)}</span>` : ''}</span>
+      <span class="row__end"><button class="link small link--danger" data-trip="${a.id}">Remove</button></span></li>`).join('');
+    $('#trip-empty').hidden = (data ?? []).length > 0;
   }
-  $<HTMLFormElement>('#trip-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    const f = new FormData(form);
-    if (String(f.get('to')) < String(f.get('from'))) return toast('The end is before the start.', 'bad');
-    const { error } = await sb.from('absences').insert({ rider_id: rid, from_date: f.get('from'), to_date: f.get('to'), note: String(f.get('note') ?? '').trim() || null });
-    toast(error ? 'Did not save.' : 'Trip added.', error ? 'bad' : 'ok');
-    form.reset(); trips();
+  $('#trip-open').addEventListener('click', () => {
+    const sh = sheet('trip', 'Add a trip');
+    sh.body.innerHTML = `<form class="form" id="trip-form">
+      <div class="form__row form__row--2"><label class="field"><span>From</span><input type="date" name="from" required /></label>
+        <label class="field"><span>To</span><input type="date" name="to" required /></label></div>
+      <label class="field"><span>Note</span><input type="text" name="note" maxlength="280" placeholder="Holiday, injury…" /><small>Only you and your coach see it.</small></label>
+      <div class="actions"><button class="btn" type="submit">Add trip</button><button class="link" type="button" data-close>Cancel</button></div></form>`;
+    sh.open();
+    $<HTMLFormElement>('#trip-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = new FormData(e.currentTarget as HTMLFormElement);
+      if (String(f.get('to')) < String(f.get('from'))) return toast('The end is before the start.', 'bad');
+      const { error } = await sb.from('absences').insert({ rider_id: rid, from_date: f.get('from'), to_date: f.get('to'), note: String(f.get('note') ?? '').trim() || null });
+      toast(error ? 'Did not save.' : 'Trip added. Your streak is safe.', error ? 'bad' : 'ok');
+      if (!error) sh.close();
+      trips();
+    });
   });
   $('#trip-list').addEventListener('click', async (e) => {
     const id = (e.target as HTMLElement).dataset.trip;
     if (!id) return;
     await sb.from('absences').delete().eq('id', id);
+    toast('Trip removed.');
     trips();
   });
   await trips();

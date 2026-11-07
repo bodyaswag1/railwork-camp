@@ -1,47 +1,93 @@
 ---
-// Shell for the rider area (/join, /signin, /me/*, /coach). Plain information layer on the ice paper, with a
-// little of the zine (tape, stamps) where it marks something real: a verified level, a founding rider.
+// Shell for the rider area. One slim Night Run bar with a small logo; on a wide screen the four main tabs sit in
+// it, on a phone they move to a tab bar at the bottom (thumb reach). Everything else (progress, profile, camps,
+// settings, the coach pages, sign out) lives in the avatar menu, the same list at every width.
 // Pages are static; each one's script loads the signed-in person from Supabase in the browser.
 import Base from './Base.astro';
 import Logo from '../components/Logo.astro';
+import { ICON } from '../members/icons';
 import '../styles/app.css';
 
 interface Props {
   title: string;
   path: string;
-  /** show the You / Profile / Coach / Settings tabs (signed-in pages) */
+  /** signed-in navigation: tabs, tab bar, avatar menu */
   nav?: boolean;
+  /** a single narrow column (sign in, join, welcome) */
   narrow?: boolean;
+  /** a medium column (settings, camps) */
+  mid?: boolean;
 }
-const { title, path, nav = false, narrow = false } = Astro.props;
+const { title, path, nav = false, narrow = false, mid = false } = Astro.props;
+const TABS = [
+  { href: '/me', label: 'Home', icon: ICON.home, exact: true },
+  { href: '/book', label: 'Book', icon: ICON.book },
+  { href: '/me/sessions', label: 'Sessions', icon: ICON.sessions },
+  { href: '/community', label: 'Crew', icon: ICON.crew },
+];
+const MENU = [
+  { href: '/me/progress', label: 'Progress', icon: ICON.progress },
+  { href: '/me/profile', label: 'Profile', icon: ICON.profile },
+  { href: '/camps', label: 'Camps', icon: ICON.camps },
+  { href: '/me/settings', label: 'Settings', icon: ICON.settings },
+];
+const COACH = [
+  { href: '/coach', label: 'Riders', exact: true },
+  { href: '/coach/schedule', label: 'Schedule' },
+  { href: '/coach/camps', label: 'Camp roster' },
+];
 ---
-<Base title={`${title} · BAS CAMP`} description="Your BAS CAMP rider profile." path={path} noindex bodyClass="app">
+<Base title={`${title} · BAS CAMP`} description="Your BAS CAMP rider area." path={path} noindex bodyClass={nav ? 'app has-tabbar' : 'app'}>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="appbar">
-    <a class="appbar__logo" href="/" aria-label="BAS CAMP home"><Logo tone="dark" eager sizes="96px" /></a>
+  <header class="topbar">
+    <a class="topbar__logo" href={nav ? '/me' : '/'} aria-label="BAS CAMP home"><Logo tone="dark" eager sizes="64px" /></a>
     {nav && (
-      <nav class="appnav" aria-label="Rider area">
-        <a href="/me">You</a>
-        <a href="/book">Book</a>
-        <a href="/me/sessions">Sessions</a>
-        <a href="/me/progress">Progress</a>
-        <a href="/community">Community</a>
-        <a href="/camps">Camps</a>
-        <a href="/me/profile">Profile</a>
-        <a href="/me/settings">Settings</a>
-        <a href="/coach" data-staff-only hidden>Coach</a>
-        <a href="/coach/schedule" data-staff-only hidden>Schedule</a>
-        <a href="/coach/camps" data-staff-only hidden>Camp roster</a>
-      </nav>
+      <>
+        <nav class="toptabs" aria-label="Main">
+          {TABS.map((t) => <a href={t.href} data-exact={t.exact ? '' : undefined}>{t.label}</a>)}
+          <a href="/coach" data-staff-only hidden>Coach</a>
+        </nav>
+        <p class="topbar__title">{title}</p>
+      </>
     )}
+    <div class="topbar__end">
+      {nav ? (
+        <>
+          <a class="signin" href={`/signin?next=${encodeURIComponent(path)}`} data-signed-out hidden>Sign in</a>
+          <details class="menu" data-signed-in hidden>
+            <summary aria-label="Your menu"><span class="avatar avatar--xs" data-me-avatar></span></summary>
+            <div class="menu__panel">
+              <div class="menu__who"><span class="avatar avatar--sm" data-me-avatar></span><div><b data-me-name></b><small data-me-email></small></div></div>
+              {MENU.map((m) => <a href={m.href}><Fragment set:html={m.icon} />{m.label}</a>)}
+              <div data-staff-only hidden>
+                <hr />
+                <p class="menu__group">Coach</p>
+                {COACH.map((m) => <a href={m.href} data-exact={m.exact ? '' : undefined}><Fragment set:html={ICON.coach} />{m.label}</a>)}
+              </div>
+              <hr />
+              <a href="/"><Fragment set:html={ICON.external} />bascamp.world</a>
+              <button class="menu__item" type="button" data-signout><Fragment set:html={ICON.signout} />Sign out</button>
+            </div>
+          </details>
+        </>
+      ) : (
+        <a class="signin" href="/">bascamp.world</a>
+      )}
+    </div>
   </header>
-  <main id="main" class:list={['appmain', { 'appmain--narrow': narrow }]}>
+  <main id="main" class:list={['appmain', { 'appmain--narrow': narrow, 'appmain--mid': mid }]}>
     <div class="unconfigured" role="alert">
       The rider area is not connected to its database yet. If you are setting it up: add the Supabase keys to
       <code>.env.local</code> and restart.
     </div>
     <slot />
   </main>
+  {nav && (
+    <nav class="tabbar" aria-label="Main">
+      {TABS.map((t) => <a href={t.href} data-exact={t.exact ? '' : undefined}><Fragment set:html={t.icon} />{t.label}</a>)}
+      <a href="/coach" data-staff-only hidden><Fragment set:html={ICON.coach} />Coach</a>
+    </nav>
+  )}
   <footer class="appfoot">
     <a href="/">bascamp.world</a> · <a href="/camp">BAS CAMP Italy</a> · <a href="https://instagram.com/baskakov74">@baskakov74</a>
   </footer>

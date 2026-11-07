@@ -34,6 +34,8 @@ async function cleanup() {
   const emails = Object.values(people).map((p) => p.email);
   await sql`delete from public.sessions where title like ${TAG + '%'}`;
   await sql`delete from public.camps where slug like 'apitest-%'`;
+  // the camp trigger writes a feed item that outlives the camp
+  await sql`delete from public.feed_items where kind = 'camp' and payload->>'title' like ${TAG + '%'}`;
   for (const u of data.users.filter((u) => emails.includes(u.email ?? ''))) await admin.auth.admin.deleteUser(u.id);
 }
 

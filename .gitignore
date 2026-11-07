@@ -9,3 +9,5 @@ shots/
 
 .vercel
 .env*
+
+.taste-skill/

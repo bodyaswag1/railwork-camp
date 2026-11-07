@@ -1,118 +1,240 @@
 ---
-// The one session timeline: upcoming (change / cancel / keep weekly), weekly loops, past. Packs at the bottom.
+// Sessions: the rider's own timetable. A week view on top (step back and forward), the weekly slots, then
+// everything upcoming with move / cancel, then the past month by month, then packs. The only place history lives.
 import App from '../../layouts/App.astro';
+import { ICON } from '../../members/icons';
 ---
 <App title="Sessions" path="/me/sessions" nav>
-  <h1>My sessions</h1>
-  <section><h2>Coming up</h2><div id="upcoming"></div>
-    <p class="empty" id="upcoming-empty" hidden>Nothing booked. <a href="/book">See open sessions</a></p></section>
+  <div class="pagehead">
+    <div>
+      <h1>Sessions</h1>
+      <p class="lede" id="finding">Everything you have booked or ridden, in one place.</p>
+    </div>
+    <div class="actions actions--wide"><a class="btn" href="/book">Book a session</a></div>
+  </div>
 
-  <section id="loops-wrap" hidden><h2 style="margin-top:28px">Every week</h2><div id="loops"></div></section>
+  <section class="card" aria-labelledby="week-h">
+    <div class="weekbar">
+      <h2 id="week-h">Week of <span id="week-label"></span></h2>
+      <div class="weekbar__nav">
+        <button class="link small" type="button" id="wk-today" hidden>This week</button>
+        <button class="iconbtn" type="button" id="wk-prev" aria-label="Previous week"><Fragment set:html={ICON.chevronL} /></button>
+        <button class="iconbtn" type="button" id="wk-next" aria-label="Next week"><Fragment set:html={ICON.chevronR} /></button>
+      </div>
+    </div>
+    <div id="week"></div>
+  </section>
 
-  <dialog id="move" class="card" style="max-width:520px;width:calc(100vw - 32px)">
-    <h3>Move to another time</h3>
-    <p class="small muted">Same kind of session. Your current time is released only once the new one is confirmed.</p>
-    <div id="move-list"></div>
-    <button class="link" type="button" id="move-close">Keep my time</button>
-  </dialog>
+  <div class="grid grid--main" style="margin-top:var(--gap)">
+    <div class="stack">
+      <section class="card card--flush" aria-labelledby="up-h">
+        <div class="card__head"><h2 id="up-h">Coming up</h2><span class="meta" id="up-count"></span></div>
+        <ul class="rows" id="upcoming"></ul>
+        <div style="padding:0 var(--pad) var(--pad)" id="upcoming-empty" hidden><p class="empty">Nothing booked. <a href="/book">See open sessions</a></p></div>
+      </section>
 
-  <section><h2 style="margin-top:28px">Past</h2><div id="past"></div>
-    <p class="empty" id="past-empty" hidden>Your sessions land here after you ride.</p></section>
+      <section aria-labelledby="past-h" class="stack">
+        <h2 id="past-h" style="margin-top:8px">Past</h2>
+        <div id="past" class="stack"></div>
+        <p class="empty" id="past-empty" hidden>Your sessions land here after you ride.</p>
+        <details class="card card--quiet" id="cancelled-wrap" hidden><summary class="small strong" style="cursor:pointer">Cancelled <span class="faint" id="cancelled-count"></span></summary>
+          <ul class="rows rows--dim" id="cancelled" style="margin-top:8px"></ul></details>
+      </section>
+    </div>
 
-  <section id="packs-wrap" hidden><h2 style="margin-top:28px">Packs</h2><div id="packs"></div></section>
+    <div class="stack">
+      <section class="card" aria-labelledby="loops-h">
+        <div class="card__head"><h2 id="loops-h">Weekly slots</h2></div>
+        <ul class="rows rows--stack" id="loops"></ul>
+        <p class="small faint" id="loops-empty" hidden>Same time every week? Tap “Every week” on a booked session. Your coach confirms and books it 4 weeks ahead.</p>
+        <p class="meta" id="loops-note" style="margin-top:10px" hidden>Away? Add a trip in <a href="/me/settings#trips">settings</a>: the weeks are released and your streak pauses.</p>
+      </section>
+
+      <section class="card" id="packs-wrap" aria-labelledby="packs-h" hidden>
+        <div class="card__head"><h2 id="packs-h">Packs</h2></div>
+        <div id="packs" class="stack" style="gap:14px"></div>
+      </section>
+    </div>
+  </div>
 </App>
 
 <script>
-  import { $, esc, requireMe, toast } from '../../members/ui';
-  import { BOOK_RESULT, BOOKING_STATUS, KIND, WEEKDAY, euro, when } from '../../members/labels';
+  import { $, esc, requireMe, sheet, toast } from '../../members/ui';
+  import { BOOK_RESULT, KIND, WEEKDAY, euro, hours, time } from '../../members/labels';
+  import { ICON } from '../../members/icons';
   import { sb } from '../../members/sb';
+  import { addDays, dayKey, dayStub, loadMine, monday, relDay, renderWeek, todayKey, weekLabel, type Booking, type Loop, type Open } from '../../members/timeline';
 
-  type B = { id: string; status: string; source: string; pack_id: string | null; sessions: { id: string; title: string; kind: string; starts_at: string; ends_at: string; venues: { name: string } | null } };
   await requireMe();
-  let moving: B | null = null;
+  const thisMon = monday(todayKey());
+  let mon = thisMon;
+  let data: Awaited<ReturnType<typeof loadMine>>;
+
+  async function paintWeek() {
+    $('#week-label').textContent = weekLabel(mon);
+    $('#wk-today').hidden = mon === thisMon;
+    $<HTMLButtonElement>('#wk-prev').disabled = mon <= addDays(thisMon, -7 * 12);
+    $<HTMLButtonElement>('#wk-next').disabled = mon >= addDays(thisMon, 7 * 8);
+    let open: Open[] = [];
+    if (mon >= thisMon) {
+      const { data: o } = await sb.rpc('open_sessions', {
+        p_from: new Date(Math.max(Date.now(), new Date(`${mon}T00:00:00`).getTime())).toISOString(),
+        p_to: new Date(`${addDays(mon, 7)}T00:00:00`).toISOString(), p_kind: null,
+      });
+      open = (o ?? []) as Open[];
+    }
+    renderWeek($('#week'), mon, data.bookings, open, data.loops);
+  }
+
+  const facts = (b: Booking) => [
+    `${esc(time(b.sessions.starts_at))}–${esc(time(b.sessions.ends_at))}`,
+    esc(KIND[b.sessions.kind] ?? ''),
+    b.sessions.venues?.name ? esc(b.sessions.venues.name) : '',
+    b.source === 'loop' ? 'weekly' : '',
+    b.pack_id ? 'pack credit' : b.status === 'paid' ? 'paid' : '',
+  ].filter(Boolean).join(' · ');
 
   async function load() {
-    const [{ data: bs }, { data: loops }, { data: packs }] = await Promise.all([
-      sb.from('bookings').select('id, status, source, pack_id, sessions(id, title, kind, starts_at, ends_at, venues(name))').neq('status', 'cancelled'),
-      sb.from('loops').select('*').in('status', ['requested', 'active']),
-      sb.from('packs').select('*').order('created_at', { ascending: false }),
-    ]);
-    const all = ((bs ?? []) as unknown as B[]).sort((a, b) => a.sessions.starts_at.localeCompare(b.sessions.starts_at));
+    data = await loadMine();
     const now = Date.now();
-    const up = all.filter((b) => new Date(b.sessions.starts_at).getTime() > now);
-    const past = all.filter((b) => new Date(b.sessions.starts_at).getTime() <= now).reverse();
-    const line = (b: B) => esc([KIND[b.sessions.kind], b.sessions.venues?.name, b.source === 'loop' ? 'weekly' : '', b.pack_id ? 'pack credit' : ''].filter(Boolean).join(' · '));
+    const live = data.bookings.filter((b) => b.status !== 'cancelled');
+    const up = live.filter((b) => new Date(b.sessions.starts_at).getTime() > now);
+    const past = live.filter((b) => new Date(b.sessions.starts_at).getTime() <= now).reverse();
+    const cancelled = data.bookings.filter((b) => b.status === 'cancelled').reverse();
 
+    $('#up-count').textContent = up.length ? `${up.length} booked` : '';
     $('#upcoming').innerHTML = up.map((b) => {
       const locked = new Date(b.sessions.starts_at).getTime() - now < 48 * 36e5;
-      return `<div class="card"><b>${esc(when(b.sessions.starts_at))} · ${esc(b.sessions.title)}</b>
-        <div class="small muted">${line(b)} · ${esc(BOOKING_STATUS[b.status])}</div>
-        <div class="actions" style="margin-top:10px">${locked
-          ? '<span class="small">Changes closed 48 h before: <a href="https://instagram.com/baskakov74">message your coach</a>.</span>'
+      const rel = relDay(b.sessions.starts_at);
+      return `<li class="row--wrap" id="b-${b.id}">${dayStub(b.sessions.starts_at)}
+        <span class="row__main"><b>${esc(b.sessions.title)}</b><span class="row__sub">${rel ? `<span style="color:var(--accent-ink);font-weight:500">${esc(rel)}</span> · ` : ''}${facts(b)}</span></span>
+        <span class="row__end">${locked
+          ? '<span class="small faint">Within 48 h: <a href="https://instagram.com/baskakov74">message your coach</a></span>'
           : `<button class="btn btn--small btn--ghost" data-move="${b.id}">Move</button><button class="link small" data-cancel="${b.id}">Cancel</button>`}
-          ${b.source !== 'loop' ? `<button class="link small" data-loop="${b.id}">Keep this time every week</button>` : ''}</div></div>`;
+          ${b.source !== 'loop' && !locked ? `<button class="link small" data-loop="${b.id}">Every week</button>` : ''}</span></li>`;
     }).join('');
     $('#upcoming-empty').hidden = up.length > 0;
-    (window as unknown as { _bk: B[] })._bk = up;
 
-    $('#past').innerHTML = past.map((b) => `<div class="card small"><b>${esc(when(b.sessions.starts_at))} · ${esc(b.sessions.title)}</b> · ${esc(BOOKING_STATUS[b.status])}</div>`).join('');
+    // past, one group per month: "October 2026 · 4 sessions · 5.5 h"
+    const byMonth = new Map<string, Booking[]>();
+    for (const b of past) {
+      const k = new Date(b.sessions.starts_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'Europe/Vienna' });
+      byMonth.set(k, [...(byMonth.get(k) ?? []), b]);
+    }
+    $('#past').innerHTML = [...byMonth].map(([m, list]) => {
+      const rode = list.filter((b) => b.status !== 'no_show');
+      const mins = rode.reduce((n, b) => n + (new Date(b.sessions.ends_at).getTime() - new Date(b.sessions.starts_at).getTime()) / 6e4, 0);
+      return `<div class="card card--flush"><div class="card__head"><h3>${esc(m)}</h3><span class="meta">${rode.length} session${rode.length === 1 ? '' : 's'} · ${hours(mins)} h</span></div>
+        <ul class="rows">${list.map((b) => `<li>${dayStub(b.sessions.starts_at, false)}<span class="row__main"><b>${esc(b.sessions.title)}</b><span class="row__sub">${facts(b)}</span></span>
+          <span class="row__end">${b.status === 'no_show' ? '<span class="pill">Cancelled</span>' : '<span class="pill pill--pos">Rode</span>'}</span></li>`).join('')}</ul></div>`;
+    }).join('');
     $('#past-empty').hidden = past.length > 0;
+    $('#cancelled').innerHTML = cancelled.map((b) => `<li>${dayStub(b.sessions.starts_at, false)}<span class="row__main"><b>${esc(b.sessions.title)}</b><span class="row__sub">${facts(b)}</span></span></li>`).join('');
+    $('#cancelled-count').textContent = String(cancelled.length);
+    $('#cancelled-wrap').hidden = !cancelled.length;
 
-    $('#loops').innerHTML = (loops ?? []).map((l) => `<div class="card"><b>${esc(WEEKDAY[l.weekday])}s ${esc(String(l.start_time).slice(0, 5))} · ${esc(l.title)}</b>
-      <div class="small muted">${l.status === 'requested' ? 'Waiting for your coach to confirm' : l.change_request ? `Change asked: “${esc(l.change_request)}”` : 'Booked 4 weeks ahead. A trip on your settings page pauses it.'}</div>
-      <div class="actions" style="margin-top:10px">${l.status === 'active' && !l.change_request ? `<button class="link small" data-change="${l.id}">Ask to change</button>` : ''}
-        <button class="link small" data-end="${l.id}">Stop</button></div></div>`).join('');
-    $('#loops-wrap').hidden = !(loops ?? []).length;
+    // weekly slots
+    $('#loops').innerHTML = data.loops.map((l: Loop) => `<li class="row--wrap"><span class="daystub daystub--mine"><small>${esc(WEEKDAY[l.weekday].slice(0, 3))}</small><b>${esc(String(l.start_time).slice(0, 5).replace(':', '.'))}</b></span>
+      <span class="row__main"><b>${esc(l.title)}</b><span class="row__sub">${l.status === 'requested' ? 'Waiting for your coach to confirm'
+        : l.change_request ? `Change asked: “${esc(l.change_request)}”` : `${esc(WEEKDAY[l.weekday])}s at ${esc(String(l.start_time).slice(0, 5))} · booked 4 weeks ahead`}</span></span>
+      <span class="row__end">${l.status === 'requested' ? '<span class="pill pill--warn">Asked</span>' : '<span class="pill pill--accent">Active</span>'}
+        ${l.status === 'active' && !l.change_request ? `<button class="link small" data-change="${l.id}">Change</button>` : ''}
+        <button class="link small" data-end="${l.id}">Stop</button></span></li>`).join('');
+    $('#loops-empty').hidden = data.loops.length > 0;
+    $('#loops-note').hidden = !data.loops.length;
 
-    $('#packs').innerHTML = (packs ?? []).map((p) => `<div class="card small"><b>${esc(KIND[p.kind])} pack</b> · ${p.sessions_total - p.sessions_used} of ${p.sessions_total} left
-      ${p.valid_until ? ` · until ${esc(p.valid_until)}` : ''} · ${p.paid_at ? 'paid' : `to pay ${esc(euro(p.price_eur))}`}</div>`).join('');
+    // packs
+    const { data: packs } = await sb.from('packs').select('*').order('created_at', { ascending: false });
+    $('#packs').innerHTML = (packs ?? []).map((p) => {
+      const left = p.sessions_total - p.sessions_used;
+      return `<div><div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px"><b class="small">${esc(KIND[p.kind])} pack</b><span class="small num">${left} of ${p.sessions_total} left</span></div>
+        <div class="progressbar"><i style="width:${(left / p.sessions_total) * 100}%"></i></div>
+        <div class="meta" style="margin-top:6px">${[p.valid_until ? `Until ${esc(new Date(p.valid_until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }))}` : '', p.paid_at ? 'Paid' : `To pay ${esc(euro(p.price_eur))}`].filter(Boolean).join(' · ')}</div></div>`;
+    }).join('');
     $('#packs-wrap').hidden = !(packs ?? []).length;
+
+    const n = up.length;
+    $('#finding').textContent = n ? `${n} session${n === 1 ? '' : 's'} coming up${data.loops.some((l) => l.status === 'active') ? ', including your weekly slot' : ''}.` : 'Nothing coming up. Everything you book or ride lands here.';
+    await paintWeek();
+    if (location.hash.startsWith('#b-')) {
+      const el = document.querySelector<HTMLElement>(location.hash);
+      if (el) { el.scrollIntoView({ block: 'center' }); el.style.background = 'var(--accent-50)'; }
+    }
   }
+
+  $('#wk-prev').addEventListener('click', () => { mon = addDays(mon, -7); paintWeek(); });
+  $('#wk-next').addEventListener('click', () => { mon = addDays(mon, 7); paintWeek(); });
+  $('#wk-today').addEventListener('click', () => { mon = thisMon; paintWeek(); });
 
   document.addEventListener('click', async (e) => {
     const t = e.target as HTMLElement;
     const id = (k: string) => t.closest<HTMLElement>(`[data-${k}]`)?.dataset[k];
     if (id('cancel')) {
-      if (!confirm('Cancel this session?')) return;
-      const { data } = await sb.rpc('cancel_booking', { p_booking: id('cancel') });
-      toast(data === 'ok' ? 'Cancelled. Nothing to pay.' : BOOK_RESULT[data] ?? 'Could not cancel.', data === 'ok' ? 'ok' : 'bad');
-      return load();
+      const b = data.bookings.find((x) => x.id === id('cancel'))!;
+      const sh = sheet('cancel', 'Cancel this session?');
+      sh.body.innerHTML = `<p><b>${esc(b.sessions.title)}</b><br><span class="faint">${esc(new Date(b.sessions.starts_at).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Vienna' }))}, ${esc(time(b.sessions.starts_at))}</span></p>
+        <p class="small faint">${b.pack_id ? 'The credit goes back to your pack.' : 'Nothing to pay.'}${b.source === 'loop' ? ' Your weekly slot carries on for the other weeks.' : ''}</p>
+        <div class="actions" style="margin-top:16px"><button class="btn btn--danger" type="button" id="do-cancel">Cancel session</button><button class="link" type="button" data-close>Keep it</button></div>`;
+      sh.open();
+      $('#do-cancel').addEventListener('click', async () => {
+        const { data: r } = await sb.rpc('cancel_booking', { p_booking: b.id });
+        sh.close();
+        toast(r === 'ok' ? 'Cancelled. Nothing to pay.' : BOOK_RESULT[r] ?? 'Could not cancel.', r === 'ok' ? 'ok' : 'bad');
+        load();
+      });
+      return;
     }
     if (id('loop')) {
-      const { data } = await sb.rpc('request_loop', { p_booking: id('loop') });
-      toast(data === 'ok' ? 'Asked. Your coach checks the time and confirms.' : data === 'already' ? 'You already have this weekly slot.' : 'Could not ask.', data === 'ok' ? 'ok' : 'bad');
+      const { data: r } = await sb.rpc('request_loop', { p_booking: id('loop') });
+      toast(r === 'ok' ? 'Asked. Your coach checks the time and confirms.' : r === 'already' ? 'You already have this weekly slot.' : 'Could not ask.', r === 'ok' ? 'ok' : 'bad');
       return load();
     }
     if (id('change')) {
-      const text = prompt('What should change? (day, time, anything)');
-      if (!text || text.trim().length < 3) return;
-      await sb.rpc('request_loop_change', { p_loop: id('change'), p_text: text });
-      toast('Sent to your coach. Your booked weeks stay as they are.');
-      return load();
-    }
-    if (id('end')) {
-      if (!confirm('Stop this weekly slot? Sessions already booked stay booked.')) return;
-      await sb.rpc('end_loop', { p_loop: id('end') });
-      return load();
-    }
-    if (id('move')) {
-      moving = (window as unknown as { _bk: B[] })._bk.find((b) => b.id === id('move')) ?? null;
-      if (!moving) return;
-      const { data } = await sb.rpc('open_sessions', { p_kind: moving.sessions.kind });
-      const options = (data ?? []).filter((s: { id: string; seats_left: number; my_booking: string | null }) => s.seats_left > 0 && !s.my_booking);
-      $('#move-list').innerHTML = options.length ? options.map((s: { id: string; starts_at: string; title: string }) =>
-        `<button class="btn btn--ghost btn--block" style="margin-bottom:8px" data-to="${s.id}">${esc(when(s.starts_at))} · ${esc(s.title)}</button>`).join('')
-        : '<p class="empty">No other open times right now.</p>';
-      ($('#move') as HTMLDialogElement).showModal();
+      const sh = sheet('change', 'Change your weekly slot');
+      sh.body.innerHTML = `<form class="form" id="change-form"><label class="field"><span>What should change?</span><textarea name="text" maxlength="280" placeholder="Thursdays instead, from 17:00" required></textarea>
+        <small>Your booked weeks stay as they are until your coach confirms.</small></label><button class="btn" type="submit">Send to your coach</button></form>`;
+      sh.open();
+      const loopId = id('change');
+      $<HTMLFormElement>('#change-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const text = String(new FormData(ev.currentTarget as HTMLFormElement).get('text') ?? '').trim();
+        if (text.length < 3) return;
+        await sb.rpc('request_loop_change', { p_loop: loopId, p_text: text });
+        sh.close();
+        toast('Sent to your coach.');
+        load();
+      });
       return;
     }
-    if (id('to') && moving) {
-      const { data } = await sb.rpc('move_booking', { p_booking: moving.id, p_session: id('to') });
-      ($('#move') as HTMLDialogElement).close();
-      toast(data?.status === 'ok' ? 'Moved.' : BOOK_RESULT[data?.status] ?? 'Could not move.', data?.status === 'ok' ? 'ok' : 'bad');
+    if (id('end')) {
+      const sh = sheet('end', 'Stop this weekly slot?');
+      const loopId = id('end');
+      sh.body.innerHTML = `<p class="small faint">Sessions already booked stay booked; nothing new is added after them.</p>
+        <div class="actions" style="margin-top:16px"><button class="btn btn--danger" type="button" id="do-end">Stop weekly slot</button><button class="link" type="button" data-close>Keep it</button></div>`;
+      sh.open();
+      $('#do-end').addEventListener('click', async () => { await sb.rpc('end_loop', { p_loop: loopId }); sh.close(); toast('Weekly slot stopped.'); load(); });
+      return;
+    }
+    if (id('move')) {
+      const b = data.bookings.find((x) => x.id === id('move'))!;
+      const { data: o } = await sb.rpc('open_sessions', { p_kind: b.sessions.kind });
+      const options = ((o ?? []) as Open[]).filter((s) => s.seats_left > 0 && !s.my_booking);
+      const sh = sheet('move', 'Move to another time');
+      sh.body.innerHTML = `<p class="small faint">Same kind of session. Your current time is released only once the new one is confirmed.</p>
+        ${options.length ? `<ul class="rows" style="margin-top:8px">${options.slice(0, 20).map((s) => `<li>${dayStub(s.starts_at, false)}<span class="row__main"><b>${esc(time(s.starts_at))} · ${esc(s.title)}</b><span class="row__sub">${esc([s.venue, s.coach && `with ${s.coach}`].filter(Boolean).join(' · '))}</span></span>
+          <span class="row__end"><button class="btn btn--small btn--ghost" data-to="${s.id}" data-from="${b.id}">Move here</button></span></li>`).join('')}</ul>`
+          : '<p class="empty" style="margin-top:12px">No other open times right now.</p>'}`;
+      sh.open();
+      return;
+    }
+    if (id('to')) {
+      const btn = t.closest<HTMLButtonElement>('[data-to]')!;
+      const { data: r } = await sb.rpc('move_booking', { p_booking: btn.dataset.from, p_session: btn.dataset.to });
+      (document.getElementById('move') as HTMLDialogElement)?.close();
+      toast(r?.status === 'ok' ? 'Moved.' : BOOK_RESULT[r?.status] ?? 'Could not move.', r?.status === 'ok' ? 'ok' : 'bad');
       return load();
     }
   });
-  $('#move-close').addEventListener('click', () => ($('#move') as HTMLDialogElement).close());
+  void dayKey; void ICON;
   await load();
 </script>

@@ -1,10 +1,10 @@
 ---
 // Camp roster: applications and statuses per camp, plus a minimal "new camp" form.
 import App from '../../layouts/App.astro';
+import CoachTabs from '../../components/CoachTabs.astro';
 ---
 <App title="Camp roster" path="/coach/camps" nav>
-  <p class="kicker">Coach</p>
-  <h1>Camp roster</h1>
+  <CoachTabs title="Camp roster" current="/coach/camps" lede="Applications and statuses per camp." />
   <div id="camps"></div>
   <details class="card"><summary><b>New camp</b></summary>
     <form class="form" id="new-camp" style="margin-top:12px">
@@ -51,12 +51,12 @@ import App from '../../layouts/App.astro';
       const held = es.filter((e) => ['accepted', 'deposit_paid', 'paid', 'attended'].includes(e.status)).length;
       return `<section class="card"><h2>${esc(c.title)}</h2>
         <p class="small">${esc(fmtDate(c.starts_on))}–${esc(fmtDate(c.ends_on))} · ${esc(c.place)} · ${esc(euro(c.price_eur))} · <b>${held}/${c.spots}</b> spots taken · ${esc(c.status)}
-          <select data-campstatus="${c.id}" style="width:auto;min-height:32px">${['draft', 'open', 'closed'].map((s) => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select></p>
+          <select data-campstatus="${c.id}" class="sel-inline">${['draft', 'open', 'closed'].map((s) => `<option ${s === c.status ? 'selected' : ''}>${s}</option>`).join('')}</select></p>
         <table class="small" style="width:100%;border-collapse:collapse">${es.map((e) => {
           const r = who(e.rider_id);
-          return `<tr style="border-top:1px solid var(--slush-concrete)"><td style="padding:6px 4px"><b>${esc(r ? `${r.first_name} ${r.last_name ?? ''}` : 'Rider')}</b><br>
+          return `<tr style="border-top:1px solid var(--line)"><td style="padding:6px 4px"><b>${esc(r ? `${r.first_name} ${r.last_name ?? ''}` : 'Rider')}</b><br>
             <span class="muted">${esc([r?.phone, r?.instagram && '@' + r.instagram, e.promo_code && `promo ${e.promo_code}`].filter(Boolean).join(' · '))}</span>${e.note ? `<br>“${esc(e.note)}”` : ''}</td>
-            <td style="padding:6px 4px;text-align:right"><select data-entry="${e.id}" style="width:auto;min-height:32px">${STATUSES.map((s) => `<option value="${s}" ${s === e.status ? 'selected' : ''}>${s.replace('_', ' ')}</option>`).join('')}</select></td></tr>`;
+            <td style="padding:6px 4px;text-align:right"><select data-entry="${e.id}" class="sel-inline">${STATUSES.map((s) => `<option value="${s}" ${s === e.status ? 'selected' : ''}>${s.replace('_', ' ')}</option>`).join('')}</select></td></tr>`;
         }).join('') || '<tr><td class="muted">No applications yet.</td></tr>'}</table></section>`;
     }).join('');
   }

@@ -58,7 +58,7 @@ export function toast(msg: string, tone: 'ok' | 'bad' = 'ok') {
   el.dataset.tone = tone;
   el.classList.add('is-on');
   clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => el.classList.remove('is-on'), 3200);
+  toastTimer = window.setTimeout(() => el.classList.remove('is-on'), 3600);
 }
 
 export const nextParam = () => new URLSearchParams(location.search).get('next');
@@ -85,20 +85,60 @@ export async function requireMe(opts: { staff?: boolean } = {}): Promise<Me> {
   return me;
 }
 
-/** fills the shared app header: coach link for staff, sign-out */
+/** paints an avatar element: the photo, or the first letter on the ice tint */
+export function paintAvatar(el: HTMLElement, url: string | null | undefined, name: string | null | undefined) {
+  el.style.backgroundImage = url ? `url("${url}")` : '';
+  el.textContent = url ? '' : (name ?? '?').trim().slice(0, 1);
+}
+
+/** fills the shared shell: tabs and menu marked for this page, coach links for staff, the avatar, sign-out */
 export function paintHeader(me: Me | null) {
   for (const el of $$('[data-staff-only]')) el.hidden = !isStaff(me);
   for (const el of $$('[data-signed-in]')) el.hidden = !me;
   for (const el of $$('[data-signed-out]')) el.hidden = !!me;
-  const here = location.pathname.replace(/\/$/, '');
-  for (const a of $$<HTMLAnchorElement>('.appnav a')) {
+  const here = location.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+  for (const a of $$<HTMLAnchorElement>('.toptabs a, .tabbar a, .menu a')) {
     const href = a.getAttribute('href') ?? '';
-    if (href === here || (href !== '/me' && here.startsWith(href))) a.setAttribute('aria-current', 'page');
+    const exact = a.hasAttribute('data-exact');
+    // the coach tab covers every /coach page; the menu's Riders link only /coach itself
+    const on = href === here || (!exact && href !== '/' && here.startsWith(href + '/'));
+    if (on) a.setAttribute('aria-current', 'page');
   }
-  $('[data-signout]')?.addEventListener('click', async () => {
+  if (me) {
+    const name = [me.firstName, me.lastName].filter(Boolean).join(' ') || me.email;
+    for (const el of $$('[data-me-avatar]')) paintAvatar(el, me.photoUrl, me.firstName ?? me.email);
+    for (const el of $$('[data-me-name]')) el.textContent = name;
+    for (const el of $$('[data-me-email]')) el.textContent = me.email;
+  }
+  // the avatar menu closes on an outside click or Escape
+  const menu = $<HTMLDetailsElement>('.menu');
+  if (menu) {
+    document.addEventListener('click', (e) => { if (menu.open && !menu.contains(e.target as Node)) menu.open = false; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary')?.focus(); } });
+  }
+  for (const b of $$('[data-signout]')) b.addEventListener('click', async () => {
     await sb.auth.signOut();
     location.href = '/signin';
   });
+}
+
+/** a bottom sheet / dialog with a title bar and a close button; returns its body element */
+export function sheet(id: string, title: string): { el: HTMLDialogElement; body: HTMLElement; open: () => void; close: () => void } {
+  let el = document.getElementById(id) as HTMLDialogElement | null;
+  if (!el) {
+    el = document.createElement('dialog');
+    el.id = id;
+    el.className = 'sheet';
+    el.innerHTML = `<div class="sheet__head"><h2></h2><button class="closebtn" type="button" aria-label="Close" data-close>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sheet__body"></div>`;
+    document.body.append(el);
+    el.addEventListener('click', (e) => {
+      if (e.target === el || (e.target as Element).closest('[data-close]')) el!.close();
+    });
+  }
+  el.querySelector('h2')!.textContent = title;
+  const d = el;
+  return { el: d, body: d.querySelector('.sheet__body') as HTMLElement, open: () => d.showModal(), close: () => d.close() };
 }
 
 export const fmtDate = (d: string | null | undefined, opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }) =>

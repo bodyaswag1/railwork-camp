@@ -1,78 +1,101 @@
 ---
-// Who you are at BAS: photo, details, level. Identity only; every switch lives on Settings.
+// Profile: who you are at BAS and what you have earned. Identity only, read first; editing opens on demand
+// (a sheet for details, an inline picker for the level). Every switch lives on Settings.
 import App from '../../layouts/App.astro';
 import { LEVELS } from '../../lib/members/rules';
+import { ICON } from '../../members/icons';
 ---
 <App title="Profile" path="/me/profile" nav>
   <div id="profile" hidden>
-    <h1>Profile</h1>
-    <div class="grid grid--side">
-      <div>
-        <section class="card card--tape" id="photo">
-          <h2>Photo</h2>
-          <div class="who">
-            <div class="avatar" id="avatar" aria-hidden="true"></div>
-            <div>
-              <label class="btn btn--small btn--ghost" for="photo-input" style="cursor:pointer">Choose a photo</label>
-              <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" />
-              <p class="small muted" style="margin:8px 0 0">A clear face helps your coach and crew find you on the slope. JPG, PNG or WebP.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" id="level">
-          <h2>Level</h2>
-          <p id="level-chip"></p>
-          <p class="small muted" id="level-note"></p>
-          <div id="level-edit" hidden>
-            <p class="small">Pick the one that sounds most like you. You can change it until your coach confirms it.</p>
-            <ul class="levels" id="level-list">
-              {LEVELS.map((l) => (
-                <li>
-                  <input type="radio" name="band" id={`band-${l.band}`} value={l.band} />
-                  <label for={`band-${l.band}`}><b>{l.band}</b><span>{l.name}</span><small>{l.means}</small></label>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
+    <section class="card idcard" id="photo" aria-label="You">
+      <label class="idcard__photo" for="photo-input" title="Change photo">
+        <span class="avatar avatar--lg" id="avatar" aria-hidden="true"></span>
+        <span class="idcard__cam"><Fragment set:html={ICON.camera} /><span class="sr-only">Change photo</span></span>
+      </label>
+      <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" />
+      <div class="idcard__main">
+        <h1 id="fullname"></h1>
+        <p class="small faint" id="idline"></p>
+        <div class="actions" id="chips" style="margin-top:10px"></div>
       </div>
+      <div class="idcard__end"><button class="btn btn--small btn--ghost" type="button" id="edit-details">Edit details</button></div>
+    </section>
 
-      <section class="card" id="details">
-        <h2>Details</h2>
-        <form class="form" id="details-form" novalidate>
-          <div class="form__row form__row--2">
-            <label class="field"><span>First name</span><input type="text" name="first_name" maxlength="60" autocomplete="given-name" />
-              <span class="err" data-error-for="first_name" hidden></span></label>
-            <label class="field"><span>Last name</span><input type="text" name="last_name" maxlength="60" autocomplete="family-name" /></label>
-          </div>
-          <label class="field"><span>Phone</span><input type="tel" name="phone" maxlength="32" autocomplete="tel" /></label>
-          <label class="field"><span>Instagram</span><input type="text" name="instagram" maxlength="60" placeholder="@yourhandle" autocapitalize="off" /></label>
-          <label class="field"><span>A line about you</span><textarea name="bio" maxlength="280" placeholder="Riding since 2019, chasing my first backside 360."></textarea>
-            <small id="bio-count"></small></label>
-          <div class="actions"><button class="btn" type="submit">Save</button></div>
-        </form>
+    <div class="grid grid--2">
+      <section class="card" id="level" aria-labelledby="level-h">
+        <div class="card__head"><h2 id="level-h">Level</h2><button class="link small" type="button" id="level-toggle" hidden>Change</button></div>
+        <p id="level-chip"></p>
+        <p class="small faint" id="level-note" style="margin-top:10px"></p>
+        <div id="level-edit" hidden style="margin-top:14px">
+          <ul class="levels" id="level-list">
+            {LEVELS.map((l) => (
+              <li>
+                <input type="radio" name="band" id={`band-${l.band}`} value={l.band} />
+                <label for={`band-${l.band}`}><b>{l.band}</b><span>{l.name}</span><small>{l.means}</small></label>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="ride-h">
+        <div class="card__head"><h2 id="ride-h">How you ride</h2><a href="/welcome">Edit answers</a></div>
+        <dl class="facts" id="answers"></dl>
+        <p class="small faint" id="answers-empty" hidden>Tell us what you ride and since when. <a href="/welcome">Answer the questions</a></p>
       </section>
     </div>
+
+    <section class="card" aria-labelledby="earned-h">
+      <div class="card__head"><h2 id="earned-h">Earned</h2><a href="/me/progress">Progress</a></div>
+      <div class="figs" style="--cols:3" id="earned"></div>
+      <div class="actions" id="earned-badges" style="margin-top:16px"></div>
+    </section>
+
+    <p class="small faint" id="visibility"></p>
   </div>
 </App>
 
+<style is:global>
+  .idcard { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; }
+  .idcard__photo { position: relative; cursor: pointer; border-radius: 50%; }
+  .idcard__cam { position: absolute; right: -2px; bottom: -2px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--night-run); color: #fff; border: 2px solid var(--surface); }
+  .idcard__cam svg { width: 16px; height: 16px; }
+  .idcard__photo:hover .avatar { filter: brightness(.95); }
+  .idcard__main h1 { overflow-wrap: anywhere; }
+  .idcard__end { grid-column: 1 / -1; }
+  @media (min-width: 640px) { .idcard { grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px; } .idcard__end { grid-column: auto; align-self: start; } }
+  .idcard input#photo-input:focus-visible + .idcard__main { outline: none; }
+</style>
+
 <script>
-  import { $, $$, busy, fieldErrors, requireMe, toast } from '../../members/ui';
+  import { $, $$, busy, esc, fieldErrors, fmtDate, paintAvatar, requireMe, sheet, toast } from '../../members/ui';
   import { levelChip, LEVEL_NOTE } from '../../members/level';
+  import { DISCIPLINE, TERRAIN } from '../../members/labels';
   import { sb } from '../../members/sb';
 
   const me = await requireMe();
   await sb.rpc('ensure_my_rider');
-  const { data: r } = await sb.from('my_rider').select('*').maybeSingle();
+  const [{ data: r }, { data: p }, { data: st }, { data: awards }, { data: badges }, { data: tp }] = await Promise.all([
+    sb.from('my_rider').select('*').maybeSingle(),
+    sb.from('profiles').select('*').eq('id', me.id).single(),
+    sb.rpc('rider_stats'),
+    sb.from('badge_awards').select('badge_key, awarded_at'),
+    sb.from('badges').select('key, title'),
+    sb.from('trick_progress').select('status').eq('status', 'landed'),
+  ]);
 
-  // ---------------------------------------------------------------- photo
+  // ---------------------------------------------------------------- identity
+  const name = () => [me.firstName, me.lastName].filter(Boolean).join(' ') || me.email;
+  let lvlRow = r;
   const av = $('#avatar');
-  const paintAvatar = (url: string | null) => {
-    av.style.backgroundImage = url ? `url("${url}")` : '';
-    av.textContent = url ? '' : (me.firstName ?? me.email).slice(0, 1);
+  const paintId = () => {
+    $('#fullname').textContent = name();
+    paintAvatar(av, me.photoUrl, me.firstName ?? me.email);
+    $('#idline').textContent = [me.instagram && `@${me.instagram}`, r?.coach_name && `Coach: ${r.coach_name}`, p?.created_at && `Riding with BAS since ${fmtDate(p.created_at, { month: 'short', year: 'numeric' })}`].filter(Boolean).join(' · ');
+    $('#chips').innerHTML = [levelChip(lvlRow), r?.founding_at ? '<span class="stamp">Founding rider</span>' : '',
+      ...(p?.disciplines ?? []).map((d: string) => `<span class="pill">${esc(DISCIPLINE[d])}</span>`)].join('');
   };
-  paintAvatar(me.photoUrl);
+  paintId();
 
   /** square crop, 512px, WebP: small enough for every card, same shape everywhere */
   async function squash(file: File): Promise<Blob> {
@@ -83,7 +106,6 @@ import { LEVELS } from '../../lib/members/rules';
     c.getContext('2d')!.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 512, 512);
     return new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('encode'))), 'image/webp', 0.85));
   }
-
   $<HTMLInputElement>('#photo-input').addEventListener('change', async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -95,26 +117,68 @@ import { LEVELS } from '../../lib/members/rules';
       const url = sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
       const { error } = await sb.from('profiles').update({ photo_url: url }).eq('id', me.id);
       if (error) throw error;
-      paintAvatar(url);
+      me.photoUrl = url;
+      paintId();
+      for (const el of $$('[data-me-avatar]')) paintAvatar(el, url, me.firstName);
       toast('Photo saved.');
     } catch {
       toast('That photo did not upload. Try a JPG or PNG under 3 MB.', 'bad');
     }
   });
 
+  // ---------------------------------------------------------------- details, in a sheet
+  $('#edit-details').addEventListener('click', () => {
+    const sh = sheet('details', 'Your details');
+    sh.body.innerHTML = `<form class="form" id="details-form" novalidate>
+      <div class="form__row form__row--2">
+        <label class="field"><span>First name</span><input type="text" name="first_name" maxlength="60" autocomplete="given-name" /><span class="err" data-error-for="first_name" hidden></span></label>
+        <label class="field"><span>Last name</span><input type="text" name="last_name" maxlength="60" autocomplete="family-name" /></label>
+      </div>
+      <label class="field"><span>Phone</span><input type="tel" name="phone" maxlength="32" autocomplete="tel" /><small>Only your coach sees it.</small></label>
+      <label class="field"><span>Instagram</span><input type="text" name="instagram" maxlength="60" placeholder="@yourhandle" autocapitalize="off" /></label>
+      <label class="field"><span>A line about you</span><textarea name="bio" maxlength="280" placeholder="Riding since 2019, chasing my first backside 360."></textarea><small id="bio-count"></small></label>
+      <div class="actions"><button class="btn" type="submit">Save</button><button class="link" type="button" data-close>Cancel</button></div></form>`;
+    const form = $<HTMLFormElement>('#details-form');
+    const set = (n: string, v: string | null) => ((form.elements.namedItem(n) as HTMLInputElement).value = v ?? '');
+    set('first_name', me.firstName); set('last_name', me.lastName); set('phone', me.phone);
+    set('instagram', me.instagram ? `@${me.instagram}` : ''); set('bio', me.bio);
+    const bio = form.elements.namedItem('bio') as HTMLTextAreaElement;
+    const count = () => ($('#bio-count').textContent = `${bio.value.length} of 280`);
+    bio.addEventListener('input', count); count();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const v = (n: string) => String(f.get(n) ?? '').trim() || null;
+      if (fieldErrors(form, { first_name: v('first_name') ? undefined : 'Add your first name.' })) return;
+      const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+      busy(btn, true, 'Saving…');
+      const patch = { first_name: v('first_name'), last_name: v('last_name'), phone: v('phone'), instagram: v('instagram')?.replace(/^@+/, '') ?? null, bio: v('bio') };
+      const { error } = await sb.from('profiles').update(patch).eq('id', me.id);
+      busy(btn, false);
+      if (error) return toast('Could not save. Try again.', 'bad');
+      Object.assign(me, { firstName: patch.first_name, lastName: patch.last_name, phone: patch.phone, instagram: patch.instagram, bio: patch.bio });
+      paintId();
+      for (const el of $$('[data-me-name]')) el.textContent = name();
+      sh.close();
+      toast('Saved.');
+    });
+    sh.open();
+  });
+
   // ---------------------------------------------------------------- level
   const paintLevel = (row: typeof r) => {
-    $('#level-chip').innerHTML = levelChip(row, { long: true }) || 'No level yet. Pick the one that sounds like you.';
+    $('#level-chip').innerHTML = levelChip(row, { long: true }) || '<span class="faint">No level yet. Pick the one that sounds like you.</span>';
     const verified = Boolean(row?.band);
     $('#level-note').textContent = verified
       ? 'Your coach confirmed this, so it is theirs to move now. Ask at your next session if you think it should change.'
       : LEVEL_NOTE;
-    $('#level-edit').hidden = verified;
+    $('#level-toggle').hidden = verified || !row?.self_band;
+    $('#level-edit').hidden = verified || Boolean(row?.self_band);
     const own = $$<HTMLInputElement>('input[name=band]').find((i) => Number(i.value) === row?.self_band);
     if (own) own.checked = true;
   };
   paintLevel(r);
-
+  $('#level-toggle').addEventListener('click', () => { const ed = $('#level-edit'); ed.hidden = !ed.hidden; $('#level-toggle').textContent = ed.hidden ? 'Change' : 'Done'; });
   $('#level-list').addEventListener('change', async (e) => {
     const band = Number((e.target as HTMLInputElement).value);
     const { data, error } = await sb.rpc('set_self_level', { p_band: band });
@@ -123,33 +187,41 @@ import { LEVELS } from '../../lib/members/rules';
       const { data: fresh } = await sb.from('my_rider').select('*').maybeSingle();
       return paintLevel(fresh);
     }
-    paintLevel({ ...(r ?? {}), band: null, self_band: band } as typeof r);
+    const next = { ...(r ?? {}), band: null, self_band: band } as typeof r;
+    paintLevel(next);
+    $('#level-edit').hidden = true; $('#level-toggle').textContent = 'Change';
+    lvlRow = next;
+    paintId();
     toast('Saved to your profile.');
   });
 
-  // ---------------------------------------------------------------- details
-  const form = $<HTMLFormElement>('#details-form');
-  const set = (n: string, v: string | null) => ((form.elements.namedItem(n) as HTMLInputElement).value = v ?? '');
-  set('first_name', me.firstName); set('last_name', me.lastName); set('phone', me.phone);
-  set('instagram', me.instagram ? `@${me.instagram}` : ''); set('bio', me.bio);
-  const bio = form.elements.namedItem('bio') as HTMLTextAreaElement;
-  const count = () => ($('#bio-count').textContent = `${bio.value.length} of 280`);
-  bio.addEventListener('input', count); count();
+  // ---------------------------------------------------------------- answers
+  const facts: [string, string | null | undefined][] = [
+    ['Rides', (p?.disciplines ?? []).map((d: string) => DISCIPLINE[d]).join(' + ')],
+    ['Since', p?.riding_since ? String(p.riding_since) : null],
+    ['Stance', p?.stance ? ({ regular: 'Regular', goofy: 'Goofy', unsure: 'Not sure yet' } as Record<string, string>)[p.stance] ?? p.stance : null],
+    ['Likes', (p?.terrain ?? []).map((t: string) => TERRAIN[t]).join(', ')],
+    ['Favourite trick', p?.favorite_trick],
+    ['Home resort', p?.home_resort],
+    ['Brand', p?.favorite_brand],
+    ['Gear', p?.gear],
+    ['Goal this season', p?.goals],
+  ];
+  const shown = facts.filter(([, v]) => v);
+  $('#answers').innerHTML = shown.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  $('#answers-empty').hidden = shown.length > 0;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = new FormData(form);
-    const v = (n: string) => String(f.get(n) ?? '').trim() || null;
-    if (fieldErrors(form, { first_name: v('first_name') ? undefined : 'Add your first name.' })) return;
-    const btn = form.querySelector('button') as HTMLButtonElement;
-    busy(btn, true, 'Saving…');
-    const { error } = await sb.from('profiles').update({
-      first_name: v('first_name'), last_name: v('last_name'), phone: v('phone'),
-      instagram: v('instagram')?.replace(/^@+/, '') ?? null, bio: v('bio'),
-    }).eq('id', me.id);
-    busy(btn, false);
-    toast(error ? 'Could not save. Try again.' : 'Saved.', error ? 'bad' : 'ok');
-  });
+  // ---------------------------------------------------------------- earned
+  $('#earned').innerHTML = [
+    [st?.sessions_total ?? 0, 'sessions'], [(tp ?? []).length, 'tricks landed'], [st?.longest_streak_weeks ?? 0, 'week best run'],
+  ].map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join('');
+  const title = new Map((badges ?? []).map((b) => [b.key, b.title]));
+  $('#earned-badges').innerHTML = (awards ?? []).map((a) => `<span class="pill pill--accent">${esc(title.get(a.badge_key) ?? a.badge_key)}</span>`).join('')
+    || '<span class="small faint">Badges land here as you ride. The first one is for turning up once.</span>';
+
+  $('#visibility').innerHTML = p?.listed
+    ? 'The crew can see your card: first name and initial, level, what you ride and tricks landed. <a href="/me/settings#privacy">Privacy</a>'
+    : 'Only you and your coach see this profile. <a href="/me/settings#privacy">Show me to the crew</a>';
 
   $('#profile').hidden = false;
   if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
