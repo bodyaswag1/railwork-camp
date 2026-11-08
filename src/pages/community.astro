@@ -172,7 +172,8 @@ import { ICON } from '../members/icons';
   const feedLine = (f: F) => ({
     joined: `<b>${esc(f.name)}</b> joined the crew${f.payload.band ? ` at ${esc(levelName(Number(f.payload.band)))}` : ''}`,
     level: `<b>${esc(f.name)}</b> is now ${esc(levelName(Number(f.payload.band)))}, confirmed by a coach`,
-    trick: `<b>${esc(f.name)}</b> landed a ${esc(f.payload.trick)}, signed off by a coach`,
+    trick: `<b>${esc(f.name)}</b> landed <b>${esc(f.payload.trick)}</b>, signed off by a coach`,
+    badge: `<b>${esc(f.name)}</b> earned a badge: <span class="pill pill--accent">${esc(f.payload.title)}</span>`,
     camp: `New camp: <b>${esc(f.payload.title)}</b> · ${esc(f.payload.place)} · <a href="/camps">apply</a>`,
     event: esc(f.payload.text ?? ''),
   } as Record<string, string>)[f.kind];

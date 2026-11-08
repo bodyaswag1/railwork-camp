@@ -249,11 +249,11 @@ test('booking, weekly slot, progress, community and camps through the pages', as
   await rider.getByRole('button', { name: 'Show me in the crew' }).click();
   // the overview puts you first among the faces, and the feed already shows the landed trick
   await expect(rider.locator('#ov-faces .face--me')).toContainText('You');
-  await expect(rider.locator('#ov-feed')).toContainText('landed a Ollie');
+  await expect(rider.locator('#ov-feed')).toContainText('landed Ollie');
   await rider.getByRole('tab', { name: 'Riders' }).click();
   await expect(rider.locator('#riders')).toContainText(`${RIDER.first} T.`);
   await rider.getByRole('tab', { name: 'Feed' }).click();
-  await expect(rider.locator('#feed')).toContainText('landed a Ollie');
+  await expect(rider.locator('#feed')).toContainText('landed Ollie');
   await rider.getByRole('tab', { name: 'Rides' }).click();
   await rider.getByRole('button', { name: 'Post a ride' }).click();
   await rider.locator('#post-form').getByLabel('Where').fill('Livigno, Mottolino park');
